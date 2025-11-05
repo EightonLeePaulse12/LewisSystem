@@ -1,0 +1,6 @@
+@LewisAPI_HostAddress = http://localhost:5192
+
+GET {{LewisAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

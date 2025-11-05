@@ -1,0 +1,29 @@
+﻿services:
+  # 1. Your Web API Service
+  my-api-service:
+    image: lewisapi:latest      # Uses the image you just built with the .NET SDK
+    ports:
+      - "8080:8080"           # Maps your computer's port 8080 to the container's port 8080
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_HTTP_PORTS=8080
+      # Your API's connection string points to the 'db-service'
+      - ConnectionStrings__DefaultConnection=ConnectionStrings__DefaultConnection=Host=db-service;Database=LewisTestDb;Username=postgres;Password=Ultrainstinct12_
+    depends_on:
+      - db-service            # Tells Docker to start the database *before* your API
+
+  # 2. Your Database Service
+  db-service:
+    image: "postgres:16"  # Pulls the official MS SQL Server image
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Ultrainstinct12_  # Set your SQL admin password
+      - POSTGRES_DB=LewisTestDb
+    ports:
+      - "5433:5433"           # Maps your computer's port 1433 to the container's port 1433
+    volumes:
+      - postgres-data:/var/lib/postgresql/data  # This line persists your database data!
+
+volumes:
+  postgres-data: # Defines the 'sql-data' volume to make sure your data doesn't disappear when the container stops
