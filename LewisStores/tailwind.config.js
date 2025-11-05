@@ -1,64 +1,47 @@
-module.exports = {
-  darkMode: 'class',  // Enables dark mode via .dark class on <html> or body
+export default {
+  darkMode: "class",
   content: [
-    './index.html',
-    './src/**/*.{js,jsx}',  // Scans for Tailwind classes
+    "./index.html",
+    "./src/**/*.{js,jsx}",  // Added .ts/.tsx for completeness
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['system-ui', 'Avenir', 'Helvetica', 'Arial', 'sans-serif'],
-      },
-      lineHeight: {
-        normal: '1.5',
-      },
-      borderRadius: {
-        sm: 'calc(var(--radius) - 4px)',
-        md: 'calc(var(--radius) - 2px)',
-        lg: 'var(--radius)',
-        xl: 'calc(var(--radius) + 4px)',
-      },
       colors: {
-        background: '#242424',
-        foreground: 'oklch(0.145 0 0)',
-        card: 'oklch(1 0 0)',
-        'card-foreground': 'oklch(0.145 0 0)',
-        popover: 'oklch(1 0 0)',
-        'popover-foreground': 'oklch(0.145 0 0)',
-        primary: 'oklch(0.205 0 0)',
-        'primary-foreground': 'oklch(0.985 0 0)',
-        secondary: 'oklch(0.97 0 0)',
-        'secondary-foreground': 'oklch(0.205 0 0)',
-        muted: 'oklch(0.97 0 0)',
-        'muted-foreground': 'oklch(0.556 0 0)',
-        accent: 'oklch(0.97 0 0)',
-        'accent-foreground': 'oklch(0.205 0 0)',
-        destructive: 'oklch(0.577 0.245 27.325)',
-        border: 'oklch(0.922 0 0)',
-        input: 'oklch(0.922 0 0)',
-        ring: 'oklch(0.708 0 0)',
-        'chart-1': 'oklch(0.646 0.222 41.116)',
-        'chart-2': 'oklch(0.6 0.118 184.704)',
-        'chart-3': 'oklch(0.398 0.07 227.392)',
-        'chart-4': 'oklch(0.828 0.189 84.429)',
-        'chart-5': 'oklch(0.769 0.188 70.08)',
-        sidebar: 'oklch(0.985 0 0)',
-        'sidebar-foreground': 'oklch(0.145 0 0)',
-        'sidebar-primary': 'oklch(0.205 0 0)',
-        'sidebar-primary-foreground': 'oklch(0.985 0 0)',
-        'sidebar-accent': 'oklch(0.97 0 0)',
-        'sidebar-accent-foreground': 'oklch(0.205 0 0)',
-        'sidebar-border': 'oklch(0.922 0 0)',
-        'sidebar-ring': 'oklch(0.708 0 0)',
+        border: "oklch(var(--border) / <alpha-value>)",
+        input: "oklch(var(--input) / <alpha-value>)",
+        ring: "oklch(var(--ring) / <alpha-value>)",
+        background: "oklch(var(--background) / <alpha-value>)",
+        foreground: "oklch(var(--foreground) / <alpha-value>)",
+        primary: {
+          DEFAULT: "oklch(var(--primary) / <alpha-value>)",
+          foreground: "oklch(var(--primary-foreground) / <alpha-value>)",
+        },
+        secondary: {
+          DEFAULT: "oklch(var(--secondary) / <alpha-value>)",
+          foreground: "oklch(var(--secondary-foreground) / <alpha-value>)",
+        },
+        destructive: {
+          DEFAULT: "oklch(var(--destructive) / <alpha-value>)",
+          foreground: "oklch(var(--destructive-foreground) / <alpha-value>)",  // Added foreground for completeness
+        },
+        muted: {
+          DEFAULT: "oklch(var(--muted) / <alpha-value>)",
+          foreground: "oklch(var(--muted-foreground) / <alpha-value>)",
+        },
+        accent: {
+          DEFAULT: "oklch(var(--accent) / <alpha-value>)",
+          foreground: "oklch(var(--accent-foreground) / <alpha-value>)",
+        },
+        popover: {
+          DEFAULT: "oklch(var(--popover) / <alpha-value>)",
+          foreground: "oklch(var(--popover-foreground) / <alpha-value>)",
+        },
+        card: {
+          DEFAULT: "oklch(var(--card) / <alpha-value>)",
+          foreground: "oklch(var(--card-foreground) / <alpha-value>)",
+        },
       },
-      fontSynthesis: 'none',
-      textRendering: 'optimizeLegibility',
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),  // Handles animations
-    function ({ addVariant }) {
-      addVariant('dark', '&:is(.dark *)');  // Custom dark variant for child elements
-    },
-  ],
+  plugins: [],  // Empty; no need for tailwindcss-animate in v4
 };
