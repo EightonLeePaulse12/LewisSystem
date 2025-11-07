@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LewisAPI", "LewisAPI.csproj", "{B7C4A6D3-7353-4700-B927-388FCCDEF290}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B7C4A6D3-7353-4700-B927-388FCCDEF290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7C4A6D3-7353-4700-B927-388FCCDEF290}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7C4A6D3-7353-4700-B927-388FCCDEF290}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7C4A6D3-7353-4700-B927-388FCCDEF290}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B89A68AA-C885-46E7-B415-F797D762BD5B}
+	EndGlobalSection
+EndGlobal
