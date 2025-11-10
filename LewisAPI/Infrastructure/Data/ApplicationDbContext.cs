@@ -19,6 +19,8 @@ namespace LewisAPI.Infrastructure.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Delivery> Deliveries { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<Cart> Carts { get; set; } = null!;
+        public DbSet<CartItem> CartItems { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

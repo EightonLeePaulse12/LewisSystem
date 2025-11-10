@@ -14,8 +14,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using Stripe;
 
 namespace LewisAPI
 {
@@ -40,6 +42,8 @@ namespace LewisAPI
             {
                 options.ListenAnyIP(8080);
             });
+
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             builder.Services.AddCors(options =>
             {
@@ -158,7 +162,11 @@ namespace LewisAPI
             // Exception Handling - Add your custom middleware service (assuming you have ExceptionHandlingMiddleware class)
             // builder.Services.AddTransient<ExceptionHandlingMiddleware>(); // If singleton/transient as needed
 
-            builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
+            builder
+                .Services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationDbContext>()
+                .AddHangfire(check => check.MaximumJobsFailed = 1)
+                .AddCheck("Stripe", () => HealthCheckResult.Healthy(), tags: new[] { "external" });
             // Add more checks, e.g., .AddHangfire(h => h.MaximumJobsFailed = 1);
 
             builder.Services.AddHangfire(config =>
@@ -180,6 +188,10 @@ namespace LewisAPI
                 InventoryTransactionRepository,
                 InventoryTransactionRepository
             >();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IReportService, ReportService>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -231,6 +243,26 @@ namespace LewisAPI
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.Use(
+                async (context, next) =>
+                {
+                    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                    context.Response.Headers.Append("X-Frame-Options", "DENY");
+                    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+                    context.Response.Headers.Append(
+                        "Content-Security-Policy",
+                        "default-src 'self'; script-src 'self' 'unsafe-inline';"
+                    ); // Customize as needed
+                    await next();
+                }
+            );
+
+            RecurringJob.AddOrUpdate<NotificationService>(
+                "overdue-reminder",
+                service => service.SendOverdueEmails(),
+                Cron.Daily
+            );
 
             // Hangfire Dashboard - Added mapping with basic auth (implement HangfireAuthorizationFilter as before)
             app.UseHangfireDashboard(
