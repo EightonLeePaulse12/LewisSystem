@@ -130,28 +130,6 @@ namespace LewisAPI.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<StoreSettings>().HasKey(s => s.Id);
-            builder.Entity<StoreSettings>().Property(s => s.DeliveryOptions).HasColumnType("jsonb");
-
-            builder
-                .Entity<StoreSettings>()
-                .HasData(
-                    new StoreSettings
-                    {
-                        Id = 1,
-                        DefaultInterestRate = 0.10m,
-                        SetupFee = 50.00m,
-                        DeliveryOptions = new Dictionary<string, decimal>
-                        {
-                            { "Local", 10.00m },
-                            { "Regional", 50.00m },
-                            { "National", 100.00m },
-                        },
-                        BillingCycleStart = "NextMonth",
-                        GracePeriodDays = 0,
-                        LateFeePercentage = 0.05m,
-                        DefaultPlanType = "Amortized",
-                    }
-                );
         }
 
         // Enum conversions if needed (Postgres handles enums as int by default, but for string storage if preferred)

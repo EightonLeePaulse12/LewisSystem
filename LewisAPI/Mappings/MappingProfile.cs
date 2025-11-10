@@ -8,7 +8,29 @@ namespace LewisAPI.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<Product, ProductDto>();
+            CreateMap<Product, ProductDto>()
+                .ForMember(
+                    dest => dest.Image1,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.Image1 != null ? Convert.ToBase64String(src.Image1) : null
+                        )
+                )
+                .ForMember(
+                    dest => dest.Image2,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.Image2 != null ? Convert.ToBase64String(src.Image2) : null
+                        )
+                )
+                .ForMember(
+                    dest => dest.Image3,
+                    opt =>
+                        opt.MapFrom(src =>
+                            src.Image3 != null ? Convert.ToBase64String(src.Image3) : null
+                        )
+                );
+            ;
             CreateMap<CreateProductDto, Product>();
             CreateMap<UpdateProductDto, Product>()
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));

@@ -82,10 +82,23 @@ namespace LewisAPI.Controllers
         }
 
         [HttpPost("products")]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
+        public async Task<IActionResult> CreateProduct(
+            [FromForm] CreateProductDto dto,
+            IFormFile? image1,
+            IFormFile? image2,
+            IFormFile? image3
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var product = _mapper.Map<Product>(dto);
+            if (image1 != null)
+                product.Image1 = await FileToByteArray(image1);
+            if (image2 != null)
+                product.Image2 = await FileToByteArray(image2);
+            if (image3 != null)
+                product.Image3 = await FileToByteArray(image3);
 
             try
             {
@@ -103,6 +116,7 @@ namespace LewisAPI.Controllers
 
                 // Invalidate cache for inventory
                 _cache.Remove("inventory_*"); // Simple wildcard invalidation; in practice, use CacheTag or remove specific keys
+                _cache.Remove("dashboard");
 
                 return CreatedAtAction(
                     nameof(product), // Assuming exists
@@ -118,10 +132,24 @@ namespace LewisAPI.Controllers
         }
 
         [HttpPatch("products/{id}")]
-        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDto dto)
+        public async Task<IActionResult> UpdateProduct(
+            Guid id,
+            [FromForm] UpdateProductDto dto,
+            IFormFile? image1,
+            IFormFile? image2,
+            IFormFile? image3
+        )
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            var product = _mapper.Map<Product>(dto);
+            if (image1 != null)
+                product.Image1 = await FileToByteArray(image1);
+            if (image2 != null)
+                product.Image2 = await FileToByteArray(image2);
+            if (image3 != null)
+                product.Image3 = await FileToByteArray(image3);
 
             try
             {
@@ -138,6 +166,7 @@ namespace LewisAPI.Controllers
 
                 // Invalidate cache
                 _cache.Remove("inventory_*");
+                _cache.Remove("dashboard");
 
                 return NoContent();
             }
@@ -169,6 +198,7 @@ namespace LewisAPI.Controllers
 
                 // Invalidate cache
                 _cache.Remove("inventory_*");
+                _cache.Remove("dashboard");
 
                 return NoContent();
             }
@@ -466,6 +496,13 @@ namespace LewisAPI.Controllers
                 Details = $"ChangeQty: {changeQty}",
             };
             await _auditRepo.LogAsync(audit);
+        }
+
+        private async Task<byte[]> FileToByteArray(IFormFile file)
+        {
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+            return memoryStream.ToArray();
         }
     }
 }

@@ -243,7 +243,12 @@ namespace LewisAPI
                 "apply-late-fees",
                 service => service.ApplyLateFeesAsync(),
                 Cron.Daily
-            );
+            ); // At midnight
+            RecurringJob.AddOrUpdate(
+                "overdue-reminders",
+                () => SendOverdueReminders(),
+                Cron.Daily(9)
+            ); // At 9 AM
 
             app.UseHangfireDashboard(
                 "/hangfire",

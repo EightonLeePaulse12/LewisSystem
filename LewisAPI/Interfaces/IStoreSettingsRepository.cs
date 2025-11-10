@@ -4,7 +4,7 @@ namespace LewisAPI.Interfaces
 {
     public interface IStoreSettingsRepository
     {
-        Task<StoreSettings> GetSettingsAsync();
+        Task<IEnumerable<StoreSettings>> GetSettingsAsync();
         Task UpdateSettingsAsync(StoreSettings updated);
     }
 }
