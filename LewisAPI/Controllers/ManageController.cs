@@ -102,7 +102,6 @@ namespace LewisAPI.Controllers
 
             try
             {
-                var product = _mapper.Map<Product>(dto);
                 product.ProductId = Guid.NewGuid();
                 var created = await _productRepo.CreateAsync(product);
 
