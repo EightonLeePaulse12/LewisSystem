@@ -10,17 +10,14 @@ namespace LewisAPI.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly InventoryTransactionRepository _inventoryTransactionRepo;
-        private readonly AuditLogRepository _auditLogRepo;
 
         public OrderRepository(
             ApplicationDbContext context,
-            InventoryTransactionRepository inventoryTransactionRepo,
-            AuditLogRepository auditLogRepo
+            InventoryTransactionRepository inventoryTransactionRepo
         )
         {
             _context = context;
             _inventoryTransactionRepo = inventoryTransactionRepo;
-            _auditLogRepo = auditLogRepo;
         }
 
         public async Task<IEnumerable<Order>> GetAllAsync(int page, int limit, Guid userId)

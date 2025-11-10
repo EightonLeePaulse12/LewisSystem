@@ -1,6 +1,4 @@
 ﻿namespace LewisAPI.DTOs
 {
-    public class CartItemDto
-    {
-    }
+    public class CartItemDto { }
 }

@@ -52,10 +52,15 @@ namespace LewisAPI.Mappings
             CreateMap<PaymentDto, Payment>();
 
             // User/Profile Mappings (assuming ApplicationUser and Customer models)
-            CreateMap<Customer, ProfileDto>()
-                .ForMember(dest => dest.Address, opt => opt.MapFrom(src => src.Address)) // If one-to-one
-                .ForMember(dest => dest.City, opt => opt.MapFrom(src => src.City))
-                .ForMember(dest => dest.PostalCode, opt => opt.MapFrom(src => src.PostalCode));
+            CreateMap<ApplicationUser, ProfileDto>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.Phone, opt => opt.MapFrom(src => src.PhoneNumber))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.UserName))
+                .ForMember(
+                    dest => dest.ProfilePicture,
+                    opt => opt.MapFrom(src => src.ProfilePicture)
+                );
+
             CreateMap<RegisterDTO, ApplicationUser>()
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email))
                 .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.Phone));

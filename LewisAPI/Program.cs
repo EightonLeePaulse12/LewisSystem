@@ -3,7 +3,6 @@ using System.Threading.RateLimiting;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.PostgreSql;
-using LewisAPI.Filters;
 using LewisAPI.Infrastructure.Data;
 using LewisAPI.Interfaces;
 using LewisAPI.Models;
@@ -15,6 +14,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using QuestPDF.Infrastructure;
 using Serilog;
 using Stripe;
@@ -45,16 +45,31 @@ namespace LewisAPI
 
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
+            //builder.Services.AddCors(options =>
+            //{
+            //    options.AddPolicy(
+            //        "StrictPolicy",
+            //        builder =>
+            //            builder
+            //                .WithOrigins("*")
+            //                .AllowAnyMethod()
+            //                .AllowAnyHeader()
+            //                .AllowCredentials()
+            //    );
+            //});
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(
-                    "StrictPolicy",
-                    builder =>
-                        builder
-                            .WithOrigins("https://yourfrontend.com")
-                            .AllowAnyMethod()
+                    "AllowAll",
+                    policy =>
+                    {
+                        policy
+                            .SetIsOriginAllowed(_ => true) // allow all origins dynamically
                             .AllowAnyHeader()
-                            .AllowCredentials()
+                            .AllowAnyMethod()
+                            .AllowCredentials(); // if you use cookies or Authorization headers
+                    }
                 );
             });
 
@@ -180,11 +195,53 @@ namespace LewisAPI
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IReportService, ReportService>();
             builder.Services.AddScoped<IStoreSettingsRepository, StoreSettingsRepository>();
-            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo
+                    {
+                        Title = "LewisAPI",
+                        Version = "v1",
+                        Description = "API for Lewis E-commerce System",
+                    }
+                );
+
+                // Add JWT Authentication Support
+                c.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description =
+                            "Enter your JWT token below (without the Bearer prefix). Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    }
+                );
+
+                c.AddSecurityRequirement(
+                    new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer",
+                                },
+                            },
+                            Array.Empty<string>()
+                        },
+                    }
+                );
+            });
 
             var app = builder.Build();
 
@@ -208,7 +265,7 @@ namespace LewisAPI
                 }
             }
 
-            app.UseCors("StrictPolicy");
+            app.UseCors("AllowAll");
 
             app.MapHealthChecks("/health");
 
@@ -218,7 +275,10 @@ namespace LewisAPI
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseSerilogRequestLogging();
 
@@ -239,23 +299,23 @@ namespace LewisAPI
                 }
             );
 
-            RecurringJob.AddOrUpdate<IPaymentService>(
-                "apply-late-fees",
-                service => service.ApplyLateFeesAsync(),
-                Cron.Daily
-            ); // At midnight
-            RecurringJob.AddOrUpdate(
-                "overdue-reminders",
-                () => SendOverdueReminders(),
-                Cron.Daily(9)
-            ); // At 9 AM
+            //RecurringJob.AddOrUpdate<IPaymentService>(
+            //    "apply-late-fees",
+            //    service => service.ApplyLateFeesAsync(),
+            //    Cron.Daily
+            //); // At midnight
+            //RecurringJob.AddOrUpdate(
+            //    "overdue-reminders",
+            //    () => SendOverdueReminders(),
+            //    Cron.Daily(9)
+            //); // At 9 AM
 
-            app.UseHangfireDashboard(
-                "/hangfire",
-                new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
-            );
+            //app.UseHangfireDashboard(
+            //    "/hangfire",
+            //    new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
+            //);
 
-            RecurringJob.AddOrUpdate("overdue-reminders", () => SendOverdueReminders(), Cron.Daily);
+            //RecurringJob.AddOrUpdate("overdue-reminders", () => SendOverdueReminders(), Cron.Daily);
 
             app.MapControllers();
 

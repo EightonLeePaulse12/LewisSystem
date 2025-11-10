@@ -83,7 +83,7 @@ namespace LewisAPI.Controllers
 
         [HttpPost("products")]
         public async Task<IActionResult> CreateProduct(
-            [FromForm] CreateProductDto dto,
+            [FromBody] CreateProductDto dto,
             IFormFile? image1,
             IFormFile? image2,
             IFormFile? image3
@@ -351,8 +351,8 @@ namespace LewisAPI.Controllers
 
         [HttpGet("reports/payments")]
         public async Task<IActionResult> GetPaymentsReport(
-            [FromBody] DateTime? start = null,
-            [FromBody] DateTime? end = null,
+            [FromQuery] DateTime? start = null,
+            [FromQuery] DateTime? end = null,
             [FromQuery] string format = "csv"
         )
         {
