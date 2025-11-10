@@ -30,6 +30,7 @@
         Deletion,
         Import,
         Export,
+        Sale,
     }
 
     public enum InstallmentStatus

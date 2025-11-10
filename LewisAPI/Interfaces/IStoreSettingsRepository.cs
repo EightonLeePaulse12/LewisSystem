@@ -1,6 +1,10 @@
-﻿namespace LewisAPI.Interfaces
+﻿using LewisAPI.Models;
+
+namespace LewisAPI.Interfaces
 {
-    public interface IStoreSettings
+    public interface IStoreSettingsRepository
     {
+        Task<StoreSettings> GetSettingsAsync();
+        Task UpdateSettingsAsync(StoreSettings updated);
     }
 }

@@ -19,8 +19,7 @@ namespace LewisAPI.Infrastructure.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Delivery> Deliveries { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
-        public DbSet<Cart> Carts { get; set; } = null!;
-        public DbSet<CartItem> CartItems { get; set; } = null!;
+        public DbSet<StoreSettings> StoreSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -130,12 +129,36 @@ namespace LewisAPI.Infrastructure.Data
                 .HasForeignKey<Customer>(c => c.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Enum conversions if needed (Postgres handles enums as int by default, but for string storage if preferred)
-            //Example: modelBuilder.Entity<Product>().Property(p => p.Status).HasConversion<string>();
-            // But keeping as int for efficiency.
+            builder.Entity<StoreSettings>().HasKey(s => s.Id);
+            builder.Entity<StoreSettings>().Property(s => s.DeliveryOptions).HasColumnType("jsonb");
 
-            // Add any seed data if desired, e.g., categories
-            // modelBuilder.Entity<Category>().HasData(new Category { Id = 1, Name = "Furniture" });
+            builder
+                .Entity<StoreSettings>()
+                .HasData(
+                    new StoreSettings
+                    {
+                        Id = 1,
+                        DefaultInterestRate = 0.10m,
+                        SetupFee = 50.00m,
+                        DeliveryOptions = new Dictionary<string, decimal>
+                        {
+                            { "Local", 10.00m },
+                            { "Regional", 50.00m },
+                            { "National", 100.00m },
+                        },
+                        BillingCycleStart = "NextMonth",
+                        GracePeriodDays = 0,
+                        LateFeePercentage = 0.05m,
+                        DefaultPlanType = "Amortized",
+                    }
+                );
         }
+
+        // Enum conversions if needed (Postgres handles enums as int by default, but for string storage if preferred)
+        //Example: modelBuilder.Entity<Product>().Property(p => p.Status).HasConversion<string>();
+        // But keeping as int for efficiency.
+
+        // Add any seed data if desired, e.g., categories
+        // modelBuilder.Entity<Category>().HasData(new Category { Id = 1, Name = "Furniture" });
     }
 }

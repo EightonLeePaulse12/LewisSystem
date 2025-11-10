@@ -4,7 +4,6 @@ using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.PostgreSql;
 using LewisAPI.Filters;
-using LewisAPI.Infrastructure;
 using LewisAPI.Infrastructure.Data;
 using LewisAPI.Interfaces;
 using LewisAPI.Models;
@@ -16,6 +15,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using QuestPDF.Infrastructure;
 using Serilog;
 using Stripe;
 
@@ -25,6 +25,8 @@ namespace LewisAPI
     {
         public static void Main(string[] args)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
             Log.Logger = new LoggerConfiguration()
@@ -35,8 +37,6 @@ namespace LewisAPI
                 .CreateBootstrapLogger();
 
             builder.Host.UseSerilog();
-
-            // Add services to the container.
 
             builder.WebHost.UseKestrel(options =>
             {
@@ -51,7 +51,7 @@ namespace LewisAPI
                     "StrictPolicy",
                     builder =>
                         builder
-                            .WithOrigins("https://yourfrontend.com") // Replace with your actual frontend URL(s), e.g., "http://localhost:3000" for dev
+                            .WithOrigins("https://yourfrontend.com")
                             .AllowAnyMethod()
                             .AllowAnyHeader()
                             .AllowCredentials()
@@ -107,22 +107,16 @@ namespace LewisAPI
                 options.AddPolicy(
                     "ManagerOrAdmin",
                     policy => policy.RequireRole("Manager", "Admin")
-                ); // Fixed comma separation
+                );
                 options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
             });
-
-            builder.Services.Configure<SendGridSettings>(
-                builder.Configuration.GetSection("SendGridSettings")
-            );
-
-            builder.Services.AddTransient<IEmailService, SendGridEmailService>();
 
             builder
                 .Services.AddFluentValidationAutoValidation()
                 .AddFluentValidationClientsideAdapters();
 
             builder.Services.AddMemoryCache();
-            // Rate Limiter (native - removed old singleton as it's not needed)
+
             builder.Services.AddRateLimiter(options =>
             {
                 options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
@@ -139,7 +133,6 @@ namespace LewisAPI
                             }
                         )
                 );
-                // Custom rule for login
                 options.AddFixedWindowLimiter(
                     "login",
                     options =>
@@ -151,23 +144,18 @@ namespace LewisAPI
 
                 options.OnRejected = async (context, token) =>
                 {
-                    context.HttpContext.Response.StatusCode = 429; // Too Many Requests
+                    context.HttpContext.Response.StatusCode = 429;
                     await context.HttpContext.Response.WriteAsync(
                         "Rate Limit exceeded. Try Again Later",
-                        token // Added token for cancellation
+                        token
                     );
                 };
             });
 
-            // Exception Handling - Add your custom middleware service (assuming you have ExceptionHandlingMiddleware class)
-            // builder.Services.AddTransient<ExceptionHandlingMiddleware>(); // If singleton/transient as needed
-
             builder
                 .Services.AddHealthChecks()
                 .AddDbContextCheck<ApplicationDbContext>()
-                .AddHangfire(check => check.MaximumJobsFailed = 1)
-                .AddCheck("Stripe", () => HealthCheckResult.Healthy(), tags: new[] { "external" });
-            // Add more checks, e.g., .AddHangfire(h => h.MaximumJobsFailed = 1);
+                .AddCheck("Stripe", () => HealthCheckResult.Healthy());
 
             builder.Services.AddHangfire(config =>
                 config
@@ -179,7 +167,7 @@ namespace LewisAPI
                             builder.Configuration.GetConnectionString("DefaultConnection")
                         )
                     )
-            ); // Use your conn string (can be same as DefaultConnection if shared)
+            );
             builder.Services.AddHangfireServer();
 
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
@@ -189,15 +177,13 @@ namespace LewisAPI
                 InventoryTransactionRepository
             >();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
-            builder.Services.AddScoped<IOrderService, OrderService>();
-            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddScoped<IStoreSettingsRepository, StoreSettingsRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
@@ -205,7 +191,7 @@ namespace LewisAPI
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate(); // Creates/updates schema based on your migrations
+                dbContext.Database.Migrate();
                 var roleManager = scope.ServiceProvider.GetRequiredService<
                     RoleManager<IdentityRole<Guid>>
                 >();
@@ -222,24 +208,19 @@ namespace LewisAPI
                 }
             }
 
-            app.UseCors("StrictPolicy"); // Use the strict policy name
+            app.UseCors("StrictPolicy");
 
             app.MapHealthChecks("/health");
 
-            app.UseSwagger();
-            app.UseRateLimiter();
-
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
-            app.UseSerilogRequestLogging(); // Added for request logging
+            app.UseSerilogRequestLogging();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -253,32 +234,26 @@ namespace LewisAPI
                     context.Response.Headers.Append(
                         "Content-Security-Policy",
                         "default-src 'self'; script-src 'self' 'unsafe-inline';"
-                    ); // Customize as needed
+                    );
                     await next();
                 }
             );
 
-            RecurringJob.AddOrUpdate<NotificationService>(
-                "overdue-reminder",
-                service => service.SendOverdueEmails(),
-                Cron.Daily
-            );
-
-            // Hangfire Dashboard - Added mapping with basic auth (implement HangfireAuthorizationFilter as before)
             app.UseHangfireDashboard(
                 "/hangfire",
-                new DashboardOptions
-                {
-                    Authorization = new[] { new HangfireAuthorizationFilter() }, // Add your custom filter class for RBAC
-                }
+                new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
             );
 
-            // Exception Middleware - Add if you have the class
-            // app.UseMiddleware<ExceptionHandlingMiddleware>();
+            RecurringJob.AddOrUpdate("overdue-reminders", () => SendOverdueReminders(), Cron.Daily);
 
             app.MapControllers();
 
             app.Run();
+        }
+
+        public static void SendOverdueReminders()
+        {
+            Console.WriteLine("Sending overdue reminders...");
         }
     }
 }

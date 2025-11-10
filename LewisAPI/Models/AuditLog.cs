@@ -6,7 +6,7 @@ namespace LewisAPI.Models
     public class AuditLog
     {
         [Key]
-        public Guid LogId { get; set; }
+        public Guid LogId { get; set; } = new Guid();
 
         public Guid UserId { get; set; }
 
