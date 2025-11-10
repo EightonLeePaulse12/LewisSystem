@@ -239,6 +239,12 @@ namespace LewisAPI
                 }
             );
 
+            RecurringJob.AddOrUpdate<IPaymentService>(
+                "apply-late-fees",
+                service => service.ApplyLateFeesAsync(),
+                Cron.Daily
+            );
+
             app.UseHangfireDashboard(
                 "/hangfire",
                 new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }

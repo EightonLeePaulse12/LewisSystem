@@ -11,5 +11,6 @@ namespace LewisAPI.Interfaces
             Guid userId = default
         );
         Task ProcessPaymentAsync(Payment payment, string? stripeToken);
+        Task ApplyLateFeesAsync();
     }
 }

@@ -142,15 +142,13 @@ namespace LewisAPI.Services
                                     columns.RelativeColumn();
                                     columns.RelativeColumn();
                                     columns.RelativeColumn();
-                                    columns.RelativeColumn();
                                 });
 
                                 table.Cell().Row(1).Column(1).Text("Payment ID");
                                 table.Cell().Row(1).Column(2).Text("Date");
                                 table.Cell().Row(1).Column(3).Text("Amount");
                                 table.Cell().Row(1).Column(4).Text("Method");
-                                table.Cell().Row(1).Column(5).Text("Order ID");
-                                table.Cell().Row(1).Column(6).Text("Agreement ID");
+                                table.Cell().Row(1).Column(5).Text("Reference");
 
                                 uint row = 2;
                                 foreach (var payment in payments)
@@ -175,12 +173,7 @@ namespace LewisAPI.Services
                                         .Cell()
                                         .Row(row)
                                         .Column(5)
-                                        .Text(payment.OrderId.ToString());
-                                    table
-                                        .Cell()
-                                        .Row(row)
-                                        .Column(6)
-                                        .Text(payment.AgreementId.ToString());
+                                        .Text(payment.AgreementId.ToString() ?? "N/A");
                                     row++;
                                 }
                             });

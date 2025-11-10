@@ -1,4 +1,5 @@
-﻿using LewisAPI.Infrastructure.Data;
+﻿using System.Text.Json;
+using LewisAPI.Infrastructure.Data;
 using LewisAPI.Interfaces;
 using LewisAPI.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,18 @@ namespace LewisAPI.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly ApplicationDbContext _context;
+        private readonly InventoryTransactionRepository _inventoryTransactionRepo;
+        private readonly AuditLogRepository _auditLogRepo;
 
-        public OrderRepository(ApplicationDbContext context)
+        public OrderRepository(
+            ApplicationDbContext context,
+            InventoryTransactionRepository inventoryTransactionRepo,
+            AuditLogRepository auditLogRepo
+        )
         {
             _context = context;
+            _inventoryTransactionRepo = inventoryTransactionRepo;
+            _auditLogRepo = auditLogRepo;
         }
 
         public async Task<IEnumerable<Order>> GetAllAsync(int page, int limit, Guid userId)
@@ -44,7 +53,41 @@ namespace LewisAPI.Repositories
 
         public async Task CreateAsync(Order order)
         {
+            foreach (var item in order.OrderItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product == null || product.StockQty < item.Quantity)
+                {
+                    throw new InvalidOperationException(
+                        $"Insufficient stock for product {item.ProductId}."
+                    );
+                }
+            }
             _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+
+            // Decrement and log
+            foreach (var item in order.OrderItems)
+            {
+                var product = await _context.Products.FindAsync(item.ProductId);
+                product.StockQty -= item.Quantity;
+
+                var transaction = new InventoryTransaction
+                {
+                    // Implement
+                };
+                await _inventoryTransactionRepo.AddAsync(transaction);
+            }
+
+            string details = JsonSerializer.Serialize(order);
+            await _auditLogRepo.LogAsync(
+                order.CustomerId,
+                "Create",
+                "Order",
+                order.OrderId.ToString(),
+                details
+            );
+
             await _context.SaveChangesAsync();
         }
 

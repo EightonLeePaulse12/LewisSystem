@@ -99,43 +99,6 @@ namespace LewisAPI.Services
 
             // Then update the LogAsync call to use the auditLog object:
             await _auditLogRepo.LogAsync(auditLog);
-            /*
-                        *   using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace LewisAPI.Models
-{
-    public class AuditLog
-    {
-        [Key]
-        public Guid LogId { get; set; }
-
-        public Guid UserId { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string Action { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string EntityType { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        public string EntityId { get; set; }
-
-        [Required]
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
-
-        public string Details { get; set; } // JSON
-
-        [ForeignKey("UserId")]
-        public virtual ApplicationUser User { get; set; }
-    }
-}
-
-                        *
-                        * */
 
             return schedule;
         }
@@ -206,6 +169,27 @@ namespace LewisAPI.Models
                 Details = $"Amount: {payment.Amount}",
             };
             await _auditLogRepo.LogAsync(auditLog);
+        }
+
+        public async Task ApplyLateFeesAsync()
+        {
+            var overdue = await _context
+                .Installments.Where(i =>
+                    i.DueDate < DateTime.UtcNow && i.Status == InstallmentStatus.Pending
+                )
+                .ToListAsync();
+
+            decimal lateFeeRate = _config.GetValue<decimal>("StoreSettings:LateFeeRate", 0.05m); // 5% configurable
+
+            foreach (var i in overdue)
+            {
+                decimal lateFee = i.AmountDue * lateFeeRate;
+                i.AmountDue += lateFee;
+                i.Status = InstallmentStatus.Overdue;
+                // Log audit or notify
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }
