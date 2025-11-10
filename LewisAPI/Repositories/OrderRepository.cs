@@ -80,13 +80,6 @@ namespace LewisAPI.Repositories
             }
 
             string details = JsonSerializer.Serialize(order);
-            await _auditLogRepo.LogAsync(
-                order.CustomerId,
-                "Create",
-                "Order",
-                order.OrderId.ToString(),
-                details
-            );
 
             await _context.SaveChangesAsync();
         }
