@@ -17,6 +17,7 @@ namespace LewisAPI.Interfaces
         Task ImportBatchAsync(IEnumerable<Product> products); // For CSV import
 
         Task<IEnumerable<Product>> ExportBatchAsync(); // For export
+
         Task HardDeleteAsync(Guid id);
     }
 }
