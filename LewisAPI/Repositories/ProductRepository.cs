@@ -90,12 +90,12 @@ namespace LewisAPI.Repositories
 
         public async Task SoftDeleteAsync(Guid id)
         {
-            var product = await GetByIdAsync(id);
-            if (product != null)
-            {
-                product.IsDeleted = true;
-                await UpdateAsync(product);
-            }
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                throw new Exception("Product not found");
+            product.IsDeleted = true;
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
         }
 
         public async Task ImportBatchAsync(IEnumerable<Product> products)
@@ -122,6 +122,16 @@ namespace LewisAPI.Repositories
             }
 
             return cachedProducts ?? Enumerable.Empty<Product>();
+        }
+
+        public async Task HardDeleteAsync(Guid id)
+        {
+            var product = await _context.Products.FindAsync(id);
+            if (product == null)
+                throw new Exception("Product Not Found");
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+            InvalidateCache();
         }
 
         private string GetCacheVersion()

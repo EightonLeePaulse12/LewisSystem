@@ -82,23 +82,12 @@ namespace LewisAPI.Controllers
         }
 
         [HttpPost("products")]
-        public async Task<IActionResult> CreateProduct(
-            [FromBody] CreateProductDto dto,
-            IFormFile? image1,
-            IFormFile? image2,
-            IFormFile? image3
-        )
+        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             var product = _mapper.Map<Product>(dto);
-            if (image1 != null)
-                product.Image1 = await FileToByteArray(image1);
-            if (image2 != null)
-                product.Image2 = await FileToByteArray(image2);
-            if (image3 != null)
-                product.Image3 = await FileToByteArray(image3);
 
             try
             {
@@ -118,7 +107,7 @@ namespace LewisAPI.Controllers
                 _cache.Remove("dashboard");
 
                 return CreatedAtAction(
-                    nameof(product), // Assuming exists
+                    nameof(GetInventory), // Assuming exists
                     new { id = created.ProductId },
                     _mapper.Map<ProductDto>(created)
                 );
@@ -130,25 +119,52 @@ namespace LewisAPI.Controllers
             }
         }
 
-        [HttpPatch("products/{id}")]
-        public async Task<IActionResult> UpdateProduct(
+        [HttpPost("products/{id}/images")]
+        public async Task<IActionResult> UploadProductImages(
             Guid id,
-            [FromForm] UpdateProductDto dto,
             IFormFile? image1,
             IFormFile? image2,
             IFormFile? image3
         )
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var product = await _productRepo.GetByIdAsync(id);
+            if (product == null)
+                return NotFound();
 
-            var product = _mapper.Map<Product>(dto);
             if (image1 != null)
                 product.Image1 = await FileToByteArray(image1);
             if (image2 != null)
                 product.Image2 = await FileToByteArray(image2);
             if (image3 != null)
                 product.Image3 = await FileToByteArray(image3);
+
+            try
+            {
+                await _productRepo.UpdateAsync(product);
+
+                var user = await _userManager.GetUserAsync(User);
+                await LogInventoryChange(id, InventoryTransactionType.Update, 0, user?.Id);
+
+                _cache.Remove("inventory_*");
+                _cache.Remove("dashboard");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    "Unexpected error occured while uploading images: {ErrorMessage}",
+                    ex.Message
+                );
+                return StatusCode(500, "An unexpected error occured while uploading images");
+            }
+        }
+
+        [HttpPatch("products/{id}")]
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
             try
             {
@@ -173,6 +189,47 @@ namespace LewisAPI.Controllers
             {
                 _logger.LogError("An error occurred: {ErrorMessage}", ex.Message);
                 return StatusCode(500, "An error occurred while updating the product.");
+            }
+        }
+
+        [HttpPatch("products/{id}/images")]
+        public async Task<IActionResult> UpdateProductImages(
+            Guid id,
+            IFormFile? image1,
+            IFormFile? image2,
+            IFormFile? image3
+        )
+        {
+            var product = await _productRepo.GetByIdAsync(id);
+            if (product == null)
+                return NotFound();
+
+            if (image1 != null)
+                product.Image1 = await FileToByteArray(image1);
+            if (image2 != null)
+                product.Image2 = await FileToByteArray(image2);
+            if (image3 != null)
+                product.Image3 = await FileToByteArray(image3);
+
+            try
+            {
+                await _productRepo.UpdateAsync(product);
+
+                var user = await _userManager.GetUserAsync(User);
+                await LogInventoryChange(id, InventoryTransactionType.Update, 0, user?.Id);
+
+                _cache.Remove("inventory_*");
+                _cache.Remove("dashboard");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    "Unexpected error occured while updating images: {ErrorMessage}",
+                    ex.Message
+                );
+                return StatusCode(500, "Unexpected error occured while updating images");
             }
         }
 
@@ -460,6 +517,33 @@ namespace LewisAPI.Controllers
             {
                 _logger.LogError("An error occurred: {ErrorMessage}", ex.Message);
                 return StatusCode(500, "An error occurred while updating order status.");
+            }
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        [HttpDelete("products/{id}/permanent")]
+        public async Task<IActionResult> PermanentDeleteProduct(Guid id)
+        {
+            try
+            {
+                await _productRepo.HardDeleteAsync(id);
+                var user = await _userManager.GetUserAsync(User);
+                await LogInventoryChange(
+                    id,
+                    InventoryTransactionType.PermanentDeletion,
+                    0,
+                    user?.Id
+                );
+
+                _cache.Remove("inventory_*");
+                _cache.Remove("dashboard");
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occured: {ErrorMessage}", ex.Message);
+                return StatusCode(500, "An error occured while permanently deleting the product");
             }
         }
 

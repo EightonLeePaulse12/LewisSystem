@@ -15,8 +15,5 @@ namespace LewisAPI.DTOs
         public int StockQty { get; set; }
         public int ReorderThreshold { get; set; }
         public ProductStatus Status { get; set; }
-        public byte[]? Image1 { get; set; }
-        public byte[]? Image2 { get; set; }
-        public byte[]? Image3 { get; set; }
     }
 }

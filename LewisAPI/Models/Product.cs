@@ -53,6 +53,9 @@ namespace LewisAPI.Models
         public byte[]? Image3 { get; set; }
         public bool IsDeleted { get; set; }
 
+        [Timestamp] // Or [ConcurrencyCheck] if using a non-byte[] type
+        public byte[] RowVersion { get; set; }
+
         [ForeignKey("CategoryId")]
         public virtual Category Category { get; set; }
 

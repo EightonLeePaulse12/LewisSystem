@@ -281,6 +281,7 @@ namespace LewisAPI
             }
 
             app.UseSerilogRequestLogging();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();

@@ -33,6 +33,7 @@ namespace LewisAPI.Mappings
             ;
             CreateMap<CreateProductDto, Product>();
             CreateMap<UpdateProductDto, Product>()
+                .ForMember(dest => dest.ProductId, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             // Order Mappings

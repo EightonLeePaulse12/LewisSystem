@@ -185,8 +185,16 @@ namespace LewisAPI.Controllers
                 // Audit
                 var auditLog = new AuditLog
                 {
-                    // Complete this for me please
+                    LogId = Guid.NewGuid(),
+                    UserId = userId,
+                    Action = "Cancel Order",
+                    EntityType = "Order",
+                    EntityId = id.ToString(),
+                    Timestamp = DateTime.UtcNow,
+                    Details = $"Order status changed to Cancelled",
                 };
+
+                await _auditRepo.LogAsync(auditLog);
 
                 // Invalidate caches
                 _cache.Remove($"user_orders_{userId}_*");

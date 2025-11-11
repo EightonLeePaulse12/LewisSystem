@@ -1,6 +1,6 @@
 ﻿namespace LewisAPI.DTOs
 {
-    public class UpdateProductDto : ProductDto
+    public class UpdateProductDto : CreateProductDto
     {
         // Fields are inherited
     }
