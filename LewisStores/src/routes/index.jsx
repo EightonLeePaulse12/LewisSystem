@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-// import { Button } from "@/components/ui/button"
-import { CustomerNavbar } from "@/components/NavigationMenus/CustomerNavbar";
+import { Button } from "@/components/ui/button"
+// import { CustomerNavbar } from "@/components/NavigationMenus/CustomerNavbar";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -8,8 +9,12 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="flex items-center justify-center w-full h-screen p-2 ">
-      First test page
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      <h1 className="mb-4 text-4xl font-bold">Welcome to Lewis E-Commerce</h1>
+      <p className="mb-6 text-lg">Shop our latest products!</p>
+      <Link to="/catalog">
+        <Button>View Catalog</Button>
+      </Link>
     </div>
   );
 }
