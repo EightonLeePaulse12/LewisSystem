@@ -96,6 +96,7 @@ namespace LewisAPI.Repositories
             product.IsDeleted = true;
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
+            InvalidateCache();
         }
 
         public async Task ImportBatchAsync(IEnumerable<Product> products)

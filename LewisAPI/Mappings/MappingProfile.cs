@@ -29,8 +29,35 @@ namespace LewisAPI.Mappings
                         opt.MapFrom(src =>
                             src.Image3 != null ? Convert.ToBase64String(src.Image3) : null
                         )
+                )
+                .ReverseMap()
+                .ForMember(
+                    dest => dest.Image1,
+                    opt =>
+                        opt.MapFrom(src =>
+                            !string.IsNullOrEmpty(src.Image1)
+                                ? Convert.FromBase64String(src.Image1)
+                                : null
+                        )
+                )
+                .ForMember(
+                    dest => dest.Image2,
+                    opt =>
+                        opt.MapFrom(src =>
+                            !string.IsNullOrEmpty(src.Image2)
+                                ? Convert.FromBase64String(src.Image2)
+                                : null
+                        )
+                )
+                .ForMember(
+                    dest => dest.Image3,
+                    opt =>
+                        opt.MapFrom(src =>
+                            !string.IsNullOrEmpty(src.Image3)
+                                ? Convert.FromBase64String(src.Image3)
+                                : null
+                        )
                 );
-            ;
             CreateMap<CreateProductDto, Product>();
             CreateMap<UpdateProductDto, Product>()
                 .ForMember(dest => dest.ProductId, opt => opt.Ignore())

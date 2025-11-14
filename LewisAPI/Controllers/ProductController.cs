@@ -11,9 +11,13 @@ public class ProductController : ControllerBase
 {
     private readonly IProductRepository _productRepo;
     private readonly IMapper _mapper;
-    private readonly ILogger _logger;
+    private readonly ILogger<ProductController> _logger;
 
-    public ProductController(IProductRepository productRepo, IMapper mapper, ILogger logger)
+    public ProductController(
+        IProductRepository productRepo,
+        IMapper mapper,
+        ILogger<ProductController> logger
+    )
     {
         _productRepo = productRepo;
         _mapper = mapper;

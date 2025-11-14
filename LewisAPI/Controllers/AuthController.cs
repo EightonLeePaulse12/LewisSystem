@@ -21,18 +21,21 @@ namespace LewisAPI.Controllers
         private readonly ApplicationDbContext _dbContext; // Added for saving Customer
         private readonly IConfiguration _config;
         private readonly ILogger<AuthController> _logger;
+        private readonly ApplicationDbContext _context;
 
         public AuthController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext dbContext,
             IConfiguration config,
-            ILogger<AuthController> logger
+            ILogger<AuthController> logger,
+            ApplicationDbContext context
         )
         {
             _userManager = userManager;
             _dbContext = dbContext;
             _config = config;
             _logger = logger;
+            _context = context;
         }
 
         [HttpPost("register")]
@@ -104,7 +107,21 @@ namespace LewisAPI.Controllers
             await _userManager.UpdateAsync(user);
             _logger.LogInformation("User logged in: {UserId}", user.Id);
 
-            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
+            //var userRoles = await _userManager.GetRolesAsync(user);
+
+            //var userRole = await _context.UserRoles.FindAsync(user.Id);
+
+            var userDetails = new
+            {
+                user.Id,
+                user.Email,
+                user.Name,
+                user.PhoneNumber,
+                user.ProfilePicture,
+                roles,
+            };
+
+            return Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token), userDetails });
         }
 
         [HttpPost("password-reset")]

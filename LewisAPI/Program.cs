@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.PostgreSql;
+using LewisAPI.Filters;
 using LewisAPI.Infrastructure.Data;
 using LewisAPI.Interfaces;
 using LewisAPI.Models;
@@ -300,23 +301,26 @@ namespace LewisAPI
                 }
             );
 
-            //RecurringJob.AddOrUpdate<IPaymentService>(
-            //    "apply-late-fees",
-            //    service => service.ApplyLateFeesAsync(),
-            //    Cron.Daily
-            //); // At midnight
-            //RecurringJob.AddOrUpdate(
-            //    "overdue-reminders",
-            //    () => SendOverdueReminders(),
-            //    Cron.Daily(9)
-            //); // At 9 AM
+            app.UseHangfireDashboard(
+                "/hangfire",
+                new DashboardOptions
+                {
+                    Authorization = [new HangfireAuthorizationFilter()],
+                    DashboardTitle = "LewisAPI Hangfire Dashboard",
+                    IgnoreAntiforgeryToken = true,
+                }
+            );
 
-            //app.UseHangfireDashboard(
-            //    "/hangfire",
-            //    new DashboardOptions { Authorization = [new HangfireAuthorizationFilter()] }
-            //);
-
-            //RecurringJob.AddOrUpdate("overdue-reminders", () => SendOverdueReminders(), Cron.Daily);
+            RecurringJob.AddOrUpdate<IPaymentService>(
+                "apply-late-fees",
+                service => service.ApplyLateFeesAsync(),
+                Cron.Daily
+            ); // At midnight
+            RecurringJob.AddOrUpdate(
+                "overdue-reminders",
+                () => SendOverdueReminders(),
+                Cron.Daily(9)
+            ); // At 9 AM
 
             app.MapControllers();
 

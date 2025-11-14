@@ -16,9 +16,9 @@ namespace LewisAPI.DTOs
         public int StockQty { get; set; }
         public int ReorderThreshold { get; set; }
         public ProductStatus Status { get; set; } // Assume enum from your models
-        public byte[]? Image1 { get; set; }
-        public byte[]? Image2 { get; set; }
-        public byte[]? Image3 { get; set; }
+        public string? Image1 { get; set; }
+        public string? Image2 { get; set; }
+        public string? Image3 { get; set; }
         public bool IsDeleted { get; set; }
     }
 }
