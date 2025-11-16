@@ -11,13 +11,6 @@ import {
 } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useReducer } from "react";
@@ -27,13 +20,13 @@ import { checkout } from "@/api/checkout";
 import API_URL from "@/constants/ApiUrl";
 import axios, { AxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
+import { PaystackButton } from "react-paystack";
 
 export const Route = createFileRoute("/checkout")({
-  beforeLoad: ({ context }) => {
-    if (
-      !context.auth.isAuthenticated ||
-      !context.auth.roles.includes("Customer")
-    ) {
+  beforeLoad: () => {
+    if (typeof window === "undefined") return;
+    const hasToken = document.cookie && document.cookie.indexOf("token=") !== -1;
+    if (!hasToken) {
       throw redirect("/login");
     }
   },
@@ -47,6 +40,11 @@ function RouteComponent() {
     termMonths: 6,
     agreedToTerms: false,
     paystackConfig: null,
+    fullName: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    postalCode: "",
   };
 
   function reducer(state, action) {
@@ -61,6 +59,16 @@ function RouteComponent() {
         return { ...state, agreedToTerms: action.payload };
       case "SET_PAYSTACK_CONFIG":
         return { ...state, paystackConfig: action.payload };
+      case "SET_FULL_NAME":
+        return { ...state, fullName: action.payload };
+      case "SET_ADDRESS_LINE1":
+        return { ...state, addressLine1: action.payload };
+      case "SET_ADDRESS_LINE2":
+        return { ...state, addressLine2: action.payload };
+      case "SET_CITY":
+        return { ...state, city: action.payload };
+      case "SET_POSTAL_CODE":
+        return { ...state, postalCode: action.payload };
       default:
         return state;
     }
@@ -74,23 +82,23 @@ function RouteComponent() {
   const deliveryFees = { Standard: 10, Express: 20, Pickup: 0 };
   const taxRate = 0.15;
   const subtotal = cartTotal;
-  const deliveryFee = deliveryFees[state.deliveryOption];
+  const deliveryFee = deliveryFees[state.deliveryOption] || 0;
   const tax = subtotal * taxRate;
   const total = subtotal + deliveryFee + tax;
 
-  const monthlyInterestRate = 0.02; // 2% example
+  const monthlyInterestRate = 0.02; 
   const monthlyPayment =
     state.paymentType === "Credit"
       ? (
           (total *
             (monthlyInterestRate *
               Math.pow(1 + monthlyInterestRate, state.termMonths))) /
-          (Math.pow(1 + monthlyInterestRate, state.termMonths) - 1)
+          (Math.pow(1 + monthlyInterestRate, state.termMonths) - 1 || 1)
         ).toFixed(2)
       : null;
 
   const mutation = useMutation({
-    mutationFn: checkout(),
+    mutationFn: (data) => checkout(data),
     onSuccess: (order) => {
       if (state.paymentType === "Full") {
         dispatch({
@@ -98,37 +106,45 @@ function RouteComponent() {
           payload: {
             reference: order.orderId.toString(),
             email: user.email || "user@example.com",
-            amount: total * 100, // In kobo
-            publicKey:
-              import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ||
-              "YOUR_PAYSTACK_PUBLIC_KEY",
+            amount: Math.round(total * 100),
+            publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY,
             onSuccess: async (response) => {
-              await axios.post(
-                `${API_URL}payments/confirm/${order.orderId}`,
-                {
-                  transactionId: response.reference,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`,
+              try {
+                await axios.post(
+                  `${API_URL}payments/confirm/${order.orderId}`,
+                  {
+                    transactionId: response.reference,
                   },
-                }
-              );
-              clearCart();
-              navigate({ to: `/order-confirmation/${order.orderId}` });
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  }
+                );
+                clearCart();
+                navigate({ to: `/order-confirmation/${order.orderId}` });
+              } catch (err) {
+                console.error("Confirmation error:", err);
+                alert("Payment confirmation failed. Please contact support.");
+              }
             },
-            onclose: () => console.log("Payment closed"),
+            onClose: () => console.log("Payment closed"),
           },
         });
       } else {
-        // Credit: no immediate payment, proceed
         clearCart();
         navigate({ to: `/order-confirmation/${order.orderId}` });
       }
-      // Trigger email on backend via Hangfire or directly
     },
     onError: (error) => {
       console.error("Checkout error:", error);
+      let message = "An error occurred during checkout. Please try again.";
+      if (error.message?.includes("Invalid term")) {
+        message = "Invalid term months. Please select between 1 and 36.";
+      } else if (error.response?.data) {
+        message = error.response.data.message || message;
+      }
+      alert(message);
     },
   });
 
@@ -141,6 +157,14 @@ function RouteComponent() {
       alert("Your cart is empty");
       return;
     }
+    if (state.paymentType === "Credit" && (state.termMonths < 1 || state.termMonths > 36 || !Number.isInteger(state.termMonths))) {
+      alert("Term months must be an integer between 1 and 36.");
+      return;
+    }
+    if (!state.fullName || !state.addressLine1 || !state.city || !state.postalCode) {
+      alert("Please fill in all billing address fields.");
+      return;
+    }
 
     const checkoutData = {
       Items: items.map((item) => ({
@@ -149,12 +173,20 @@ function RouteComponent() {
         UnitPrice: item.unitPrice,
       })),
       DeliveryOption: state.deliveryOption,
-      PaymentType: state.PaymentType,
-      TermMonths: state.PaymentType === "Credit" ? state.termMonths : null,
+      PaymentType: state.paymentType === "Full" ? 0 : 1, // Use int for enum: 0 = Cash, 1 = Credit
+      TermMonths: state.paymentType === "Credit" ? state.termMonths : null,
+      BillingAddress: {
+        FullName: state.fullName,
+        AddressLine1: state.addressLine1,
+        AddressLine2: state.addressLine2,
+        City: state.city,
+        PostalCode: state.postalCode,
+      },
     };
 
     mutation.mutate(checkoutData);
   };
+
   return (
     <div className="container py-8 mx-auto">
       <h1 className="mb-6 text-2xl font-bold">Checkout</h1>
@@ -208,28 +240,21 @@ function RouteComponent() {
               </RadioGroup>
               {state.paymentType === "Credit" && (
                 <div className="mt-4">
-                  <Label htmlFor="terms">Select Terms</Label>
-                  <Select
-                    value={state.termMonths.toString()}
-                    onValueChange={(value) =>
+                  <Label htmlFor="terms">Term Months (1-36)</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="36"
+                    step="1"
+                    value={state.termMonths}
+                    onChange={(e) =>
                       dispatch({
                         type: "SET_TERM_MONTHS",
-                        payload: parseInt(value),
+                        payload: parseInt(e.target.value, 10) || 1,
                       })
                     }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="3">3 Months</SelectItem>
-                      <SelectItem value="6">6 Months</SelectItem>
-                      <SelectItem value="12">12 Months</SelectItem>
-                      <SelectItem value="24">24 Months</SelectItem>
-                      <SelectItem value="36">36 Months</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="mt-2">Monthly Payment: ${monthlyPayment}</p>
+                  />
+                  <p className="mt-2">Estimated Monthly Payment: ${monthlyPayment || '0.00'}</p>
                 </div>
               )}
             </CardContent>
@@ -239,11 +264,41 @@ function RouteComponent() {
               <CardTitle>Billing Address</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-4">
-              <Input placeholder="Full Name" />
-              <Input placeholder="Address Line 1" />
-              <Input placeholder="Address Line 2" />
-              <Input placeholder="City" />
-              <Input placeholder="Postal Code" />
+              <Input
+                placeholder="Full Name"
+                value={state.fullName}
+                onChange={(e) =>
+                  dispatch({ type: "SET_FULL_NAME", payload: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Address Line 1"
+                value={state.addressLine1}
+                onChange={(e) =>
+                  dispatch({ type: "SET_ADDRESS_LINE1", payload: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Address Line 2 (optional)"
+                value={state.addressLine2}
+                onChange={(e) =>
+                  dispatch({ type: "SET_ADDRESS_LINE2", payload: e.target.value })
+                }
+              />
+              <Input
+                placeholder="City"
+                value={state.city}
+                onChange={(e) =>
+                  dispatch({ type: "SET_CITY", payload: e.target.value })
+                }
+              />
+              <Input
+                placeholder="Postal Code"
+                value={state.postalCode}
+                onChange={(e) =>
+                  dispatch({ type: "SET_POSTAL_CODE", payload: e.target.value })
+                }
+              />
             </CardContent>
           </Card>
         </div>
