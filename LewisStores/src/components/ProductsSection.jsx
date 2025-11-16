@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,24 +8,33 @@ import { ProductsSidebar } from "@/components/ProductsSidebar"; // Your new comp
 
 export default function ProductsSection() {
   const [page, setPage] = useState(1);
-  const [limit] = useState(10);
+  const [limit] = useState(9);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const [priceRange, setPriceRange] = useState({ min: 0, max: Infinity });
 
-  const { data: products = [], isLoading } = useQuery({
-    queryKey: ["products", page, limit, search],
-    queryFn: () => FetchProducts(page, limit, search),
-    onSuccess: (data) => console.log("Fetched Products: ", data),
-    throwOnError: (data) => console.log("Error: ", data),
+  // Fetch a large page of products and perform client-side filtering/pagination
+  const { data: allProducts = [], isLoading } = useQuery({
+    queryKey: ["products-all", search],
+    queryFn: () => FetchProducts(1, 1000, search),
   });
 
-  const filteredProducts = products.filter((p) => {
+  const filteredProducts = allProducts.filter((p) => {
     const matchesCategory = !category || p.category?.name === category;
     const matchesPrice =
       p.unitPrice >= priceRange.min && p.unitPrice <= priceRange.max;
     return matchesCategory && matchesPrice;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / limit));
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
+  const start = (page - 1) * limit;
+  const end = start + limit;
+  const pageProducts = filteredProducts.slice(start, end);
 
   return (
     <div className="container p-4 mx-auto">
@@ -42,8 +51,8 @@ export default function ProductsSection() {
           ) : (
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProducts.length > 0 ? (
-                  filteredProducts.map((product) => (
+                {pageProducts.length > 0 ? (
+                  pageProducts.map((product) => (
                     <Card key={product.productId}>
                       <CardHeader>
                         <CardTitle>{product.name}</CardTitle>
@@ -78,8 +87,13 @@ export default function ProductsSection() {
                 >
                   Previous
                 </Button>
-                <span className="self-center">Page {page}</span>
-                <Button onClick={() => setPage((p) => p + 1)}>Next</Button>
+                <span className="self-center">Page {page} of {totalPages}</span>
+                <Button
+                  disabled={page === totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                >
+                  Next
+                </Button>
               </div>
             </>
           )}

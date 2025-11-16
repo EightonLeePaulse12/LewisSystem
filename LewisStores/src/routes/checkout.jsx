@@ -148,7 +148,7 @@ function RouteComponent() {
         Quantity: item.quantity,
         UnitPrice: item.unitPrice,
       })),
-      DeliveryOption: state.deliverOption,
+      DeliveryOption: state.deliveryOption,
       PaymentType: state.PaymentType,
       TermMonths: state.PaymentType === "Credit" ? state.termMonths : null,
     };

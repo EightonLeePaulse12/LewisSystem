@@ -1,5 +1,10 @@
 import React from "react";
 import { useCart } from "@/context/CartContext";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Link } from "@tanstack/react-router";
+import { Minus, Plus, Trash2 } from "lucide-react";
 
 const ShoppingCart = () => {
   const { items, removeItem, updateQuantity, total } = useCart();
@@ -74,9 +79,12 @@ const ShoppingCart = () => {
             </div>
             {/* Add tax/delivery later in checkout */}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex-col space-y-3">
             <Link to="/checkout" className="w-full">
               <Button className="w-full">Proceed to Checkout</Button>
+            </Link>
+            <Link to="/products" className="w-full">
+              <Button className="w-full">Continue Shopping</Button>
             </Link>
           </CardFooter>
         </Card>
