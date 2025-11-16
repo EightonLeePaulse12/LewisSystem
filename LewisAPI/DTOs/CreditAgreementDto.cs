@@ -12,6 +12,7 @@ namespace LewisAPI.DTOs
         public DateTime? NextDueDate { get; set; }
         public decimal OutstandingBalance { get; set; }
         public CreditAgreementStatus Status { get; set; }
-        public List<InstallmentDto> Installments { get; set; }
+        public CreditPlanType? PlanType { get; set; }
+        public List<InstallmentDto> Installments { get; set; } = new();
     }
 }

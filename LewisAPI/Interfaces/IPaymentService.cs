@@ -1,4 +1,5 @@
-﻿using LewisAPI.Models;
+﻿using LewisAPI.DTOs;
+using LewisAPI.Models;
 
 namespace LewisAPI.Interfaces
 {
@@ -12,7 +13,12 @@ namespace LewisAPI.Interfaces
             Guid userId = default
         );
 
-        Task ProcessPaymentAsync(Payment payment, string? stripeToken);
+        Task<string> InitiatePaymentAsync(decimal amount, string email, string reference, string callbackUrl = null, Dictionary<string, string> metadata = null);
+
+        Task ProcessPaymentAsync(Payment payment, string email, string reference);
+        Task<VerificationResult> VerifyPaymentAsync(string transactionId);
+
+        Task VerifyWebhookAsync(HttpRequest request);
 
         Task ApplyLateFeesAsync();
     }

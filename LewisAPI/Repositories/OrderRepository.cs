@@ -71,7 +71,25 @@ namespace LewisAPI.Repositories
 
                 var transaction = new InventoryTransaction
                 {
-                    // Implement
+                    // Generate a new ID for the transaction
+                    TransactionId = Guid.NewGuid(),
+
+                    // Link to the product being changed
+                    ProductId = item.ProductId,
+
+                    // The quantity change is negative because stock is decreasing
+                    ChangeQty = -item.Quantity,
+
+                    // Assuming an enum value for sales/order fulfillment
+                    Type = InventoryTransactionType.Sale,
+
+                    // Note linking this change to the specific order
+                    Note = $"Stock adjustment for Order ID: {order.OrderId}",
+
+                    // Assuming the Order object has the ID of the user who placed it
+                    PerformedBy = order.CustomerId,
+
+                    // PerformedAt is set by default in the class definition (DateTime.UtcNow)
                 };
                 await _inventoryTransactionRepo.AddAsync(transaction);
             }

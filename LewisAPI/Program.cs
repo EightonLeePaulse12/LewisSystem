@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using FluentValidation.AspNetCore;
 using Hangfire;
@@ -46,19 +47,6 @@ namespace LewisAPI
 
             StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
-            //builder.Services.AddCors(options =>
-            //{
-            //    options.AddPolicy(
-            //        "StrictPolicy",
-            //        builder =>
-            //            builder
-            //                .WithOrigins("*")
-            //                .AllowAnyMethod()
-            //                .AllowAnyHeader()
-            //                .AllowCredentials()
-            //    );
-            //});
-
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(
@@ -66,10 +54,10 @@ namespace LewisAPI
                     policy =>
                     {
                         policy
-                            .SetIsOriginAllowed(_ => true) // allow all origins dynamically
+                            .SetIsOriginAllowed(_ => true)
                             .AllowAnyHeader()
                             .AllowAnyMethod()
-                            .AllowCredentials(); // if you use cookies or Authorization headers
+                            .AllowCredentials();
                     }
                 );
             });
@@ -186,18 +174,28 @@ namespace LewisAPI
             );
             builder.Services.AddHangfireServer();
 
+            // Register repositories and services
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
-            builder.Services.AddScoped<
-                InventoryTransactionRepository,
-                InventoryTransactionRepository
-            >();
+            builder.Services.AddScoped<InventoryTransactionRepository>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IReportService, ReportService>();
             builder.Services.AddScoped<IStoreSettingsRepository, StoreSettingsRepository>();
+            builder.Services.AddScoped<InstallmentService>();
+            builder.Services.AddHttpClient<PaymentService>();
 
-            builder.Services.AddControllers();
+            // Configure JSON serialization to handle circular references
+            builder.Services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -211,7 +209,6 @@ namespace LewisAPI
                     }
                 );
 
-                // Add JWT Authentication Support
                 c.AddSecurityDefinition(
                     "Bearer",
                     new OpenApiSecurityScheme
@@ -229,17 +226,17 @@ namespace LewisAPI
                 c.AddSecurityRequirement(
                     new OpenApiSecurityRequirement
                     {
-                        {
-                            new OpenApiSecurityScheme
                             {
-                                Reference = new OpenApiReference
+                                new OpenApiSecurityScheme
                                 {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer",
+                                    Reference = new OpenApiReference
+                                    {
+                                        Type = ReferenceType.SecurityScheme,
+                                        Id = "Bearer",
+                                    },
                                 },
+                                Array.Empty<string>()
                             },
-                            Array.Empty<string>()
-                        },
                     }
                 );
             });
@@ -287,6 +284,7 @@ namespace LewisAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Security headers middleware
             app.Use(
                 async (context, next) =>
                 {
@@ -315,12 +313,12 @@ namespace LewisAPI
                 "apply-late-fees",
                 service => service.ApplyLateFeesAsync(),
                 Cron.Daily
-            ); // At midnight
+            );
             RecurringJob.AddOrUpdate(
                 "overdue-reminders",
                 () => SendOverdueReminders(),
                 Cron.Daily(9)
-            ); // At 9 AM
+            );
 
             app.MapControllers();
 

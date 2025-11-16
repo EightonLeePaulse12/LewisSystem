@@ -2,10 +2,14 @@
 {
     public class PaymentDto
     {
-        public decimal Amount { get; set; }
+        public Guid PaymentId { get; set; }
         public Guid? OrderId { get; set; }
         public Guid? AgreementId { get; set; }
-        public string? StripeToken { get; set; }
-        public string? Method { get; set; } // Optional for manual
+        public decimal Amount { get; set; }
+        public DateTime PaymentDate { get; set; }
+        public string Method { get; set; }
+        public string Reference { get; set; }
+        public Guid? ReceivedBy { get; set; }
+        public string? Email { get; internal set; }
     }
 }

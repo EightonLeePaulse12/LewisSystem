@@ -51,7 +51,7 @@ namespace LewisAPI.Models
         public byte[]? Image1 { get; set; }
         public byte[]? Image2 { get; set; }
         public byte[]? Image3 { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } 
 
         [Timestamp] // Or [ConcurrencyCheck] if using a non-byte[] type
         public byte[] RowVersion { get; set; }
