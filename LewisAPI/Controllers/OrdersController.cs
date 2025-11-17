@@ -29,6 +29,7 @@ namespace LewisAPI.Controllers
         private readonly ILogger<OrdersController> _logger;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _cache;
+        private readonly IOrderRepository _orderRepo;
         private readonly ApplicationDbContext _context;
 
         public OrdersController(
@@ -41,7 +42,9 @@ namespace LewisAPI.Controllers
             IMapper mapper,
             IMemoryCache cache,
             IAuditLogRepository auditRepo,
-            ApplicationDbContext context
+            ApplicationDbContext context,
+            IOrderRepository orderRepo
+
         )
         {
             _orderService = orderService;
@@ -54,36 +57,31 @@ namespace LewisAPI.Controllers
             _cache = cache;
             _auditRepo = auditRepo;
             _context = context;
+            _orderRepo = orderRepo;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetOrders(
             [FromQuery] int page = 1,
-            [FromQuery] int limit = 10
+            [FromQuery] int limit = 10,
+            [FromQuery] Guid? userId = null
         )
         {
-            try
+            string cacheKey = $"orders_{page}_{limit}_{userId?.ToString() ?? "all"}";
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<Order>? orders))
             {
-                if (page < 1) page = 1;
-                if (limit < 1 || limit > 100) limit = 10;
-
-                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                string cacheKey = $"user_orders_{userId}_{page}_{limit}";
-
-                if (!_cache.TryGetValue(cacheKey, out IEnumerable<OrderDto>? orders))
+                try
                 {
-                    var orderEntities = await _orderService.GetAllAsync(page, limit, userId);
-                    orders = _mapper.Map<IEnumerable<OrderDto>>(orderEntities);
+                    orders = await _orderRepo.GetAllAsync(page, limit, userId);
                     _cache.Set(cacheKey, orders, TimeSpan.FromMinutes(5));
                 }
-
-                return Ok(new { success = true, data = orders });
+                catch (Exception ex)
+                {
+                    _logger.LogError("An error occurred: {ErrorMessage}", ex.Message);
+                    return StatusCode(500, "An error occurred while fetching orders.");
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error fetching orders: {ErrorMessage}", ex.Message);
-                return StatusCode(500, new { success = false, message = "An error occurred while fetching orders.", error = ex.Message });
-            }
+            return Ok(orders);
         }
 
         [HttpPost("checkout")]
@@ -336,6 +334,7 @@ namespace LewisAPI.Controllers
         }
 
         [HttpPatch("{id}")]
+        [Authorize(Roles = "Admin, Manager")]
         public async Task<IActionResult> UpdateOrder(Guid id, [FromBody] UpdateOrderRequestDto request)
         {
             try
@@ -346,18 +345,15 @@ namespace LewisAPI.Controllers
                 if (request == null)
                     return BadRequest(new { success = false, message = "Update request is required." });
 
-                var order = await _context.Orders
-                    .Include(o => o.Delivery)
-                    .AsNoTracking()
-                    .FirstOrDefaultAsync(o => o.OrderId == id);
-
-                if (order == null)
-                    return NotFound(new { success = false, message = "Order not found." });
-
-                // Create a new order object for updates to avoid tracking issues
                 var orderToUpdate = await _context.Orders
                     .Include(o => o.Delivery)
                     .FirstOrDefaultAsync(o => o.OrderId == id);
+
+                if (orderToUpdate == null)
+                    return NotFound(new { success = false, message = "Order not found." });
+
+                // Create a new order object for updates to avoid tracking issues
+
 
                 if (orderToUpdate == null)
                     return NotFound(new { success = false, message = "Order not found." });
@@ -387,8 +383,12 @@ namespace LewisAPI.Controllers
                     }
                 }
 
+                var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userIdString))
+                    return Unauthorized();
+
                 // Create audit log
-                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var userId = Guid.Parse(userIdString);
                 _context.AuditLogs.Add(new AuditLog
                 {
                     LogId = Guid.NewGuid(),

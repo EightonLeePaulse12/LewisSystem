@@ -17,7 +17,7 @@ namespace LewisAPI.Controllers
 {
     [Route("api/manage")]
     [ApiController]
-    [Authorize(Policy = "ManagerOrAdmin")]
+    [Authorize]
     public class ManageController : ControllerBase
     {
         private readonly IProductRepository _productRepo;
@@ -458,7 +458,7 @@ namespace LewisAPI.Controllers
         public async Task<IActionResult> GetOrders(
             [FromQuery] int page = 1,
             [FromQuery] int limit = 10,
-            [FromBody] Guid userId = default
+            [FromQuery] Guid? userId = default
         )
         {
             string cacheKey = $"orders_{page}_{limit}";

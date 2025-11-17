@@ -117,7 +117,7 @@ namespace LewisAPI.Controllers
                 user.Email,
                 user.Name,
                 user.PhoneNumber,
-                user.ProfilePicture,
+                ProfilePicture = Convert.ToBase64String(user.ProfilePicture ?? new byte[0]),
                 roles,
             };
 

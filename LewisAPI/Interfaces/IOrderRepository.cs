@@ -4,7 +4,7 @@ namespace LewisAPI.Interfaces
 {
     public interface IOrderRepository
     {
-        Task<IEnumerable<Order>> GetAllAsync(int page, int limit, Guid userId);
+        Task<IEnumerable<Order>> GetAllAsync(int page, int limit, Guid? userId = null);
 
         Task<Order?> GetByIdAsync(Guid id);
 

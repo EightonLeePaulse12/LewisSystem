@@ -31,6 +31,8 @@ namespace LewisAPI
 
             var builder = WebApplication.CreateBuilder(args);
 
+            System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
                 .Enrich.FromLogContext()
@@ -93,6 +95,7 @@ namespace LewisAPI
                             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
                         ),
                         ClockSkew = TimeSpan.Zero,
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                     };
 
                     options.Events = new JwtBearerEvents

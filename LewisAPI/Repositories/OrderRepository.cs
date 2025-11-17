@@ -10,26 +10,36 @@ namespace LewisAPI.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly InventoryTransactionRepository _inventoryTransactionRepo;
+        private readonly ILogger<OrderRepository> _logger;
 
         public OrderRepository(
             ApplicationDbContext context,
-            InventoryTransactionRepository inventoryTransactionRepo
+            InventoryTransactionRepository inventoryTransactionRepo,
+            ILogger<OrderRepository> logger
         )
         {
+            _logger = logger;
             _context = context;
             _inventoryTransactionRepo = inventoryTransactionRepo;
         }
 
-        public async Task<IEnumerable<Order>> GetAllAsync(int page, int limit, Guid userId)
+        public async Task<IEnumerable<Order>> GetAllAsync(int page, int limit, Guid? userId = null)
         {
+
             var query = _context
                 .Orders.Include(o => o.OrderItems)
-                .Where(o => o.CustomerId == userId)
                 .Include(o => o.CreditAgreement)
                 .Include(o => o.Delivery)
                 .Include(o => o.Payments)
                 .AsQueryable();
 
+            _logger.LogInformation("This is the data first: {OrderData}", query);
+            if (userId.HasValue)
+            {
+                query = query.Where(o => o.CustomerId == userId.Value);
+            }
+
+            _logger.LogInformation("This is the data second: {OrderData}", query);
             return await query
                 .OrderByDescending(o => o.OrderDate)
                 .Skip((page - 1) * limit)
@@ -98,6 +108,8 @@ namespace LewisAPI.Repositories
 
             await _context.SaveChangesAsync();
         }
+
+
 
         public async Task UpdateAsync(Order order)
         {
