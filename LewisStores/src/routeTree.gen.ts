@@ -16,7 +16,13 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products/index'
 import { Route as ProductsProductIdRouteImport } from './routes/products/$productId'
+import { Route as OrdersManageRouteImport } from './routes/orders/manage'
+import { Route as OrdersOrderIdRouteImport } from './routes/orders/$orderId'
+import { Route as ManageOrdersRouteImport } from './routes/manage/orders'
+import { Route as ManageInventoryRouteImport } from './routes/manage/inventory'
+import { Route as ManageDashboardRouteImport } from './routes/manage/dashboard'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
+import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 
 const ProductDetailRoute = ProductDetailRouteImport.update({
@@ -54,9 +60,39 @@ const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
   path: '/products/$productId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrdersManageRoute = OrdersManageRouteImport.update({
+  id: '/orders/manage',
+  path: '/orders/manage',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
+  id: '/orders/$orderId',
+  path: '/orders/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageOrdersRoute = ManageOrdersRouteImport.update({
+  id: '/manage/orders',
+  path: '/manage/orders',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageInventoryRoute = ManageInventoryRouteImport.update({
+  id: '/manage/inventory',
+  path: '/manage/inventory',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManageDashboardRoute = ManageDashboardRouteImport.update({
+  id: '/manage/dashboard',
+  path: '/manage/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/_auth/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthProfileRoute = AuthProfileRouteImport.update({
+  id: '/_auth/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -72,7 +108,13 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/productDetail': typeof ProductDetailRoute
   '/login': typeof AuthLoginRoute
+  '/profile': typeof AuthProfileRoute
   '/register': typeof AuthRegisterRoute
+  '/manage/dashboard': typeof ManageDashboardRoute
+  '/manage/inventory': typeof ManageInventoryRoute
+  '/manage/orders': typeof ManageOrdersRoute
+  '/orders/$orderId': typeof OrdersOrderIdRoute
+  '/orders/manage': typeof OrdersManageRoute
   '/products/$productId': typeof ProductsProductIdRoute
   '/products': typeof ProductsIndexRoute
 }
@@ -83,7 +125,13 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/productDetail': typeof ProductDetailRoute
   '/login': typeof AuthLoginRoute
+  '/profile': typeof AuthProfileRoute
   '/register': typeof AuthRegisterRoute
+  '/manage/dashboard': typeof ManageDashboardRoute
+  '/manage/inventory': typeof ManageInventoryRoute
+  '/manage/orders': typeof ManageOrdersRoute
+  '/orders/$orderId': typeof OrdersOrderIdRoute
+  '/orders/manage': typeof OrdersManageRoute
   '/products/$productId': typeof ProductsProductIdRoute
   '/products': typeof ProductsIndexRoute
 }
@@ -95,7 +143,13 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/productDetail': typeof ProductDetailRoute
   '/_auth/login': typeof AuthLoginRoute
+  '/_auth/profile': typeof AuthProfileRoute
   '/_auth/register': typeof AuthRegisterRoute
+  '/manage/dashboard': typeof ManageDashboardRoute
+  '/manage/inventory': typeof ManageInventoryRoute
+  '/manage/orders': typeof ManageOrdersRoute
+  '/orders/$orderId': typeof OrdersOrderIdRoute
+  '/orders/manage': typeof OrdersManageRoute
   '/products/$productId': typeof ProductsProductIdRoute
   '/products/': typeof ProductsIndexRoute
 }
@@ -108,7 +162,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/productDetail'
     | '/login'
+    | '/profile'
     | '/register'
+    | '/manage/dashboard'
+    | '/manage/inventory'
+    | '/manage/orders'
+    | '/orders/$orderId'
+    | '/orders/manage'
     | '/products/$productId'
     | '/products'
   fileRoutesByTo: FileRoutesByTo
@@ -119,7 +179,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/productDetail'
     | '/login'
+    | '/profile'
     | '/register'
+    | '/manage/dashboard'
+    | '/manage/inventory'
+    | '/manage/orders'
+    | '/orders/$orderId'
+    | '/orders/manage'
     | '/products/$productId'
     | '/products'
   id:
@@ -130,7 +196,13 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/productDetail'
     | '/_auth/login'
+    | '/_auth/profile'
     | '/_auth/register'
+    | '/manage/dashboard'
+    | '/manage/inventory'
+    | '/manage/orders'
+    | '/orders/$orderId'
+    | '/orders/manage'
     | '/products/$productId'
     | '/products/'
   fileRoutesById: FileRoutesById
@@ -142,7 +214,13 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ProductDetailRoute: typeof ProductDetailRoute
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthProfileRoute: typeof AuthProfileRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  ManageDashboardRoute: typeof ManageDashboardRoute
+  ManageInventoryRoute: typeof ManageInventoryRoute
+  ManageOrdersRoute: typeof ManageOrdersRoute
+  OrdersOrderIdRoute: typeof OrdersOrderIdRoute
+  OrdersManageRoute: typeof OrdersManageRoute
   ProductsProductIdRoute: typeof ProductsProductIdRoute
   ProductsIndexRoute: typeof ProductsIndexRoute
 }
@@ -198,11 +276,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/orders/manage': {
+      id: '/orders/manage'
+      path: '/orders/manage'
+      fullPath: '/orders/manage'
+      preLoaderRoute: typeof OrdersManageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/orders/$orderId': {
+      id: '/orders/$orderId'
+      path: '/orders/$orderId'
+      fullPath: '/orders/$orderId'
+      preLoaderRoute: typeof OrdersOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage/orders': {
+      id: '/manage/orders'
+      path: '/manage/orders'
+      fullPath: '/manage/orders'
+      preLoaderRoute: typeof ManageOrdersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage/inventory': {
+      id: '/manage/inventory'
+      path: '/manage/inventory'
+      fullPath: '/manage/inventory'
+      preLoaderRoute: typeof ManageInventoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage/dashboard': {
+      id: '/manage/dashboard'
+      path: '/manage/dashboard'
+      fullPath: '/manage/dashboard'
+      preLoaderRoute: typeof ManageDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth/register': {
       id: '/_auth/register'
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_auth/profile': {
+      id: '/_auth/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
@@ -222,7 +342,13 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ProductDetailRoute: ProductDetailRoute,
   AuthLoginRoute: AuthLoginRoute,
+  AuthProfileRoute: AuthProfileRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  ManageDashboardRoute: ManageDashboardRoute,
+  ManageInventoryRoute: ManageInventoryRoute,
+  ManageOrdersRoute: ManageOrdersRoute,
+  OrdersOrderIdRoute: OrdersOrderIdRoute,
+  OrdersManageRoute: OrdersManageRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
   ProductsIndexRoute: ProductsIndexRoute,
 }
