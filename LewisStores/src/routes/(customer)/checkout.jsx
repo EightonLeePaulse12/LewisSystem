@@ -22,7 +22,7 @@ import axios, { AxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import { PaystackButton } from "react-paystack";
 
-export const Route = createFileRoute("/checkout")({
+export const Route = createFileRoute("/(customer)/checkout")({
   beforeLoad: () => {
     if (typeof window === "undefined") return;
     const hasToken = document.cookie && document.cookie.indexOf("token=") !== -1;

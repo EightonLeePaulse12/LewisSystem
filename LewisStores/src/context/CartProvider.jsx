@@ -1,4 +1,10 @@
-import { createContext, useState, useEffect, useCallback, useMemo } from "react";
+import {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 
 export const CartContext = createContext(undefined);
 
@@ -43,15 +49,18 @@ export function CartProvider({ children }) {
     setItems((prev) => prev.filter((i) => i.productId !== productId));
   }, []);
 
-  const updateQuantity = useCallback((productId, quantity) => {
-    if (quantity <= 0) {
-      removeItem(productId);
-      return;
-    }
-    setItems((prev) =>
-      prev.map((i) => (i.productId === productId ? { ...i, quantity } : i))
-    );
-  }, [removeItem]);
+  const updateQuantity = useCallback(
+    (productId, quantity) => {
+      if (quantity <= 0) {
+        removeItem(productId);
+        return;
+      }
+      setItems((prev) =>
+        prev.map((i) => (i.productId === productId ? { ...i, quantity } : i))
+      );
+    },
+    [removeItem]
+  );
 
   const clearCart = useCallback(() => setItems([]), []);
 

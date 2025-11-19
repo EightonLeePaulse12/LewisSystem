@@ -48,16 +48,20 @@ export function LoginForm({ className, ...props }) {
       const token = data.token;
       const id = data.userDetails.id;
       const userData = data.userDetails;
-      const userRole = data.userDetails.roles[0]
-      
+      const userRole = data.userDetails.roles[0];
+
       console.log("Saved cookies:", document.cookie);
       console.log(data);
 
       AuthLogin(token, id, userData, userRole);
       // Handle success - redirect to login page
       toast.success("Successfully logged in!");
+      // Update LoginForm onSuccess for role-based redirect
+      // In your LoginForm.jsx's mutation onSuccess:
       setTimeout(() => {
-        router.navigate({ to: "/" });
+        router.navigate({
+          to: userRole === "Customer" ? "/" : "/manage/dashboard",
+        });
       }, 2000);
     },
     onError: (error) => {

@@ -1,7 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LoginForm } from "@/components/LoginForm";
+import { redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/_auth/login")({
+export const Route = createFileRoute("/(public)/_auth/login")({
+  beforeLoad: ({ context }) => {
+    if (context.auth.isAuthenticated) {
+      const dashboard =
+        context.auth.userRole === "Customer" ? "/" : "/manage/dashboard";
+      throw redirect({ to: dashboard });
+    }
+  },
   component: RouteComponent,
 });
 

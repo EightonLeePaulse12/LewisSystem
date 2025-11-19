@@ -8,335 +8,492 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProductDetailRouteImport } from './routes/productDetail'
-import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as CartRouteImport } from './routes/cart'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProductsIndexRouteImport } from './routes/products/index'
-import { Route as ProductsProductIdRouteImport } from './routes/products/$productId'
-import { Route as OrdersManageRouteImport } from './routes/orders/manage'
-import { Route as OrdersOrderIdRouteImport } from './routes/orders/$orderId'
-import { Route as ManageOrdersRouteImport } from './routes/manage/orders'
-import { Route as ManageInventoryRouteImport } from './routes/manage/inventory'
-import { Route as ManageDashboardRouteImport } from './routes/manage/dashboard'
-import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
-import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
-import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as ProductDetailRouteImport } from "@/routes/(public)/products/$productId";
+import { Route as CheckoutRouteImport } from "./routes/(customer)/checkout";
+import { Route as CartRouteImport } from "./routes/(customer)/cart";
+import { Route as AboutRouteImport } from "./routes/(public)/about";
+import { Route as PublicRouteImport } from "./routes/(public)";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as ProductsIndexRouteImport } from "./routes/(public)/products/index";
+import { Route as ProductsProductIdRouteImport } from "./routes/(public)/products/$productId";
+import { Route as OrdersManageRouteImport } from "./routes/(admin)/orders/manage";
+import { Route as OrdersOrderIdRouteImport } from "./routes/(admin)/orders/$orderId";
+import { Route as ManageStoreSettingsRouteImport } from "./routes/(admin)/manage/storeSettings";
+import { Route as ManageReportsRouteImport } from "./routes/(admin)/manage/reports";
+import { Route as ManageDashboardRouteImport } from "./routes/(admin)/manage/dashboard";
+import { Route as ManageAuditLogsRouteImport } from "./routes/(admin)/manage/auditLogs";
+import { Route as AuthRegisterRouteImport } from "./routes/(public)/_auth/register";
+import { Route as AuthProfileRouteImport } from "./routes/(public)/_auth/profile";
+import { Route as AuthLoginRouteImport } from "./routes/(public)/_auth/login";
+import { Route as ManageOrdersIndexRouteImport } from "./routes/(admin)/manage/orders/index";
+import { Route as ManageInventoryIndexRouteImport } from "./routes/(admin)/manage/inventory/index";
+import { Route as ManageOrdersOrderIdRouteImport } from "./routes/(admin)/manage/orders/$orderId";
+import { Route as ManageInventoryImportRouteImport } from "./routes/(admin)/manage/inventory/import";
+import { Route as ManageInventoryAddRouteImport } from "./routes/(admin)/manage/inventory/add";
+import { Route as ManageInventoryEditProductIdRouteImport } from "./routes/(admin)/manage/inventory/edit/$productId";
 
 const ProductDetailRoute = ProductDetailRouteImport.update({
-  id: '/productDetail',
-  path: '/productDetail',
+  id: "/productDetail",
+  path: "/productDetail",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
+  id: "/checkout",
+  path: "/checkout",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const CartRoute = CartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
+  id: "/cart",
+  path: "/cart",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+  id: "/about",
+  path: "/about",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
+const PublicRoute = PublicRouteImport.update({
+  id: "/_public",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProductsIndexRoute = ProductsIndexRouteImport.update({
-  id: '/products/',
-  path: '/products/',
+  id: "/products/",
+  path: "/products/",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ProductsProductIdRoute = ProductsProductIdRouteImport.update({
-  id: '/products/$productId',
-  path: '/products/$productId',
+  id: "/products/$productId",
+  path: "/products/$productId",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const OrdersManageRoute = OrdersManageRouteImport.update({
-  id: '/orders/manage',
-  path: '/orders/manage',
+  id: "/orders/manage",
+  path: "/orders/manage",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const OrdersOrderIdRoute = OrdersOrderIdRouteImport.update({
-  id: '/orders/$orderId',
-  path: '/orders/$orderId',
+  id: "/orders/$orderId",
+  path: "/orders/$orderId",
   getParentRoute: () => rootRouteImport,
-} as any)
-const ManageOrdersRoute = ManageOrdersRouteImport.update({
-  id: '/manage/orders',
-  path: '/manage/orders',
+} as any);
+const ManageStoreSettingsRoute = ManageStoreSettingsRouteImport.update({
+  id: "/manage/storeSettings",
+  path: "/manage/storeSettings",
   getParentRoute: () => rootRouteImport,
-} as any)
-const ManageInventoryRoute = ManageInventoryRouteImport.update({
-  id: '/manage/inventory',
-  path: '/manage/inventory',
+} as any);
+const ManageReportsRoute = ManageReportsRouteImport.update({
+  id: "/manage/reports",
+  path: "/manage/reports",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const ManageDashboardRoute = ManageDashboardRouteImport.update({
-  id: '/manage/dashboard',
-  path: '/manage/dashboard',
+  id: "/manage/dashboard",
+  path: "/manage/dashboard",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
+const ManageAuditLogsRoute = ManageAuditLogsRouteImport.update({
+  id: "/manage/auditLogs",
+  path: "/manage/auditLogs",
+  getParentRoute: () => rootRouteImport,
+} as any);
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
-  id: '/_auth/register',
-  path: '/register',
+  id: "/_auth/register",
+  path: "/register",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthProfileRoute = AuthProfileRouteImport.update({
-  id: '/_auth/profile',
-  path: '/profile',
+  id: "/_auth/profile",
+  path: "/profile",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
 const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/_auth/login',
-  path: '/login',
+  id: "/_auth/login",
+  path: "/login",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
+const ManageOrdersIndexRoute = ManageOrdersIndexRouteImport.update({
+  id: "/manage/orders/",
+  path: "/manage/orders/",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ManageInventoryIndexRoute = ManageInventoryIndexRouteImport.update({
+  id: "/manage/inventory/",
+  path: "/manage/inventory/",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ManageOrdersOrderIdRoute = ManageOrdersOrderIdRouteImport.update({
+  id: "/manage/orders/$orderId",
+  path: "/manage/orders/$orderId",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ManageInventoryImportRoute = ManageInventoryImportRouteImport.update({
+  id: "/manage/inventory/import",
+  path: "/manage/inventory/import",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ManageInventoryAddRoute = ManageInventoryAddRouteImport.update({
+  id: "/manage/inventory/add",
+  path: "/manage/inventory/add",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ManageInventoryEditProductIdRoute =
+  ManageInventoryEditProductIdRouteImport.update({
+    id: "/manage/inventory/edit/$productId",
+    path: "/manage/inventory/edit/$productId",
+    getParentRoute: () => rootRouteImport,
+  } as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/cart': typeof CartRoute
-  '/checkout': typeof CheckoutRoute
-  '/productDetail': typeof ProductDetailRoute
-  '/login': typeof AuthLoginRoute
-  '/profile': typeof AuthProfileRoute
-  '/register': typeof AuthRegisterRoute
-  '/manage/dashboard': typeof ManageDashboardRoute
-  '/manage/inventory': typeof ManageInventoryRoute
-  '/manage/orders': typeof ManageOrdersRoute
-  '/orders/$orderId': typeof OrdersOrderIdRoute
-  '/orders/manage': typeof OrdersManageRoute
-  '/products/$productId': typeof ProductsProductIdRoute
-  '/products': typeof ProductsIndexRoute
+  "/": typeof IndexRoute;
+  "/about": typeof AboutRoute;
+  "/cart": typeof CartRoute;
+  "/checkout": typeof CheckoutRoute;
+  "/productDetail": typeof ProductDetailRoute;
+  "/login": typeof AuthLoginRoute;
+  "/profile": typeof AuthProfileRoute;
+  "/register": typeof AuthRegisterRoute;
+  "/manage/auditLogs": typeof ManageAuditLogsRoute;
+  "/manage/dashboard": typeof ManageDashboardRoute;
+  "/manage/reports": typeof ManageReportsRoute;
+  "/manage/storeSettings": typeof ManageStoreSettingsRoute;
+  "/orders/$orderId": typeof OrdersOrderIdRoute;
+  "/orders/manage": typeof OrdersManageRoute;
+  "/products/$productId": typeof ProductsProductIdRoute;
+  "/products": typeof ProductsIndexRoute;
+  "/manage/inventory/add": typeof ManageInventoryAddRoute;
+  "/manage/inventory/import": typeof ManageInventoryImportRoute;
+  "/manage/orders/$orderId": typeof ManageOrdersOrderIdRoute;
+  "/manage/inventory": typeof ManageInventoryIndexRoute;
+  "/manage/orders": typeof ManageOrdersIndexRoute;
+  "/manage/inventory/edit/$productId": typeof ManageInventoryEditProductIdRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/cart': typeof CartRoute
-  '/checkout': typeof CheckoutRoute
-  '/productDetail': typeof ProductDetailRoute
-  '/login': typeof AuthLoginRoute
-  '/profile': typeof AuthProfileRoute
-  '/register': typeof AuthRegisterRoute
-  '/manage/dashboard': typeof ManageDashboardRoute
-  '/manage/inventory': typeof ManageInventoryRoute
-  '/manage/orders': typeof ManageOrdersRoute
-  '/orders/$orderId': typeof OrdersOrderIdRoute
-  '/orders/manage': typeof OrdersManageRoute
-  '/products/$productId': typeof ProductsProductIdRoute
-  '/products': typeof ProductsIndexRoute
+  "/": typeof IndexRoute;
+  "/about": typeof AboutRoute;
+  "/cart": typeof CartRoute;
+  "/checkout": typeof CheckoutRoute;
+  "/productDetail": typeof ProductDetailRoute;
+  "/login": typeof AuthLoginRoute;
+  "/profile": typeof AuthProfileRoute;
+  "/register": typeof AuthRegisterRoute;
+  "/manage/auditLogs": typeof ManageAuditLogsRoute;
+  "/manage/dashboard": typeof ManageDashboardRoute;
+  "/manage/reports": typeof ManageReportsRoute;
+  "/manage/storeSettings": typeof ManageStoreSettingsRoute;
+  "/orders/$orderId": typeof OrdersOrderIdRoute;
+  "/orders/manage": typeof OrdersManageRoute;
+  "/products/$productId": typeof ProductsProductIdRoute;
+  "/products": typeof ProductsIndexRoute;
+  "/manage/inventory/add": typeof ManageInventoryAddRoute;
+  "/manage/inventory/import": typeof ManageInventoryImportRoute;
+  "/manage/orders/$orderId": typeof ManageOrdersOrderIdRoute;
+  "/manage/inventory": typeof ManageInventoryIndexRoute;
+  "/manage/orders": typeof ManageOrdersIndexRoute;
+  "/manage/inventory/edit/$productId": typeof ManageInventoryEditProductIdRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/about': typeof AboutRoute
-  '/cart': typeof CartRoute
-  '/checkout': typeof CheckoutRoute
-  '/productDetail': typeof ProductDetailRoute
-  '/_auth/login': typeof AuthLoginRoute
-  '/_auth/profile': typeof AuthProfileRoute
-  '/_auth/register': typeof AuthRegisterRoute
-  '/manage/dashboard': typeof ManageDashboardRoute
-  '/manage/inventory': typeof ManageInventoryRoute
-  '/manage/orders': typeof ManageOrdersRoute
-  '/orders/$orderId': typeof OrdersOrderIdRoute
-  '/orders/manage': typeof OrdersManageRoute
-  '/products/$productId': typeof ProductsProductIdRoute
-  '/products/': typeof ProductsIndexRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/_public": typeof PublicRoute;
+  "/about": typeof AboutRoute;
+  "/cart": typeof CartRoute;
+  "/checkout": typeof CheckoutRoute;
+  "/productDetail": typeof ProductDetailRoute;
+  "/_auth/login": typeof AuthLoginRoute;
+  "/_auth/profile": typeof AuthProfileRoute;
+  "/_auth/register": typeof AuthRegisterRoute;
+  "/manage/auditLogs": typeof ManageAuditLogsRoute;
+  "/manage/dashboard": typeof ManageDashboardRoute;
+  "/manage/reports": typeof ManageReportsRoute;
+  "/manage/storeSettings": typeof ManageStoreSettingsRoute;
+  "/orders/$orderId": typeof OrdersOrderIdRoute;
+  "/orders/manage": typeof OrdersManageRoute;
+  "/products/$productId": typeof ProductsProductIdRoute;
+  "/products/": typeof ProductsIndexRoute;
+  "/manage/inventory/add": typeof ManageInventoryAddRoute;
+  "/manage/inventory/import": typeof ManageInventoryImportRoute;
+  "/manage/orders/$orderId": typeof ManageOrdersOrderIdRoute;
+  "/manage/inventory/": typeof ManageInventoryIndexRoute;
+  "/manage/orders/": typeof ManageOrdersIndexRoute;
+  "/manage/inventory/edit/$productId": typeof ManageInventoryEditProductIdRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | '/about'
-    | '/cart'
-    | '/checkout'
-    | '/productDetail'
-    | '/login'
-    | '/profile'
-    | '/register'
-    | '/manage/dashboard'
-    | '/manage/inventory'
-    | '/manage/orders'
-    | '/orders/$orderId'
-    | '/orders/manage'
-    | '/products/$productId'
-    | '/products'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | "/about"
+    | "/cart"
+    | "/checkout"
+    | "/productDetail"
+    | "/login"
+    | "/profile"
+    | "/register"
+    | "/manage/auditLogs"
+    | "/manage/dashboard"
+    | "/manage/reports"
+    | "/manage/storeSettings"
+    | "/orders/$orderId"
+    | "/orders/manage"
+    | "/products/$productId"
+    | "/products"
+    | "/manage/inventory/add"
+    | "/manage/inventory/import"
+    | "/manage/orders/$orderId"
+    | "/manage/inventory"
+    | "/manage/orders"
+    | "/manage/inventory/edit/$productId";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | '/about'
-    | '/cart'
-    | '/checkout'
-    | '/productDetail'
-    | '/login'
-    | '/profile'
-    | '/register'
-    | '/manage/dashboard'
-    | '/manage/inventory'
-    | '/manage/orders'
-    | '/orders/$orderId'
-    | '/orders/manage'
-    | '/products/$productId'
-    | '/products'
+    | "/"
+    | "/about"
+    | "/cart"
+    | "/checkout"
+    | "/productDetail"
+    | "/login"
+    | "/profile"
+    | "/register"
+    | "/manage/auditLogs"
+    | "/manage/dashboard"
+    | "/manage/reports"
+    | "/manage/storeSettings"
+    | "/orders/$orderId"
+    | "/orders/manage"
+    | "/products/$productId"
+    | "/products"
+    | "/manage/inventory/add"
+    | "/manage/inventory/import"
+    | "/manage/orders/$orderId"
+    | "/manage/inventory"
+    | "/manage/orders"
+    | "/manage/inventory/edit/$productId";
   id:
-    | '__root__'
-    | '/'
-    | '/about'
-    | '/cart'
-    | '/checkout'
-    | '/productDetail'
-    | '/_auth/login'
-    | '/_auth/profile'
-    | '/_auth/register'
-    | '/manage/dashboard'
-    | '/manage/inventory'
-    | '/manage/orders'
-    | '/orders/$orderId'
-    | '/orders/manage'
-    | '/products/$productId'
-    | '/products/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/_public"
+    | "/about"
+    | "/cart"
+    | "/checkout"
+    | "/productDetail"
+    | "/_auth/login"
+    | "/_auth/profile"
+    | "/_auth/register"
+    | "/manage/auditLogs"
+    | "/manage/dashboard"
+    | "/manage/reports"
+    | "/manage/storeSettings"
+    | "/orders/$orderId"
+    | "/orders/manage"
+    | "/products/$productId"
+    | "/products/"
+    | "/manage/inventory/add"
+    | "/manage/inventory/import"
+    | "/manage/orders/$orderId"
+    | "/manage/inventory/"
+    | "/manage/orders/"
+    | "/manage/inventory/edit/$productId";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
-  CartRoute: typeof CartRoute
-  CheckoutRoute: typeof CheckoutRoute
-  ProductDetailRoute: typeof ProductDetailRoute
-  AuthLoginRoute: typeof AuthLoginRoute
-  AuthProfileRoute: typeof AuthProfileRoute
-  AuthRegisterRoute: typeof AuthRegisterRoute
-  ManageDashboardRoute: typeof ManageDashboardRoute
-  ManageInventoryRoute: typeof ManageInventoryRoute
-  ManageOrdersRoute: typeof ManageOrdersRoute
-  OrdersOrderIdRoute: typeof OrdersOrderIdRoute
-  OrdersManageRoute: typeof OrdersManageRoute
-  ProductsProductIdRoute: typeof ProductsProductIdRoute
-  ProductsIndexRoute: typeof ProductsIndexRoute
+  IndexRoute: typeof IndexRoute;
+  PublicRoute: typeof PublicRoute;
+  AboutRoute: typeof AboutRoute;
+  CartRoute: typeof CartRoute;
+  CheckoutRoute: typeof CheckoutRoute;
+  ProductDetailRoute: typeof ProductDetailRoute;
+  AuthLoginRoute: typeof AuthLoginRoute;
+  AuthProfileRoute: typeof AuthProfileRoute;
+  AuthRegisterRoute: typeof AuthRegisterRoute;
+  ManageAuditLogsRoute: typeof ManageAuditLogsRoute;
+  ManageDashboardRoute: typeof ManageDashboardRoute;
+  ManageReportsRoute: typeof ManageReportsRoute;
+  ManageStoreSettingsRoute: typeof ManageStoreSettingsRoute;
+  OrdersOrderIdRoute: typeof OrdersOrderIdRoute;
+  OrdersManageRoute: typeof OrdersManageRoute;
+  ProductsProductIdRoute: typeof ProductsProductIdRoute;
+  ProductsIndexRoute: typeof ProductsIndexRoute;
+  ManageInventoryAddRoute: typeof ManageInventoryAddRoute;
+  ManageInventoryImportRoute: typeof ManageInventoryImportRoute;
+  ManageOrdersOrderIdRoute: typeof ManageOrdersOrderIdRoute;
+  ManageInventoryIndexRoute: typeof ManageInventoryIndexRoute;
+  ManageOrdersIndexRoute: typeof ManageOrdersIndexRoute;
+  ManageInventoryEditProductIdRoute: typeof ManageInventoryEditProductIdRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/productDetail': {
-      id: '/productDetail'
-      path: '/productDetail'
-      fullPath: '/productDetail'
-      preLoaderRoute: typeof ProductDetailRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cart': {
-      id: '/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof CartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/products/': {
-      id: '/products/'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof ProductsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/products/$productId': {
-      id: '/products/$productId'
-      path: '/products/$productId'
-      fullPath: '/products/$productId'
-      preLoaderRoute: typeof ProductsProductIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orders/manage': {
-      id: '/orders/manage'
-      path: '/orders/manage'
-      fullPath: '/orders/manage'
-      preLoaderRoute: typeof OrdersManageRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/orders/$orderId': {
-      id: '/orders/$orderId'
-      path: '/orders/$orderId'
-      fullPath: '/orders/$orderId'
-      preLoaderRoute: typeof OrdersOrderIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manage/orders': {
-      id: '/manage/orders'
-      path: '/manage/orders'
-      fullPath: '/manage/orders'
-      preLoaderRoute: typeof ManageOrdersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manage/inventory': {
-      id: '/manage/inventory'
-      path: '/manage/inventory'
-      fullPath: '/manage/inventory'
-      preLoaderRoute: typeof ManageInventoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/manage/dashboard': {
-      id: '/manage/dashboard'
-      path: '/manage/dashboard'
-      fullPath: '/manage/dashboard'
-      preLoaderRoute: typeof ManageDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth/register': {
-      id: '/_auth/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth/profile': {
-      id: '/_auth/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth/login': {
-      id: '/_auth/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/productDetail": {
+      id: "/productDetail";
+      path: "/productDetail";
+      fullPath: "/productDetail";
+      preLoaderRoute: typeof ProductDetailRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/checkout": {
+      id: "/checkout";
+      path: "/checkout";
+      fullPath: "/checkout";
+      preLoaderRoute: typeof CheckoutRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/cart": {
+      id: "/cart";
+      path: "/cart";
+      fullPath: "/cart";
+      preLoaderRoute: typeof CartRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/about": {
+      id: "/about";
+      path: "/about";
+      fullPath: "/about";
+      preLoaderRoute: typeof AboutRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_public": {
+      id: "/_public";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof PublicRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/products/": {
+      id: "/products/";
+      path: "/products";
+      fullPath: "/products";
+      preLoaderRoute: typeof ProductsIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/products/$productId": {
+      id: "/products/$productId";
+      path: "/products/$productId";
+      fullPath: "/products/$productId";
+      preLoaderRoute: typeof ProductsProductIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/orders/manage": {
+      id: "/orders/manage";
+      path: "/orders/manage";
+      fullPath: "/orders/manage";
+      preLoaderRoute: typeof OrdersManageRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/orders/$orderId": {
+      id: "/orders/$orderId";
+      path: "/orders/$orderId";
+      fullPath: "/orders/$orderId";
+      preLoaderRoute: typeof OrdersOrderIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/storeSettings": {
+      id: "/manage/storeSettings";
+      path: "/manage/storeSettings";
+      fullPath: "/manage/storeSettings";
+      preLoaderRoute: typeof ManageStoreSettingsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/reports": {
+      id: "/manage/reports";
+      path: "/manage/reports";
+      fullPath: "/manage/reports";
+      preLoaderRoute: typeof ManageReportsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/dashboard": {
+      id: "/manage/dashboard";
+      path: "/manage/dashboard";
+      fullPath: "/manage/dashboard";
+      preLoaderRoute: typeof ManageDashboardRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/auditLogs": {
+      id: "/manage/auditLogs";
+      path: "/manage/auditLogs";
+      fullPath: "/manage/auditLogs";
+      preLoaderRoute: typeof ManageAuditLogsRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_auth/register": {
+      id: "/_auth/register";
+      path: "/register";
+      fullPath: "/register";
+      preLoaderRoute: typeof AuthRegisterRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_auth/profile": {
+      id: "/_auth/profile";
+      path: "/profile";
+      fullPath: "/profile";
+      preLoaderRoute: typeof AuthProfileRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/_auth/login": {
+      id: "/_auth/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof AuthLoginRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/orders/": {
+      id: "/manage/orders/";
+      path: "/manage/orders";
+      fullPath: "/manage/orders";
+      preLoaderRoute: typeof ManageOrdersIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/inventory/": {
+      id: "/manage/inventory/";
+      path: "/manage/inventory";
+      fullPath: "/manage/inventory";
+      preLoaderRoute: typeof ManageInventoryIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/orders/$orderId": {
+      id: "/manage/orders/$orderId";
+      path: "/manage/orders/$orderId";
+      fullPath: "/manage/orders/$orderId";
+      preLoaderRoute: typeof ManageOrdersOrderIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/inventory/import": {
+      id: "/manage/inventory/import";
+      path: "/manage/inventory/import";
+      fullPath: "/manage/inventory/import";
+      preLoaderRoute: typeof ManageInventoryImportRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/inventory/add": {
+      id: "/manage/inventory/add";
+      path: "/manage/inventory/add";
+      fullPath: "/manage/inventory/add";
+      preLoaderRoute: typeof ManageInventoryAddRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/manage/inventory/edit/$productId": {
+      id: "/manage/inventory/edit/$productId";
+      path: "/manage/inventory/edit/$productId";
+      fullPath: "/manage/inventory/edit/$productId";
+      preLoaderRoute: typeof ManageInventoryEditProductIdRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PublicRoute: PublicRoute,
   AboutRoute: AboutRoute,
   CartRoute: CartRoute,
   CheckoutRoute: CheckoutRoute,
@@ -344,14 +501,21 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthProfileRoute: AuthProfileRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  ManageAuditLogsRoute: ManageAuditLogsRoute,
   ManageDashboardRoute: ManageDashboardRoute,
-  ManageInventoryRoute: ManageInventoryRoute,
-  ManageOrdersRoute: ManageOrdersRoute,
+  ManageReportsRoute: ManageReportsRoute,
+  ManageStoreSettingsRoute: ManageStoreSettingsRoute,
   OrdersOrderIdRoute: OrdersOrderIdRoute,
   OrdersManageRoute: OrdersManageRoute,
   ProductsProductIdRoute: ProductsProductIdRoute,
   ProductsIndexRoute: ProductsIndexRoute,
-}
+  ManageInventoryAddRoute: ManageInventoryAddRoute,
+  ManageInventoryImportRoute: ManageInventoryImportRoute,
+  ManageOrdersOrderIdRoute: ManageOrdersOrderIdRoute,
+  ManageInventoryIndexRoute: ManageInventoryIndexRoute,
+  ManageOrdersIndexRoute: ManageOrdersIndexRoute,
+  ManageInventoryEditProductIdRoute: ManageInventoryEditProductIdRoute,
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

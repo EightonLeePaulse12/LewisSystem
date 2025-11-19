@@ -87,7 +87,9 @@ export default function ProductsSection() {
                 >
                   Previous
                 </Button>
-                <span className="self-center">Page {page} of {totalPages}</span>
+                <span className="self-center">
+                  Page {page} of {totalPages}
+                </span>
                 <Button
                   disabled={page === totalPages}
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}

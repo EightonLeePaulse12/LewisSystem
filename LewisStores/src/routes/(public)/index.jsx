@@ -1,9 +1,9 @@
 // src/routes/index.jsx (updated to be under layout, but no component change)
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/(public)/")({
   component: Index,
 });
 

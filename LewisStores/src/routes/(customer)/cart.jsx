@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 import ShoppingCart from "@/components/ShoppingCart";
 
-export const Route = createFileRoute("/cart")({
+export const Route = createFileRoute("/(customer)/cart")({
   component: CartComponent,
 });
 
