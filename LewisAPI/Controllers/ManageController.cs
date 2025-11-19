@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Text;
+using System.Threading.Tasks;
 using AutoMapper;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -12,6 +14,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using System.Globalization;
+using System.Security.Claims;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace LewisAPI.Controllers
 {
@@ -30,6 +36,8 @@ namespace LewisAPI.Controllers
         private readonly ILogger<ManageController> _logger;
         private readonly ApplicationDbContext _context;
         private readonly IMemoryCache _cache;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IUsersRepository _usersRepo;
 
         public ManageController(
             IProductRepository productRepo,
@@ -41,7 +49,9 @@ namespace LewisAPI.Controllers
             UserManager<ApplicationUser> userManager,
             ILogger<ManageController> logger,
             ApplicationDbContext context,
-            IMemoryCache cache
+            IMemoryCache cache,
+            IHttpClientFactory httpClientFactory,
+            IUsersRepository usersRepo
         )
         {
             _productRepo = productRepo;
@@ -54,6 +64,8 @@ namespace LewisAPI.Controllers
             _logger = logger;
             _context = context;
             _cache = cache;
+            _httpClientFactory = httpClientFactory;
+            _usersRepo = usersRepo;
         }
 
         [HttpGet("inventory")]
@@ -82,7 +94,7 @@ namespace LewisAPI.Controllers
         }
 
         [HttpPost("products")]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto dto)
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -275,34 +287,63 @@ namespace LewisAPI.Controllers
             {
                 using var stream = file.OpenReadStream();
                 using var reader = new StreamReader(stream);
-                using var csv = new CsvReader(
-                    reader,
-                    new CsvConfiguration(CultureInfo.InvariantCulture) { HasHeaderRecord = true }
-                );
+                using var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    HasHeaderRecord = true,
+                    HeaderValidated = null, // Optional: Prevents errors if CSV headers case doesn't match exactly
+                    MissingFieldFound = null
+                });
 
-                var products = csv.GetRecords<CreateProductDto>().ToList();
-                var entities = _mapper.Map<IEnumerable<Product>>(products);
-                await _productRepo.ImportBatchAsync(entities);
+                // 1. Read data using the IMPORT DTO (which uses strings for images)
+                var importDtos = csv.GetRecords<ProductImportDto>().ToList();
+                _logger.LogInformation("Read {Count} records from CSV", importDtos.Count);
 
+                // 2. Process images asynchronously (base64 or URL to byte[])
+                var entitiesList = _mapper.Map<List<Product>>(importDtos);
+                _logger.LogInformation("Mapped {Count} entities", entitiesList.Count);
+
+                for (int i = 0; i < entitiesList.Count; i++)
+                {
+                    var dto = importDtos[i];
+                    _logger.LogInformation("Processing images for SKU: {SKU}", dto.SKU);
+
+                    entitiesList[i].Image1 = await GetImageBytesAsync(dto.Image1);
+                    entitiesList[i].Image2 = await GetImageBytesAsync(dto.Image2);
+                    entitiesList[i].Image3 = await GetImageBytesAsync(dto.Image3);
+                }
+
+                // 3. Save to database
+                await _productRepo.ImportBatchAsync(entitiesList);
+
+                // 4. Log inventory changes
                 var user = await _userManager.GetUserAsync(User);
-                var totalQty = entities.Sum(p => p.StockQty);
-                await LogInventoryChange(
-                    Guid.Empty,
-                    InventoryTransactionType.Import,
-                    totalQty,
-                    user?.Id
-                );
+                var totalQty = entitiesList.Sum(p => p.StockQty);
+                await LogInventoryChange(null, InventoryTransactionType.Import, totalQty, user?.Id);
 
-                // Invalidate cache
                 _cache.Remove("inventory_*");
 
-                return Ok($"Imported {products.Count} products.");
+                return Ok($"Imported {importDtos.Count} products.");
+            }
+            catch (CsvHelperException csvEx)
+            {
+                // Returns specific CSV formatting errors to the user
+                return BadRequest($"CSV Error at Row {csvEx.Context.Parser.Row}: {csvEx.Message}");
             }
             catch (Exception ex)
             {
-                _logger.LogError("An error occurred: {ErrorMessage}", ex.Message);
+                _logger.LogError(ex, "An error occurred during import.");
                 return StatusCode(500, "An error occurred during import.");
             }
+        }
+
+        [HttpGet("products/{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
+        {
+            var product = await _productRepo.GetByIdAsync(id);
+
+            return product == null
+                ? NotFound()
+                : Ok(_mapper.Map<ProductDto>(product));
         }
 
         [HttpGet("products/export")]
@@ -322,7 +363,7 @@ namespace LewisAPI.Controllers
                 memoryStream.Position = 0;
 
                 var user = await _userManager.GetUserAsync(User);
-                await LogInventoryChange(Guid.Empty, InventoryTransactionType.Export, 0, user?.Id);
+                await LogInventoryChange(null, InventoryTransactionType.Export, 0, user?.Id);
 
                 return File(memoryStream.ToArray(), "text/csv", "products.csv");
             }
@@ -459,6 +500,7 @@ namespace LewisAPI.Controllers
             [FromQuery] int page = 1,
             [FromQuery] int limit = 10,
             [FromQuery] Guid? userId = default
+
         )
         {
             string cacheKey = $"orders_{page}_{limit}";
@@ -476,6 +518,29 @@ namespace LewisAPI.Controllers
                 }
             }
             return Ok(orders);
+        }
+
+        [HttpGet("orders/single/{id}")]
+        public async Task<IActionResult> GetOrderDetails(Guid id)
+        {
+            try
+            {
+                if (id == Guid.Empty)
+                    return BadRequest(new { success = false, message = "Invalid order ID." });
+
+                var order = await _orderRepo.GetByIdAsync(id);
+
+                if (order == null)
+                    return NotFound(new { success = false, message = "Order not found." });
+
+                var orderDto = _mapper.Map<OrderDto>(order);
+                return Ok(new { success = true, data = orderDto });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error fetching order details: {ErrorMessage}", ex.Message);
+                return StatusCode(500, new { success = false, message = "An error occurred while fetching order details.", error = ex.Message });
+            }
         }
 
         [HttpPatch("orders/{id}")]
@@ -547,8 +612,54 @@ namespace LewisAPI.Controllers
             }
         }
 
+        [HttpGet("users")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> GetAllUsersAsync([FromQuery] int page = 1, [FromQuery] int limit = 10)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching users: Page {Page}, Limit {Limit}", page, limit);
+
+                var (users, totalCount) = await _usersRepo.GetAllUsersAsync(page, limit);
+
+                Response.Headers.Add("X-Total-Count", totalCount.ToString());
+                Response.Headers.Add("X-Page", page.ToString());
+                Response.Headers.Add("X-Limit", limit.ToString());
+
+                return Ok(users);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation(ex, "Error fetching all users");
+                return StatusCode(500, "Internal server error while fetching users");
+            }
+        }
+
+        [HttpPost("ban/{id}")]
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> BanUser(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            try
+            {
+                await _usersRepo.BanUserAsync(id);
+
+                _logger.LogWarning("User {UserId} has been banned.", id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error banning user {UserId}", id);
+                return StatusCode(500, "Internal server error while banning user");
+            }
+        }
+
         private async Task LogInventoryChange(
-            Guid productId,
+            Guid? productId,
             InventoryTransactionType type,
             int changeQty,
             Guid? userId
@@ -556,17 +667,20 @@ namespace LewisAPI.Controllers
         {
             var performedBy = userId ?? Guid.Empty;
 
-            var transaction = new InventoryTransaction
+            if (productId.HasValue)
             {
-                TransactionId = Guid.NewGuid(),
-                ProductId = productId,
-                ChangeQty = changeQty,
-                Type = type,
-                Note = $"Action: {type}",
-                PerformedBy = performedBy,
-                PerformedAt = DateTime.UtcNow,
-            };
-            await _inventoryTransactionRepo.AddAsync(transaction);
+                var transaction = new InventoryTransaction
+                {
+                    TransactionId = Guid.NewGuid(),
+                    ProductId = productId.Value,
+                    ChangeQty = changeQty,
+                    Type = type,
+                    Note = $"Action: {type}",
+                    PerformedBy = performedBy,
+                    PerformedAt = DateTime.UtcNow,
+                };
+                await _inventoryTransactionRepo.AddAsync(transaction);
+            }
 
             var audit = new AuditLog
             {
@@ -574,12 +688,55 @@ namespace LewisAPI.Controllers
                 UserId = performedBy,
                 Action = type.ToString(),
                 EntityType = "Product",
-                EntityId = productId.ToString(),
+                EntityId = productId?.ToString() ?? "Batch",
                 Timestamp = DateTime.UtcNow,
                 Details = $"ChangeQty: {changeQty}",
             };
             await _auditRepo.LogAsync(audit);
         }
+
+        private async Task<byte[]?> GetImageBytesAsync(string? imageStr)
+        {
+            if (string.IsNullOrEmpty(imageStr)) return null;
+
+            if (imageStr.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                try
+                {
+                    using var client = _httpClientFactory.CreateClient();
+                    return await client.GetByteArrayAsync(imageStr);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning("Failed to download image from URL {Url}: {Message}", imageStr, ex.Message);
+                    return null;
+                }
+            }
+            else
+            {
+                try
+                {
+                    return Convert.FromBase64String(imageStr);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning("Failed to decode base64 image: {Message}", ex.Message);
+                    return null;
+                }
+            }
+        }
+
+        //[HttpGet("products/{id}")]
+        //public async Task<IActionResult> GetProductById(Guid id)
+        //{
+        //    var product = await _productRepo.GetByIdAsync(id);
+        //    if (product == null)
+        //        return NotFound();
+
+        //    var dto = _mapper.Map<ProductDto>(product);
+        //    return Ok(dto);
+        //}
+
 
         private async Task<byte[]> FileToByteArray(IFormFile file)
         {

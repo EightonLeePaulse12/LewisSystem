@@ -64,6 +64,22 @@ namespace LewisAPI.Mappings
                 .ForMember(dest => dest.ProductId, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
+            CreateMap<ProductImportDto, Product>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId ?? Guid.NewGuid()))
+                .ForMember(dest => dest.Image1, opt => opt.Ignore())
+                .ForMember(dest => dest.Image2, opt => opt.Ignore())
+                .ForMember(dest => dest.Image3, opt => opt.Ignore());
+
+            CreateMap<ApplicationUser, UserManagementDto>()
+            // Example of explicit mapping if property names don't match exactly
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+            // Assuming your ApplicationUser has these properties (or you map them from claims/other sources)
+            .ForMember(dest => dest.ProfilePicture, opt => opt.MapFrom(src => src.ProfilePicture))
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(src => src.CreatedAt)) // Example property name
+            .ForMember(dest => dest.LastLogin, opt => opt.Ignore());
+
             // ============================================
             // ORDER MAPPINGS - NO CIRCULAR REFERENCES
             // ============================================
@@ -135,6 +151,7 @@ namespace LewisAPI.Mappings
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
                 // Ignore Agreement navigation to prevent cycles
                 .ForSourceMember(src => src.Agreement, opt => opt.DoNotValidate());
+
 
             // ============================================
             // PAYMENT MAPPINGS - NO CIRCULAR REFERENCES

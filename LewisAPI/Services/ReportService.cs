@@ -25,8 +25,12 @@ namespace LewisAPI.Services
             string format
         )
         {
+            // Normalize to UTC
+            var startUtc = DateTime.SpecifyKind(start.Date, DateTimeKind.Utc);
+            var endUtc = DateTime.SpecifyKind(end.Date.AddDays(1), DateTimeKind.Utc);
+
             var sales = await _context
-                .Orders.Where(o => o.OrderDate >= start && o.OrderDate <= end)
+                .Orders.Where(o => o.OrderDate >= startUtc && o.OrderDate < endUtc)
                 .Select(o => new
                 {
                     o.OrderId,
@@ -103,8 +107,12 @@ namespace LewisAPI.Services
             string format
         )
         {
+            // Normalize to UTC
+            var startUtc = DateTime.SpecifyKind(start.Date, DateTimeKind.Utc);
+            var endUtc = DateTime.SpecifyKind(end.Date.AddDays(1), DateTimeKind.Utc);
+
             var payments = await _context
-                .Payments.Where(p => p.PaymentDate >= start && p.PaymentDate <= end)
+                .Payments.Where(p => p.PaymentDate >= startUtc && p.PaymentDate < endUtc)
                 .Select(p => new
                 {
                     p.PaymentId,

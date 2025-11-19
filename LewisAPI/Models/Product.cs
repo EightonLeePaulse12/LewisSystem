@@ -35,7 +35,7 @@ namespace LewisAPI.Models
         public decimal? Weight { get; set; }
 
         [MaxLength(100)]
-        public string Dimensions { get; set; }
+        public string? Dimensions { get; set; }
 
         [Required]
         [Range(0, int.MaxValue)]

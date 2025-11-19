@@ -39,26 +39,43 @@ namespace LewisAPI.Controllers
         {
             try
             {
-                var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-                var user = await _userManager.FindByIdAsync(userId.ToString());
+                // 1. Get the raw string claim value
+                var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userIdString == null) return Unauthorized();
+
+                // 2. ✅ FIX: Parse the string claim into a Guid. This is the correct type 
+                //    for comparison against your User model's Guid primary key.
+                Guid userIdGuid = Guid.Parse(userIdString);
+
+                // 3. RETRIEVAL FIX: Use the Guid variable for comparison.
+                //    EF Core (Npgsql) will correctly translate u.Id (Guid) == userIdGuid (Guid) 
+                //    into a valid PostgreSQL query (WHERE Id = 'uuid-value').
+                var user = await _context.Users
+                                         .SingleOrDefaultAsync(u => u.Id == userIdGuid);
+
                 if (user == null)
                     return NotFound();
 
-                string? profilePictureBase64 = null;
-                if (user.ProfilePicture != null && user.ProfilePicture.Length > 0)
+                // ... (Image Conversion and Return Logic Remains The Same)
+                string? imageUrl = null;
+                if (user.ProfilePicture != null)
                 {
-                    // Convert the byte array (image data) into a Base64 string
-                    profilePictureBase64 = Convert.ToBase64String(user.ProfilePicture);
+                    string profilePictureBase64 = Convert.ToBase64String(user.ProfilePicture);
+
+                    // ⚠️ Ensure the MIME type below matches the file type in user.ProfilePicture!
+                    imageUrl = $"data:image/jpeg;base64,{profilePictureBase64}";
                 }
 
-                // Assumes Customer nav loaded or mapped
+                _logger.LogInformation("Profile retrieved for user {Id}. Picture present: {IsPresent}",
+                                        user.Id, imageUrl != null);
+
                 var userDetails = new
                 {
                     user.Id,
                     user.Email,
                     user.Name,
                     user.PhoneNumber,
-                    profilePicture =  (string)profilePictureBase64!,
+                    profilePicture = imageUrl,
                     user.CreatedAt,
                 };
 
@@ -66,7 +83,8 @@ namespace LewisAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error fetching profile: {Message}", ex.Message);
+                _logger.LogError(ex, "Error fetching profile for user {Id}: {Message}",
+                                    User.FindFirstValue(ClaimTypes.NameIdentifier), ex.Message);
                 return StatusCode(500, "Internal server error");
             }
         }

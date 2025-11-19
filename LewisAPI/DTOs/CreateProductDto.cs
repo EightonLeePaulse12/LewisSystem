@@ -1,4 +1,5 @@
 ﻿using LewisAPI.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace LewisAPI.DTOs
 {
@@ -15,5 +16,9 @@ namespace LewisAPI.DTOs
         public int StockQty { get; set; }
         public int ReorderThreshold { get; set; }
         public ProductStatus Status { get; set; }
+
+        public IFormFile? Image1 { get; set; }
+        public IFormFile? Image2 { get; set; }
+        public IFormFile? Image3 { get; set; }
     }
 }

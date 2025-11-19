@@ -31,6 +31,7 @@ namespace LewisAPI.Repositories
                 .Include(o => o.CreditAgreement)
                 .Include(o => o.Delivery)
                 .Include(o => o.Payments)
+                .Include(o => o.Customer.User)
                 .AsQueryable();
 
             _logger.LogInformation("This is the data first: {OrderData}", query);

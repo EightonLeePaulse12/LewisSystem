@@ -16,7 +16,7 @@ using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using QuestPDF.Infrastructure;
 using Serilog;
 using Stripe;
@@ -184,9 +184,9 @@ namespace LewisAPI
             builder.Services.AddScoped<IPaymentService, PaymentService>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IReportService, ReportService>();
-            builder.Services.AddScoped<IStoreSettingsRepository, StoreSettingsRepository>();
             builder.Services.AddScoped<InstallmentService>();
             builder.Services.AddHttpClient<PaymentService>();
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
             // Configure JSON serialization to handle circular references
             builder.Services
@@ -223,23 +223,6 @@ namespace LewisAPI
                         In = ParameterLocation.Header,
                         Description =
                             "Enter your JWT token below (without the Bearer prefix). Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                    }
-                );
-
-                c.AddSecurityRequirement(
-                    new OpenApiSecurityRequirement
-                    {
-                            {
-                                new OpenApiSecurityScheme
-                                {
-                                    Reference = new OpenApiReference
-                                    {
-                                        Type = ReferenceType.SecurityScheme,
-                                        Id = "Bearer",
-                                    },
-                                },
-                                Array.Empty<string>()
-                            },
                     }
                 );
             });
