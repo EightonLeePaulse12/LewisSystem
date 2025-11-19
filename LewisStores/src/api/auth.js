@@ -47,7 +47,7 @@ export const Login = async (user) => {
 export const GetProfile = async () => {
   try {
     const { data } = await axios.get(`${API_URL}customers/profile`, headers());
-    console.log(data)
+    console.log(data);
     return data;
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
@@ -60,9 +60,27 @@ export const GetProfile = async () => {
 export const UpdateProfile = async (UpdateProfilePayload) => {
   try {
     const { data } = await axios.patch(
-      `${API_URL}customers/profile`,
+      // Changed to patch
+      `${API_URL}customers/profile`, // Changed endpoint to match C# [HttpPatch("profile")]
       UpdateProfilePayload,
-      headers()
+      headers() // Correctly passing headers as a single object argument
+    );
+    return data;
+  } catch (e) {
+    if (e instanceof AxiosError && e.response) {
+      throw new Error(e.response.data?.message || "Update Failed");
+    }
+    throw new Error("Network error. Please try again.");
+  }
+};
+
+export const UploadProfilePicture = async (formDataPayload) => {
+  try {
+    // Axios automatically sets the Content-Type to 'multipart/form-data' for FormData
+    const { data } = await axios.post(
+      `${API_URL}customers/profile-picture`, // Endpoint for picture upload
+      formDataPayload, // FormData object
+      headers() // Correctly passing headers for Authorization
     );
     return data;
   } catch (e) {

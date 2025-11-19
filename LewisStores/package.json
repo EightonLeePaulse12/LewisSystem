@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-routes": "@tanstack/router-cli generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -40,8 +41,8 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tailwindcss/vite": "^4.1.17",
     "@tanstack/react-query": "^5.90.10",
-    "@tanstack/react-router": "^1.136.11",
-    "@tanstack/react-router-devtools": "^1.136.11",
+    "@tanstack/react-router": "^1.136.15",
+    "@tanstack/react-router-devtools": "^1.136.15",
     "axios": "^1.13.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -56,7 +57,6 @@
     "react-day-picker": "^9.11.1",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.66.1",
-    "react-paystack": "^6.0.0",
     "react-resizable-panels": "^3.0.6",
     "recharts": "2.15.4",
     "sonner": "^2.0.7",
@@ -68,7 +68,8 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@tanstack/eslint-plugin-query": "^5.91.2",
-    "@tanstack/router-plugin": "^1.136.11",
+    "@tanstack/router-cli": "^1.136.15",
+    "@tanstack/router-plugin": "^1.136.15",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",

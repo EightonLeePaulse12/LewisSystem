@@ -133,6 +133,7 @@ export const getProductById = async (id) => {
     const { data } = await axios.get(`${API_URL}manage/products/${id}`, {
       ...headers(),
     });
+    console.log(data)
     return data;
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
@@ -404,7 +405,7 @@ export const FetchAuditLogs = async (page, limit, filter) => {
     const { data } = await axios.get(`${API_URL}Auditlogs?${params}`, {
       ...headers(),
     });
-    console.log(data)
+    console.log(data);
     return data;
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
@@ -436,6 +437,35 @@ export const UpdateStoreSettings = async (dto) => {
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
       throw new Error(e.response.data?.message || "Update failed");
+    }
+    throw new Error("Network error. Please try again.");
+  }
+};
+
+export const GetAllUsers = async (page, limit) => {
+  try {
+    const params = new URLSearchParams({ page, limit });
+    const { data } = await axios.get(`${API_URL}manage/users?${params}`, {
+      ...headers(),
+    });
+    console.log;
+    return data;
+  } catch (e) {
+    if (e instanceof AxiosError && e.response) {
+      throw new Error(e.response.data?.message || "Failed to fetch users");
+    }
+    throw new Error("Network error. Please try again.");
+  }
+};
+
+export const BanUser = async (id) => {
+  try {
+    await axios.post(`${API_URL}manage/ban/${id}`, {
+      headers
+    });
+  } catch (e) {
+    if (e instanceof AxiosError && e.response) {
+      throw new Error(e.response.data?.message || "Failed to fetch users");
     }
     throw new Error("Network error. Please try again.");
   }

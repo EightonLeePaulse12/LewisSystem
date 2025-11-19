@@ -56,6 +56,7 @@ export default function ProductsSection() {
                     <Card key={product.productId}>
                       <CardHeader>
                         <CardTitle>{product.name}</CardTitle>
+                        {product.image1 && <img src={product.image1} alt={product.name} />}
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-muted-foreground">
@@ -66,7 +67,7 @@ export default function ProductsSection() {
                           ${product.unitPrice}
                         </p>
                         <p>Stock: {product.stockQty}</p>
-                        <Link to={`/products/${product.productId}`}>
+                        <Link to={`/public/products/${product.productId}`}>
                           <Button variant="outline" className="mt-4">
                             View Details
                           </Button>

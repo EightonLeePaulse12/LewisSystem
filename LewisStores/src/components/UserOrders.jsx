@@ -85,7 +85,7 @@ const UserOrders = () => {
                   <TableRow
                     key={order.orderId}
                     className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => navigate({ to: `/orders/${order.orderId}` })} // Use navigate for routing
+                    onClick={() => navigate({ to: `/customer/orders/${order.orderId}` })} // Use navigate for routing
                   >
                     <TableCell>{order.orderId}</TableCell>
                     <TableCell>

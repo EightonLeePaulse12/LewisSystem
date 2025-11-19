@@ -112,6 +112,9 @@ const InventoryList = () => {
               <TableBody>
                 {filteredInventory.map((product) => (
                   <TableRow key={product.productId}>
+                    <Link
+                      to={`/admin/manage/inventory/${product.productId}`}
+                    ></Link>
                     <TableCell>{product.name}</TableCell>
                     <TableCell>{product.sku}</TableCell>
                     <TableCell>
@@ -120,6 +123,8 @@ const InventoryList = () => {
                           product.stockQty < product.reorderThreshold
                             ? "destructive"
                             : "default"
+
+                            
                         }
                       >
                         {product.stockQty}
@@ -127,7 +132,7 @@ const InventoryList = () => {
                     </TableCell>
                     <TableCell>${product.unitPrice}</TableCell>
                     <TableCell>
-                      <Link to={`/manage/inventory/edit/${product.productId}`}>
+                      <Link to={`/admin/manage/inventory/${product.productId}`}>
                         <Button variant="outline">Edit</Button>
                       </Link>
                       <Button
