@@ -1,7 +1,0 @@
-{
-  "routesDirectory": "./src/routes",
-  "generatedRouteTree": "./src/routeTree.gen.js",
-  "disableTypes": true,
-  "extensions": [".jsx"],
-  "quoteStyle": "double"
-}
