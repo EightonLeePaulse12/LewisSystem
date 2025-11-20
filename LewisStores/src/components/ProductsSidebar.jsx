@@ -35,7 +35,7 @@ export function ProductsSidebar({
 
   useEffect(() => {
     onSearchChange(search);
-  }, [search, onSearchChange])
+  }, [search, onSearchChange]);
 
   useEffect(() => {
     onCategoryChange(category);
@@ -92,5 +92,5 @@ export function ProductsSidebar({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

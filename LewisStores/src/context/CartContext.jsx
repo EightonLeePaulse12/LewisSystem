@@ -1,23 +1,31 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { useContext } from "react";
+import { CartContext } from "./CartProvider";
 
-const CartContext = createContext(undefined);
-
-export function CartProvider({ children }) {
-  const [items, setItems] = useState([]);
-
-  const addItem = (newItem) => {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.productId === newItem.productId);
-      if (existing) {
-        return prev.map((i) =>
-          i.productId === newItem.productId
-            ? { ...i, quantity: i.quantity + newItem.quantity }
-            : i
-        );
-      }
-      return [...prev, newItem];
-    });
-  };
-
-  const removeItem = 
-}
+export const useCart = () => {
+  const context = useContext(CartContext);
+  if (!context) {
+    // During HMR/fast-refresh the provider can be momentarily unavailable.
+    // Return a safe fallback in development to avoid the overlay crashing the page.
+    if (
+      typeof import.meta !== "undefined" &&
+      import.meta.env &&
+      import.meta.env.DEV
+    ) {
+      console.warn(
+        "useCart must be used within CartProvider - returning fallback in dev"
+      );
+      return {
+        items: [],
+        addItem: () => {
+          console.warn("addItem called but CartProvider is not mounted");
+        },
+        removeItem: () => {},
+        updateQuantity: () => {},
+        clearCart: () => {},
+        total: 0,
+      };
+    }
+    throw new Error("useCart must be used within CartProvider");
+  }
+  return context;
+};

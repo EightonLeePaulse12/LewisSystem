@@ -6,7 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "@tanstack/react-router";
+// Removed useRouter import since we're not using manual navigation
 import { Login as LoginAPI } from "@/api/auth";
 import {
   Card,
@@ -31,7 +31,7 @@ const loginSchema = z.object({
 
 export function LoginForm({ className, ...props }) {
   const { login: AuthLogin } = useAuth();
-  const router = useRouter();
+  // Removed router since beforeLoad handles redirects
 
   const {
     register: loginField,
@@ -48,17 +48,14 @@ export function LoginForm({ className, ...props }) {
       const token = data.token;
       const id = data.userDetails.id;
       const userData = data.userDetails;
-      const userRole = data.userDetails.roles[0]
-      
+      const userRole = data.userDetails.roles[0];
+
       console.log("Saved cookies:", document.cookie);
       console.log(data);
 
       AuthLogin(token, id, userData, userRole);
-      // Handle success - redirect to login page
       toast.success("Successfully logged in!");
-      setTimeout(() => {
-        router.navigate({ to: "/" });
-      }, 2000);
+      // Removed manual navigation and setTimeout—beforeLoad in the route will handle redirects on next load
     },
     onError: (error) => {
       // Set error to root form field for display
@@ -82,7 +79,7 @@ export function LoginForm({ className, ...props }) {
         <CardHeader>
           <CardTitle>Login to your account</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your email and password below to login to your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -97,15 +94,15 @@ export function LoginForm({ className, ...props }) {
                   required
                   {...loginField("email")}
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
                 )}
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Link
-                    to="#"
+                    to="#" // Placeholder for forgot password
                     className="inline-block ml-auto text-sm underline-offset-4 hover:underline"
                   >
                     Forgot your password?
@@ -117,17 +114,23 @@ export function LoginForm({ className, ...props }) {
                   required
                   {...loginField("password")}
                 />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                {errors.password && (
+                  <p className="text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
                 )}
               </Field>
+              {errors.root && (
+                <p className="text-sm text-red-500">{errors.root.message}</p>
+              )}
               <Field>
                 <Button type="submit" disabled={isLoading}>
                   {isLoading ? "Processing..." : "Log in"}
                 </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
-                  <Link href="/register">Sign up</Link>
+                  <Link to="/register">Sign up</Link>{" "}
+                  {/* Fixed: use 'to' instead of 'href' */}
                 </FieldDescription>
               </Field>
             </FieldGroup>

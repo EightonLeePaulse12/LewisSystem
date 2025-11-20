@@ -1,29 +1,12 @@
-import { CustomerNavbar } from "@/components/NavigationMenus/CustomerNavbar";
-import { createRootRoute, Link, Outlet } from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-const RootLayout = () => {
-  return (
+export const Route = createRootRouteWithContext()({
+  component: () => (
     <>
-      <div className="flex gap-2 p-2">
-        <Link to="/" className="[&.active]:font-bold">
-          Home
-        </Link>{" "}
-        <Link to="/about" className="[&.active]:font-bold">
-          About
-        </Link>
-        <Link to="/login" className="[&.active]:font-bold">
-          Login
-        </Link>
-        <Link to="/register" className="[&.active]:font-bold">
-          Register
-        </Link>
-      </div>
-      <hr />
       <Outlet />
       <TanStackRouterDevtools />
     </>
-  );
-};
-
-export const Route = createRootRoute({ component: RootLayout });
+  ),
+  notFoundComponent: () => <div>404 - Not Found</div>,
+});
