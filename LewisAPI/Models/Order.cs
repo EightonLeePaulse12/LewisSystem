@@ -7,6 +7,7 @@ namespace LewisAPI.Models
     {
         [Key]
         public Guid OrderId { get; set; }
+
         public Guid CustomerId { get; set; }
 
         [Required]

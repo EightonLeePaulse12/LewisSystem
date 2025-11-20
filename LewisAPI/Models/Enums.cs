@@ -25,10 +25,13 @@
 
     public enum InventoryTransactionType
     {
-        Add,
-        Remove,
+        Creation,
+        Update,
+        Deletion,
+        Import,
+        Export,
         Sale,
-        Adjustment,
+        PermanentDeletion,
     }
 
     public enum InstallmentStatus

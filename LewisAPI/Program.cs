@@ -1,17 +1,25 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using FluentValidation.AspNetCore;
 using Hangfire;
 using Hangfire.PostgreSql;
 using LewisAPI.Filters;
 using LewisAPI.Infrastructure.Data;
+using LewisAPI.Interfaces;
 using LewisAPI.Models;
+using LewisAPI.Repositories;
+using LewisAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using QuestPDF.Infrastructure;
 using Serilog;
+using Stripe;
 
 namespace LewisAPI
 {
@@ -19,7 +27,11 @@ namespace LewisAPI
     {
         public static void Main(string[] args)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
+
+            System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Configuration)
@@ -30,25 +42,29 @@ namespace LewisAPI
 
             builder.Host.UseSerilog();
 
-            // Add services to the container.
-
             builder.WebHost.UseKestrel(options =>
             {
                 options.ListenAnyIP(8080);
             });
 
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy(
-                    "StrictPolicy",
-                    builder =>
-                        builder
-                            .WithOrigins("https://yourfrontend.com") // Replace with your actual frontend URL(s), e.g., "http://localhost:3000" for dev
-                            .AllowAnyMethod()
+                    "AllowAll",
+                    policy =>
+                    {
+                        policy
+                            .SetIsOriginAllowed(_ => true)
                             .AllowAnyHeader()
-                            .AllowCredentials()
+                            .AllowAnyMethod()
+                            .AllowCredentials();
+                    }
                 );
             });
+
+            builder.Services.AddAutoMapper(_ => { }, typeof(Program));
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
@@ -79,6 +95,7 @@ namespace LewisAPI
                             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
                         ),
                         ClockSkew = TimeSpan.Zero,
+                        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                     };
 
                     options.Events = new JwtBearerEvents
@@ -97,7 +114,7 @@ namespace LewisAPI
                 options.AddPolicy(
                     "ManagerOrAdmin",
                     policy => policy.RequireRole("Manager", "Admin")
-                ); // Fixed comma separation
+                );
                 options.AddPolicy("CustomerOnly", policy => policy.RequireRole("Customer"));
             });
 
@@ -106,7 +123,7 @@ namespace LewisAPI
                 .AddFluentValidationClientsideAdapters();
 
             builder.Services.AddMemoryCache();
-            // Rate Limiter (native - removed old singleton as it's not needed)
+
             builder.Services.AddRateLimiter(options =>
             {
                 options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
@@ -123,7 +140,6 @@ namespace LewisAPI
                             }
                         )
                 );
-                // Custom rule for login
                 options.AddFixedWindowLimiter(
                     "login",
                     options =>
@@ -135,19 +151,18 @@ namespace LewisAPI
 
                 options.OnRejected = async (context, token) =>
                 {
-                    context.HttpContext.Response.StatusCode = 429; // Too Many Requests
+                    context.HttpContext.Response.StatusCode = 429;
                     await context.HttpContext.Response.WriteAsync(
                         "Rate Limit exceeded. Try Again Later",
-                        token // Added token for cancellation
+                        token
                     );
                 };
             });
 
-            // Exception Handling - Add your custom middleware service (assuming you have ExceptionHandlingMiddleware class)
-            // builder.Services.AddTransient<ExceptionHandlingMiddleware>(); // If singleton/transient as needed
-
-            builder.Services.AddHealthChecks().AddDbContextCheck<ApplicationDbContext>();
-            // Add more checks, e.g., .AddHangfire(h => h.MaximumJobsFailed = 1);
+            builder
+                .Services.AddHealthChecks()
+                .AddDbContextCheck<ApplicationDbContext>()
+                .AddCheck("Stripe", () => HealthCheckResult.Healthy());
 
             builder.Services.AddHangfire(config =>
                 config
@@ -156,64 +171,149 @@ namespace LewisAPI
                     .UseRecommendedSerializerSettings()
                     .UsePostgreSqlStorage(c =>
                         c.UseNpgsqlConnection(
-                            builder.Configuration.GetConnectionString("HangfireConnection")
+                            builder.Configuration.GetConnectionString("DefaultConnection")
                         )
                     )
-            ); // Use your conn string (can be same as DefaultConnection if shared)
+            );
             builder.Services.AddHangfireServer();
 
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            // Register repositories and services
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            builder.Services.AddScoped<InventoryTransactionRepository>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IReportService, ReportService>();
+            builder.Services.AddScoped<InstallmentService>();
+            builder.Services.AddHttpClient<PaymentService>();
+            builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 
-            builder.Services.AddSwaggerGen();
+            // Configure JSON serialization to handle circular references
+            builder.Services
+                .AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.WriteIndented = true;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                });
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(
+                    "v1",
+                    new OpenApiInfo
+                    {
+                        Title = "LewisAPI",
+                        Version = "v1",
+                        Description = "API for Lewis E-commerce System",
+                    }
+                );
+
+                c.AddSecurityDefinition(
+                    "Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description =
+                            "Enter your JWT token below (without the Bearer prefix). Example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                    }
+                );
+            });
 
             var app = builder.Build();
 
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate(); // Creates/updates schema based on your migrations
+                dbContext.Database.Migrate();
+                var roleManager = scope.ServiceProvider.GetRequiredService<
+                    RoleManager<IdentityRole<Guid>>
+                >();
+                string[] roles = { "Admin", "Manager", "Customer" };
+                foreach (var role in roles)
+                {
+                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+                    {
+                        roleManager
+                            .CreateAsync(new IdentityRole<Guid>(role))
+                            .GetAwaiter()
+                            .GetResult();
+                    }
+                }
             }
 
-            app.UseCors("StrictPolicy"); // Use the strict policy name
+            app.UseCors("AllowAll");
 
             app.MapHealthChecks("/health");
 
-            app.UseSwagger();
-            app.UseRateLimiter();
-
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            if (!app.Environment.IsDevelopment())
+            {
+                app.UseHttpsRedirection();
+            }
 
-            app.UseSerilogRequestLogging(); // Added for request logging
+            app.UseSerilogRequestLogging();
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Hangfire Dashboard - Added mapping with basic auth (implement HangfireAuthorizationFilter as before)
+            // Security headers middleware
+            app.Use(
+                async (context, next) =>
+                {
+                    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+                    context.Response.Headers.Append("X-Frame-Options", "DENY");
+                    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+                    context.Response.Headers.Append(
+                        "Content-Security-Policy",
+                        "default-src 'self'; script-src 'self' 'unsafe-inline';"
+                    );
+                    await next();
+                }
+            );
+
             app.UseHangfireDashboard(
                 "/hangfire",
                 new DashboardOptions
                 {
-                    Authorization = new[] { new HangfireAuthorizationFilter() }, // Add your custom filter class for RBAC
+                    Authorization = [new HangfireAuthorizationFilter()],
+                    DashboardTitle = "LewisAPI Hangfire Dashboard",
+                    IgnoreAntiforgeryToken = true,
                 }
             );
 
-            // Exception Middleware - Add if you have the class
-            // app.UseMiddleware<ExceptionHandlingMiddleware>();
+            RecurringJob.AddOrUpdate<IPaymentService>(
+                "apply-late-fees",
+                service => service.ApplyLateFeesAsync(),
+                Cron.Daily
+            );
+            RecurringJob.AddOrUpdate(
+                "overdue-reminders",
+                () => SendOverdueReminders(),
+                Cron.Daily(9)
+            );
 
             app.MapControllers();
 
             app.Run();
+        }
+
+        public static void SendOverdueReminders()
+        {
+            Console.WriteLine("Sending overdue reminders...");
         }
     }
 }

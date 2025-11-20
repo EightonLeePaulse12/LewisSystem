@@ -25,6 +25,7 @@ namespace LewisAPI.Models
 
         [ForeignKey("CustomerId")]
         public virtual ApplicationUser User { get; set; }
+
         public virtual ICollection<Order> Orders { get; set; }
     }
 }

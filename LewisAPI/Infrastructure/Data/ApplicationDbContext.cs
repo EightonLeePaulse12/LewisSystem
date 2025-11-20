@@ -19,13 +19,27 @@ namespace LewisAPI.Infrastructure.Data
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Delivery> Deliveries { get; set; }
         public DbSet<AuditLog> AuditLogs { get; set; }
+        public DbSet<StoreSettings> StoreSettings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
             // Soft delete filter for Products
-            builder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
+            builder
+                .Entity<Product>()
+                .HasMany(p => p.InventoryTransactions)
+                .WithOne(it => it.Product)
+                .HasForeignKey(it => it.ProductId)
+                .IsRequired(false); // Makes it optional
+
+            // Similarly for OrderItems
+            builder
+                .Entity<Product>()
+                .HasMany(p => p.OrderItems)
+                .WithOne(oi => oi.Product)
+                .HasForeignKey(oi => oi.ProductId)
+                .IsRequired(false);
 
             // Indexes for Product
             builder.Entity<Product>().HasIndex(p => p.Name);
@@ -115,12 +129,14 @@ namespace LewisAPI.Infrastructure.Data
                 .HasForeignKey<Customer>(c => c.CustomerId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Enum conversions if needed (Postgres handles enums as int by default, but for string storage if preferred)
-            //Example: modelBuilder.Entity<Product>().Property(p => p.Status).HasConversion<string>();
-            // But keeping as int for efficiency.
-
-            // Add any seed data if desired, e.g., categories
-            // modelBuilder.Entity<Category>().HasData(new Category { Id = 1, Name = "Furniture" });
+            builder.Entity<StoreSettings>().HasKey(s => s.Id);
         }
+
+        // Enum conversions if needed (Postgres handles enums as int by default, but for string storage if preferred)
+        //Example: modelBuilder.Entity<Product>().Property(p => p.Status).HasConversion<string>();
+        // But keeping as int for efficiency.
+
+        // Add any seed data if desired, e.g., categories
+        // modelBuilder.Entity<Category>().HasData(new Category { Id = 1, Name = "Furniture" });
     }
 }

@@ -7,6 +7,7 @@ namespace LewisAPI.Models
     {
         [Key]
         public Guid TransactionId { get; set; }
+
         public Guid ProductId { get; set; }
 
         [Required]
@@ -17,6 +18,7 @@ namespace LewisAPI.Models
 
         [MaxLength(500)]
         public string Note { get; set; }
+
         public Guid PerformedBy { get; set; }
 
         [Required]
