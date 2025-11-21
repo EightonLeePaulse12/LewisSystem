@@ -36,7 +36,7 @@ const InventoryList = () => {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => deleteProduct(id),
+    mutationFn: (id) => deleteProduct(id), // This function should call the soft delete API
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
       toast.success("Product deleted");
@@ -81,7 +81,7 @@ const InventoryList = () => {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
-        <Link to="/manage/inventory/add">
+        <Link to="/admin/manage/inventory/add">
           <Button>Add Product</Button>
         </Link>
         <Link to="/manage/inventory/import">
@@ -112,26 +112,20 @@ const InventoryList = () => {
               <TableBody>
                 {filteredInventory.map((product) => (
                   <TableRow key={product.productId}>
-                    <Link
-                      to={`/admin/manage/inventory/${product.productId}`}
-                    ></Link>
-                    <TableCell>{product.name}</TableCell>
-                    <TableCell>{product.sku}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          product.stockQty < product.reorderThreshold
-                            ? "destructive"
-                            : "default"
+                    {/* 1. REMOVE the empty Link here */}
 
-                            
-                        }
-                      >
-                        {product.stockQty}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>${product.unitPrice}</TableCell>
+                    {/* 2. WRAP the content of the TableCell with the Link */}
                     <TableCell>
+                      <Link to={`/admin/manage/inventory/${product.productId}`}>
+                        {product.name}
+                      </Link>
+                    </TableCell>
+
+                    <TableCell>{product.sku}</TableCell>
+                    <TableCell>{product.stockQty}</TableCell>
+                    <TableCell>R{product.costPrice.toFixed(2)}</TableCell>
+                    <TableCell>
+                      {/* ... Actions column buttons (Edit/Delete) remain separate ... */}
                       <Link to={`/admin/manage/inventory/${product.productId}`}>
                         <Button variant="outline">Edit</Button>
                       </Link>

@@ -14,10 +14,10 @@ import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as RouteRouteImport } from './routes/route'
 import { Route as PublicAboutRouteImport } from './routes/public/about'
+import { Route as CustomerProfileRouteImport } from './routes/customer/profile'
 import { Route as CustomerCheckoutRouteImport } from './routes/customer/checkout'
 import { Route as CustomerCartRouteImport } from './routes/customer/cart'
 import { Route as AuthRegisterRouteImport } from './routes/_auth/register'
-import { Route as AuthProfileRouteImport } from './routes/_auth/profile'
 import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as PublicProductsIndexRouteImport } from './routes/public/products/index'
 import { Route as PublicProductsProductIdRouteImport } from './routes/public/products/$productId'
@@ -61,6 +61,11 @@ const PublicAboutRoute = PublicAboutRouteImport.update({
   path: '/about',
   getParentRoute: () => PublicRoute,
 } as any)
+const CustomerProfileRoute = CustomerProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => CustomerRoute,
+} as any)
 const CustomerCheckoutRoute = CustomerCheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -74,11 +79,6 @@ const CustomerCartRoute = CustomerCartRouteImport.update({
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/_auth/register',
   path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthProfileRoute = AuthProfileRouteImport.update({
-  id: '/_auth/profile',
-  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -178,10 +178,10 @@ export interface FileRoutesByFullPath {
   '/customer': typeof CustomerRouteWithChildren
   '/public': typeof PublicRouteWithChildren
   '/login': typeof AuthLoginRoute
-  '/profile': typeof AuthProfileRoute
   '/register': typeof AuthRegisterRoute
   '/customer/cart': typeof CustomerCartRoute
   '/customer/checkout': typeof CustomerCheckoutRoute
+  '/customer/profile': typeof CustomerProfileRoute
   '/public/about': typeof PublicAboutRoute
   '/admin/manage/auditLogs': typeof AdminManageAuditLogsRoute
   '/admin/manage/dashboard': typeof AdminManageDashboardRoute
@@ -205,10 +205,10 @@ export interface FileRoutesByTo {
   '/customer': typeof CustomerRouteWithChildren
   '/public': typeof PublicRouteWithChildren
   '/login': typeof AuthLoginRoute
-  '/profile': typeof AuthProfileRoute
   '/register': typeof AuthRegisterRoute
   '/customer/cart': typeof CustomerCartRoute
   '/customer/checkout': typeof CustomerCheckoutRoute
+  '/customer/profile': typeof CustomerProfileRoute
   '/public/about': typeof PublicAboutRoute
   '/admin/manage/auditLogs': typeof AdminManageAuditLogsRoute
   '/admin/manage/dashboard': typeof AdminManageDashboardRoute
@@ -234,10 +234,10 @@ export interface FileRoutesById {
   '/customer': typeof CustomerRouteWithChildren
   '/public': typeof PublicRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
-  '/_auth/profile': typeof AuthProfileRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/customer/cart': typeof CustomerCartRoute
   '/customer/checkout': typeof CustomerCheckoutRoute
+  '/customer/profile': typeof CustomerProfileRoute
   '/public/about': typeof PublicAboutRoute
   '/admin/manage/auditLogs': typeof AdminManageAuditLogsRoute
   '/admin/manage/dashboard': typeof AdminManageDashboardRoute
@@ -263,10 +263,10 @@ export interface FileRouteTypes {
     | '/customer'
     | '/public'
     | '/login'
-    | '/profile'
     | '/register'
     | '/customer/cart'
     | '/customer/checkout'
+    | '/customer/profile'
     | '/public/about'
     | '/admin/manage/auditLogs'
     | '/admin/manage/dashboard'
@@ -290,10 +290,10 @@ export interface FileRouteTypes {
     | '/customer'
     | '/public'
     | '/login'
-    | '/profile'
     | '/register'
     | '/customer/cart'
     | '/customer/checkout'
+    | '/customer/profile'
     | '/public/about'
     | '/admin/manage/auditLogs'
     | '/admin/manage/dashboard'
@@ -318,10 +318,10 @@ export interface FileRouteTypes {
     | '/customer'
     | '/public'
     | '/_auth/login'
-    | '/_auth/profile'
     | '/_auth/register'
     | '/customer/cart'
     | '/customer/checkout'
+    | '/customer/profile'
     | '/public/about'
     | '/admin/manage/auditLogs'
     | '/admin/manage/dashboard'
@@ -347,7 +347,6 @@ export interface RootRouteChildren {
   CustomerRoute: typeof CustomerRouteWithChildren
   PublicRoute: typeof PublicRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
-  AuthProfileRoute: typeof AuthProfileRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
@@ -388,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicAboutRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/customer/profile': {
+      id: '/customer/profile'
+      path: '/profile'
+      fullPath: '/customer/profile'
+      preLoaderRoute: typeof CustomerProfileRouteImport
+      parentRoute: typeof CustomerRoute
+    }
     '/customer/checkout': {
       id: '/customer/checkout'
       path: '/checkout'
@@ -407,13 +413,6 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof AuthRegisterRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_auth/profile': {
-      id: '/_auth/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof AuthProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_auth/login': {
@@ -574,6 +573,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface CustomerRouteChildren {
   CustomerCartRoute: typeof CustomerCartRoute
   CustomerCheckoutRoute: typeof CustomerCheckoutRoute
+  CustomerProfileRoute: typeof CustomerProfileRoute
   CustomerOrdersOrderIdRoute: typeof CustomerOrdersOrderIdRoute
   CustomerOrdersManageRoute: typeof CustomerOrdersManageRoute
 }
@@ -581,6 +581,7 @@ interface CustomerRouteChildren {
 const CustomerRouteChildren: CustomerRouteChildren = {
   CustomerCartRoute: CustomerCartRoute,
   CustomerCheckoutRoute: CustomerCheckoutRoute,
+  CustomerProfileRoute: CustomerProfileRoute,
   CustomerOrdersOrderIdRoute: CustomerOrdersOrderIdRoute,
   CustomerOrdersManageRoute: CustomerOrdersManageRoute,
 }
@@ -610,7 +611,6 @@ const rootRouteChildren: RootRouteChildren = {
   CustomerRoute: CustomerRouteWithChildren,
   PublicRoute: PublicRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
-  AuthProfileRoute: AuthProfileRoute,
   AuthRegisterRoute: AuthRegisterRoute,
 }
 export const routeTree = rootRouteImport

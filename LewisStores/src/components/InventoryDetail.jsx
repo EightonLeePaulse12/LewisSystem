@@ -35,45 +35,29 @@ const InventoryDetail = ({ inventoryId }) => {
     stockQty: 0,
     unitPrice: 0,
     description: "",
-    category: "",
     reorderThreshold: 0,
   });
 
   const [images, setImages] = useState({
-    image1: null,
-    image2: null,
-    image3: null,
+    imageUrl: null,  // For new file uploads only
   });
 
-  const [previews, setPreviews] = useState({
-    image1: "",
-    image2: "",
-    image3: "",
-  });
+  const [currentImageUrl, setCurrentImageUrl] = useState("");  // For displaying existing image
 
   useEffect(() => {
     if (product) {
       setFormData({
-        name: product.name,
-        sku: product.sku,
-        stockQty: product.stockQty,
-        unitPrice: product.unitPrice,
+        name: product.name || "",
+        sku: product.sku || "",
+        stockQty: product.stockQty || 0,
+        unitPrice: product.unitPrice || 0,
         description: product.description || "",
-        category: product.category || "",
-        reorderThreshold: product.reorderThreshold,
+        reorderThreshold: product.reorderThreshold || 0,
       });
-
-      setPreviews({
-        image1: product.image1
-          ? `data:image/jpeg;base64,${product.image1}`
-          : "",
-        image2: product.image2
-          ? `data:image/jpeg;base64,${product.image2}`
-          : "",
-        image3: product.image3
-          ? `data:image/jpeg;base64,${product.image3}`
-          : "",
-      });
+      // Assuming product.imageUrl is base64; add prefix for display
+      setCurrentImageUrl(
+        product.imageUrl ? `data:image/jpeg;base64,${product.imageUrl}` : ""
+      );
     }
   }, [product]);
 
@@ -82,6 +66,7 @@ const InventoryDetail = ({ inventoryId }) => {
     onSuccess: () => {
       toast.success("Product details updated");
       queryClient.invalidateQueries({ queryKey: ["inventory", "product"] });
+      queryClient.invalidateQueries({ queryKey: ["product", inventoryId] });  // Invalidate specific product
     },
     onError: (error) =>
       toast.error("Failed to update details: " + error.message),
@@ -92,6 +77,7 @@ const InventoryDetail = ({ inventoryId }) => {
     onSuccess: () => {
       toast.success("Product images updated");
       queryClient.invalidateQueries({ queryKey: ["inventory", "product"] });
+      queryClient.invalidateQueries({ queryKey: ["product", inventoryId] });
       navigate("/manage/inventory");
     },
     onError: (error) =>
@@ -111,14 +97,12 @@ const InventoryDetail = ({ inventoryId }) => {
     }));
   };
 
-  const handleImageChange = (e, imageKey) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImages((prev) => ({ ...prev, [imageKey]: file }));
-      setPreviews((prev) => ({
-        ...prev,
-        [imageKey]: URL.createObjectURL(file),
-      }));
+      setImages((prev) => ({ ...prev, imageUrl: file }));
+      // Optional: Create a preview for the selected file (not the existing one)
+      // setCurrentImageUrl(URL.createObjectURL(file));  // Uncomment if you want to show preview immediately
     }
   };
 
@@ -126,14 +110,13 @@ const InventoryDetail = ({ inventoryId }) => {
     e.preventDefault();
     try {
       await updateMutation.mutateAsync(formData);
-      const hasNewImages = Object.values(images).some((img) => img !== null);
-      if (hasNewImages) {
+      const hasNewImage = images.imageUrl && images.imageUrl instanceof File;
+      if (hasNewImage) {
         await imagesMutation.mutateAsync(images);
       } else {
         navigate("/manage/inventory");
       }
     } catch (error) {
-      // Error handled in onError
       console.log(error);
     }
   };
@@ -217,15 +200,6 @@ const InventoryDetail = ({ inventoryId }) => {
                 />
               </div>
               <div>
-                <Label htmlFor="category">Category</Label>
-                <Input
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div>
                 <Label htmlFor="reorderThreshold">Reorder Threshold</Label>
                 <Input
                   id="reorderThreshold"
@@ -247,28 +221,23 @@ const InventoryDetail = ({ inventoryId }) => {
               />
             </div>
             <div className="space-y-4">
-              <Label>Images</Label>
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {["image1", "image2", "image3"].map((imgKey) => (
-                  <div key={imgKey}>
-                    <Label htmlFor={imgKey}>
-                      {imgKey.charAt(0).toUpperCase() + imgKey.slice(1)}
-                    </Label>
-                    <Input
-                      id={imgKey}
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleImageChange(e, imgKey)}
-                    />
-                    {previews[imgKey] && (
-                      <img
-                        src={previews[imgKey]}
-                        alt={`${imgKey} preview`}
-                        className="object-cover w-full h-32 mt-2 border rounded-md"
-                      />
-                    )}
-                  </div>
-                ))}
+              <Label>Image</Label>
+              {currentImageUrl && (
+                <img
+                  src={currentImageUrl}
+                  alt="Current product image"
+                  loading="lazy"
+                  className="object-cover w-full h-32 mt-2 border rounded-md"
+                />
+              )}
+              <div>
+                <Label htmlFor="imageUrl">New Image (optional)</Label>
+                <Input
+                  id="imageUrl"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
               </div>
             </div>
             <div className="flex gap-4">

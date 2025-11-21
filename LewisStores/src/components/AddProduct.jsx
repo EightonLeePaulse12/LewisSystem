@@ -28,9 +28,7 @@ const AddProduct = () => {
     costPrice: 0,
     stockQty: 0,
     reorderThreshold: 0,
-    image1: null,
-    image2: null,
-    image3: null,
+    imageUrl: null,
   });
 
   const mutation = useMutation({
@@ -141,16 +139,8 @@ const AddProduct = () => {
               />
             </div>
             <div>
-              <Label>Image 1</Label>
-              <Input name="image1" type="file" onChange={handleChange} />
-            </div>
-            <div>
-              <Label>Image 2</Label>
-              <Input name="image2" type="file" onChange={handleChange} />
-            </div>
-            <div>
-              <Label>Image 3</Label>
-              <Input name="image3" type="file" onChange={handleChange} />
+              <Label>Image</Label>
+              <Input name="imageUrl" type="file" onChange={handleChange} />
             </div>
             <Button type="submit" disabled={mutation.isPending}>
               {mutation.isPending ? (

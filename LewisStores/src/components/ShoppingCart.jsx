@@ -19,6 +19,7 @@ const ShoppingCart = () => {
                 <img
                   src={item.image}
                   alt={item.name}
+                  loading="lazy"
                   className="object-cover w-20 h-20 mr-4"
                 />
                 <div className="grow">

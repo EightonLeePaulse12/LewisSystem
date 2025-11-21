@@ -59,7 +59,11 @@ export function LoginForm({ className, ...props }) {
     },
     onError: (error) => {
       // Set error to root form field for display
-      setError("root", { message: error.message || "Login failed" });
+      setError("root", {
+        message:
+          error.message ||
+          "Login failed. Either your password or email is incorrect or you have been banned.",
+      });
     },
   });
 
