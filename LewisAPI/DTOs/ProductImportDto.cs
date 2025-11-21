@@ -22,10 +22,8 @@ namespace LewisAPI.DTOs
         public ProductStatus Status { get; set; }
 
         // --- CRITICAL CHANGE HERE ---
-        // These must be strings to read the text from the CSV
-        public string? Image1 { get; set; }
-        public string? Image2 { get; set; }
-        public string? Image3 { get; set; }
+        // These must be strings to read the text from the CSV  
+        public string? ImageUrl { get; set; }
         // ----------------------------
 
         public bool IsDeleted { get; set; }

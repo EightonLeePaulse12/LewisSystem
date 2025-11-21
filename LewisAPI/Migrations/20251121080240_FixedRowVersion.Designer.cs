@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LewisAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251118093338_NewMigrate")]
-    partial class NewMigrate
+    [Migration("20251121080240_FixedRowVersion")]
+    partial class FixedRowVersion
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -481,7 +481,7 @@ namespace LewisAPI.Migrations
 
                     b.Property<decimal>("CostPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18, 2");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -492,13 +492,7 @@ namespace LewisAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<byte[]>("Image1")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("Image2")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("Image3")
+                    b.Property<byte[]>("ImageUrl")
                         .HasColumnType("bytea");
 
                     b.Property<bool>("IsDeleted")
@@ -512,11 +506,11 @@ namespace LewisAPI.Migrations
                     b.Property<int>("ReorderThreshold")
                         .HasColumnType("integer");
 
-                    b.Property<byte[]>("RowVersion")
+                    b.Property<uint>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.Property<string>("SKU")
                         .IsRequired()

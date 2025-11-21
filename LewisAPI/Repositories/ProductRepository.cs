@@ -30,11 +30,14 @@ namespace LewisAPI.Repositories
 
             if (!_cache.TryGetValue(cacheKey, out IEnumerable<Product>? cachedProducts))
             {
-                var query = _context.Products.Where(p => !p.IsDeleted).AsQueryable();
+                var query = _context.Products
+                    .Where(p => !p.IsDeleted)
+                    .Include(c => c.Category) // Keep Include to load Category object
+                    .AsQueryable();
 
                 if (!string.IsNullOrEmpty(filter))
                 {
-                    query = query.Where(p => p.Name.Contains(filter) || p.SKU.Contains(filter));
+                    query = query.Where(p => p.Name.Contains(filter) || p.SKU.Contains(filter) || p.Category.Name.Contains(filter));
                 }
 
                 cachedProducts = await query.Skip((page - 1) * limit).Take(limit).ToListAsync();

@@ -29,7 +29,7 @@ namespace LewisAPI.Models
         public decimal UnitPrice { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(18, 2")]
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal CostPrice { get; set; }
 
         public decimal? Weight { get; set; }
@@ -48,16 +48,13 @@ namespace LewisAPI.Models
         [Required]
         public ProductStatus Status { get; set; }
 
-        public byte[]? Image1 { get; set; }
-        public byte[]? Image2 { get; set; }
-        public byte[]? Image3 { get; set; }
-        public bool IsDeleted { get; set; } 
+        [Column(TypeName = "bytea")] // Npgsql-specific
+        public byte[]? ImageUrl { get; set; }
 
-        [Timestamp] // Or [ConcurrencyCheck] if using a non-byte[] type
-        public byte[] RowVersion { get; set; }
+        public bool IsDeleted { get; set; }
 
         [ForeignKey("CategoryId")]
-        public virtual Category Category { get; set; }
+        public virtual Category? Category { get; set; }
 
         public virtual ICollection<InventoryTransaction> InventoryTransactions { get; set; }
         public virtual ICollection<OrderItem> OrderItems { get; set; }

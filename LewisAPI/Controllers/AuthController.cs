@@ -75,7 +75,7 @@ namespace LewisAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
-            if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
+            if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password) || user.LockoutEnd != null)
             {
                 return Unauthorized();
             }
@@ -99,7 +99,7 @@ namespace LewisAPI.Controllers
                 issuer: _config["Jwt:Issuer"]!,
                 audience: _config["Jwt:Audience"]!,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(30),
+                expires: DateTime.Now.AddHours(1),
                 signingCredentials: creds
             );
 
@@ -117,7 +117,7 @@ namespace LewisAPI.Controllers
                 user.Email,
                 user.Name,
                 user.PhoneNumber,
-                ProfilePicture = Convert.ToBase64String(user.ProfilePicture ?? new byte[0]),
+                user.ProfilePicture,
                 roles,
             };
 
