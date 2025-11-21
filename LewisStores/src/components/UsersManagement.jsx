@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { GetAllUsers, BanUser } from "@/api/manage"; // ← YOU ALREADY HAVE THIS
+import { GetAllUsers, BanUser, UnBanUser } from "@/api/manage"; // ← YOU ALREADY HAVE THIS
 import {
   Table,
   TableBody,
@@ -25,7 +25,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-
 const UsersManagement = () => {
   const [page, setPage] = useState(1);
   const limit = 10;
@@ -42,6 +41,13 @@ const UsersManagement = () => {
   // BAN USER
   const banMutation = useMutation({
     mutationFn: (id) => BanUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["users"]);
+    },
+  });
+
+  const unBanMutation = useMutation({
+    mutationFn: (id) => UnBanUser(id),
     onSuccess: () => {
       queryClient.invalidateQueries(["users"]);
     },
@@ -103,10 +109,26 @@ const UsersManagement = () => {
                         </span>
                       )}
                     </TableCell>
-
-                    {/* ACTIONS */}
                     <TableCell className="text-right">
-                      {!u.isBanned && (
+                      {/* Determine if the user is currently banned based on lockoutEnd */}
+                      {u.lockoutEnd ? (
+                        // --- UNBAN BUTTON ---
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          disabled={
+                            unBanMutation.isPending || banMutation.isPending
+                          }
+                          onClick={() => unBanMutation.mutate(u.id)} // ✅ Fixed
+                        >
+                          {unBanMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            "Unban"
+                          )}
+                        </Button>
+                      ) : (
+                        // --- BAN BUTTON (Inside AlertDialog) ---
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
                             <Button
@@ -123,15 +145,14 @@ const UsersManagement = () => {
                               )}
                             </Button>
                           </AlertDialogTrigger>
-
                           <AlertDialogContent>
                             <AlertDialogHeader>
                               <AlertDialogTitle>
-                                Ban this user?
+                                Ban user: {u.name}?
                               </AlertDialogTitle>
                               <AlertDialogDescription>
-                                This will immediately ban the user and prevent
-                                them from accessing the system.
+                                This will permanently ban the user and prevent
+                                them from accessing the system until unbanned.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>

@@ -14,7 +14,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { getProductById, updateProduct, updateProductImages } from "@/api/manage"; 
+import {
+  getProductById,
+  updateProduct,
+  updateProductImages,
+} from "@/api/manage";
 
 const EditProduct = ({ productId }) => {
   const navigate = useNavigate();
@@ -27,10 +31,9 @@ const EditProduct = ({ productId }) => {
     costPrice: 0,
     stockQty: 0,
     reorderThreshold: 0,
-    image1: null,
-    image2: null,
-    image3: null,
+    imageUrl: null,  // For new file uploads only
   });
+  const [currentImageUrl, setCurrentImageUrl] = useState("");  // For displaying existing image
 
   // Fetch product data
   const { data: product, isLoading: isFetching } = useQuery({
@@ -50,10 +53,9 @@ const EditProduct = ({ productId }) => {
         costPrice: product.costPrice || 0,
         stockQty: product.stockQty || 0,
         reorderThreshold: product.reorderThreshold || 0,
-        image1: null, // Files are not pre-loaded; user can re-upload
-        image2: null,
-        image3: null,
+        imageUrl: null,  // Always null for new uploads
       });
+      setCurrentImageUrl(product.imageUrl || "");  // Set for display (assumes base64 or URL)
     }
   }, [product]);
 
@@ -86,16 +88,25 @@ const EditProduct = ({ productId }) => {
       reorderThreshold: parseInt(form.reorderThreshold, 10),
     };
     const images = {};
-    if (form.image1) images.image1 = form.image1;
-    if (form.image2) images.image2 = form.image2;
-    if (form.image3) images.image3 = form.image3;
+    // Only include if a new file is selected (File object, not string)
+    if (form.imageUrl && form.imageUrl instanceof File) {
+      images.imageUrl = form.imageUrl;
+    }
     mutation.mutate({ details, images });
   };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setForm((prev) => ({ ...prev, [name]: files ? files[0] : value }));
-  };
+       const { name, value, files } = e.target;
+       if (files && files[0]) {
+         const file = files[0];
+         if (file.size > 1024 * 500) { // 1MB example
+           toast.error("File too large");
+           return;
+         }
+       }
+       setForm((prev) => ({ ...prev, [name]: files ? files[0] : value }));
+     };
+     
 
   if (isFetching) return <Loader2 className="mx-auto mt-10 animate-spin" />;
 
@@ -178,27 +189,18 @@ const EditProduct = ({ productId }) => {
               />
             </div>
             <div>
-              <Label>Image 1 (Re-upload to replace)</Label>
+              <Label>Current Image</Label>
+              {currentImageUrl && (
+                <img
+                  src={currentImageUrl}  // Assumes full URL or base64 with prefix
+                  alt={form.name}
+                  loading="lazy"
+                  className="max-w-xs max-h-48 object-cover mb-2"
+                />
+              )}
+              <Label>New Image (optional)</Label>
               <Input
-                name="image1"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label>Image 2 (Re-upload to replace)</Label>
-              <Input
-                name="image2"
-                type="file"
-                accept="image/*"
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <Label>Image 3 (Re-upload to replace)</Label>
-              <Input
-                name="image3"
+                name="imageUrl"
                 type="file"
                 accept="image/*"
                 onChange={handleChange}

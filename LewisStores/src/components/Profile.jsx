@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import UserOrders from "@/components/UserOrders";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 // ⚠️ FIX 4: Import the new UploadProfilePicture function from your auth file
 import { GetProfile, UpdateProfile, UploadProfilePicture } from "@/api/auth";
 
+import { getOrders } from "@/api/manage";
+import { MAX_FILE_SIZE } from "@/constants/general";
 // ⚠️ FIX 5: Remove the mock UploadProfilePicture function here since it's now in '@/api/auth'
 // (Assuming you've moved the correct implementation into the api/auth file as requested)
 
@@ -33,6 +36,22 @@ const Profile = () => {
     phoneNumber: "",
     email: "",
   });
+
+  const { data: ordersResponse } = useQuery({
+    queryKey: ["userOrders", 1, 10], // Include page and limit in key for potential pagination
+    queryFn: async () => {
+      const res = await getOrders(1, 10);
+      return res; // Assuming res is { data: [...] } or directly the array; adjust if needed
+    },
+    refetchOnWindowFocus: true, // Enable refetch when window gains focus to update status after navigation
+  });
+
+  // Extract orders array safely
+  const orders = Array.isArray(ordersResponse?.data)
+    ? ordersResponse.data
+    : Array.isArray(ordersResponse)
+    ? ordersResponse
+    : [];
 
   // This state holds the temporary local URL or the fetched base64 URL
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -120,6 +139,8 @@ const Profile = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
+    console.log(file);
+
     if (file) {
       // 1. Create a **local object URL** to display the preview immediately
       const url = URL.createObjectURL(file);
@@ -202,9 +223,7 @@ const Profile = () => {
           {/* Upload Button */}
           <div className="flex-1 space-y-2">
             <h3 className="font-medium">Upload a new photo</h3>
-            <p className="text-sm text-muted-foreground">
-              Supports JPG, PNG or WEBP.
-            </p>
+            <p className="text-sm text-muted-foreground">Supports JPG.</p>
             <Button
               variant="outline"
               disabled={imageMutation.isPending}
@@ -281,6 +300,7 @@ const Profile = () => {
           </CardFooter>
         </form>
       </Card>
+      {orders && <UserOrders />}
     </div>
   );
 };

@@ -63,9 +63,7 @@ export const createProduct = async (productDetails) => {
 export const uploadProductImages = async (id, images) => {
   try {
     const formData = new FormData();
-    if (images.image1) formData.append("image1", images.image1);
-    if (images.image2) formData.append("image2", images.image2);
-    if (images.image3) formData.append("image3", images.image3);
+    if (images.imageUrl) formData.append("imageUrl", images.imageUrl);
     const { data } = await axios.post(
       `${API_URL}manage/products/${id}/images`,
       formData,
@@ -105,9 +103,7 @@ export const updateProduct = async (id, updateDetails) => {
 export const updateProductImages = async (id, images) => {
   try {
     const formData = new FormData();
-    if (images.image1) formData.append("image1", images.image1);
-    if (images.image2) formData.append("image2", images.image2);
-    if (images.image3) formData.append("image3", images.image3);
+    if (images.imageUrl) formData.append("imageUrl", images.imageUrl);
     const { data } = await axios.patch(
       `${API_URL}manage/products/${id}/images`,
       formData,
@@ -133,7 +129,7 @@ export const getProductById = async (id) => {
     const { data } = await axios.get(`${API_URL}manage/products/${id}`, {
       ...headers(),
     });
-    console.log(data)
+    console.log(data);
     return data;
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
@@ -448,7 +444,7 @@ export const GetAllUsers = async (page, limit) => {
     const { data } = await axios.get(`${API_URL}manage/users?${params}`, {
       ...headers(),
     });
-    console.log;
+    console.log(data);
     return data;
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
@@ -460,9 +456,18 @@ export const GetAllUsers = async (page, limit) => {
 
 export const BanUser = async (id) => {
   try {
-    await axios.post(`${API_URL}manage/ban/${id}`, {
-      headers
-    });
+    await axios.post(`${API_URL}manage/ban/${id}`, {}, headers());
+  } catch (e) {
+    if (e instanceof AxiosError && e.response) {
+      throw new Error(e.response.data?.message || "Failed to fetch users");
+    }
+    throw new Error("Network error. Please try again.");
+  }
+};
+
+export const UnBanUser = async (id) => {
+  try {
+    await axios.post(`${API_URL}manage/unban/${id}`, {}, headers());
   } catch (e) {
     if (e instanceof AxiosError && e.response) {
       throw new Error(e.response.data?.message || "Failed to fetch users");

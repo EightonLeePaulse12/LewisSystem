@@ -9,6 +9,7 @@ export default function ProductDetails({ productId }) {
     queryKey: ["product", productId],
     queryFn: () => FetchSingleProduct(productId),
   });
+  
   const { addItem } = useCart();
 
   if (isLoading) return <p className="mt-8 text-center">Loading...</p>;
@@ -34,7 +35,7 @@ export default function ProductDetails({ productId }) {
                 productId: product.productId,
                 name: product.name,
                 unitPrice: product.unitPrice,
-                image: product.image1 || "",
+                image: product.imageUrl || "",
                 quantity: 1,
               })
             }

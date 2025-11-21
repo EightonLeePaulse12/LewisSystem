@@ -56,7 +56,10 @@ export default function ProductsSection() {
                     <Card key={product.productId}>
                       <CardHeader>
                         <CardTitle>{product.name}</CardTitle>
-                        {product.image1 && <img src={product.image1} alt={product.name} />}
+
+                        {product.imageUrl && (
+                          <img src={product.imageUrl} alt={product.name} loading="lazy" className="aspect-square" />
+                        )}
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm text-muted-foreground">
