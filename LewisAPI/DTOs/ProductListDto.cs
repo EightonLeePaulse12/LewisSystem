@@ -2,7 +2,7 @@
 
 namespace LewisAPI.DTOs
 {
-    public class ProductDto
+    public class ProductListDto
     {
         public Guid ProductId { get; set; }
         public string SKU { get; set; } = string.Empty;

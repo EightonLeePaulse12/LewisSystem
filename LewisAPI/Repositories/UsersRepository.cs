@@ -70,19 +70,39 @@ namespace LewisAPI.Repositories
 
         public async Task BanUserAsync(Guid id)
         {
-            var user = await _context.Users.FindAsync(id.ToString());
+            var user = await _context.Users.FindAsync(id);
+
+
+            if (!user.LockoutEnabled)
+            {
+                await _userManager.SetLockoutEnabledAsync(user, true);
+            }
+
+            // 2. Set the lockout date to the maximum possible value (permanent ban)
+            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue);
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            ClearUserCache();
+        }
+
+        public async Task UnBanUserAsync(Guid id)
+        {
+            var user = await _context.Users.FindAsync(id);
 
             if (user == null)
             {
                 return;
             }
 
-            user.LockoutEnd = DateTimeOffset.MaxValue;
+            await _userManager.SetLockoutEndDateAsync(user, null);
+            await _userManager.ResetAccessFailedCountAsync(user);
 
-            _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
             ClearUserCache();
+            
         }
     }
 }

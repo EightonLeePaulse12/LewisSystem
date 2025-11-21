@@ -8,67 +8,51 @@ namespace LewisAPI.Mappings
     {
         public MappingProfile()
         {
-            CreateMap<Product, ProductDto>()
-                .ForMember(
-                    dest => dest.Image1,
-                    opt =>
-                        opt.MapFrom(src =>
-                            src.Image1 != null ? Convert.ToBase64String(src.Image1) : null
-                        )
-                )
-                .ForMember(
-                    dest => dest.Image2,
-                    opt =>
-                        opt.MapFrom(src =>
-                            src.Image2 != null ? Convert.ToBase64String(src.Image2) : null
-                        )
-                )
-                .ForMember(
-                    dest => dest.Image3,
-                    opt =>
-                        opt.MapFrom(src =>
-                            src.Image3 != null ? Convert.ToBase64String(src.Image3) : null
-                        )
-                )
-                .ReverseMap()
-                .ForMember(
-                    dest => dest.Image1,
-                    opt =>
-                        opt.MapFrom(src =>
-                            !string.IsNullOrEmpty(src.Image1)
-                                ? Convert.FromBase64String(src.Image1)
-                                : null
-                        )
-                )
-                .ForMember(
-                    dest => dest.Image2,
-                    opt =>
-                        opt.MapFrom(src =>
-                            !string.IsNullOrEmpty(src.Image2)
-                                ? Convert.FromBase64String(src.Image2)
-                                : null
-                        )
-                )
-                .ForMember(
-                    dest => dest.Image3,
-                    opt =>
-                        opt.MapFrom(src =>
-                            !string.IsNullOrEmpty(src.Image3)
-                                ? Convert.FromBase64String(src.Image3)
-                                : null
-                        )
-                );
+            //CreateMap<Product, ProductDto>()
+            //    .ForMember(
+            //        dest => dest.Image1,
+            //        opt =>
+            //            opt.MapFrom(src =>
+            //                src.Image1 != null ? Convert.ToBase64String(src.Image1) : null
+            //            )
+            //    )
+            //    .ReverseMap()
+            //    .ForMember(
+            //        dest => dest.Image1,
+            //        opt =>
+            //            opt.MapFrom(src =>
+            //                !string.IsNullOrEmpty(src.Image1)
+            //                    ? Convert.FromBase64String(src.Image1)
+            //                    : null
+            //            )
+            //    );
 
-            CreateMap<CreateProductDto, Product>();
+
+
+
+
+            // Keep your existing ProductListDto mapping (URL-based, good for performance in lists)
+            CreateMap<Product, ProductListDto>()
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom<ProductImageUrlResolver>())
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+
+
+            // For imports (already handles string -> byte[] in controller, but ensure DTO has string)
+            CreateMap<ProductImportDto, Product>()
+                .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId ?? Guid.NewGuid()))
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
+            CreateMap<CreateProductDto, Product>()
+            .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
+
             CreateMap<UpdateProductDto, Product>()
                 .ForMember(dest => dest.ProductId, opt => opt.Ignore())
                 .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
             CreateMap<ProductImportDto, Product>()
                 .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.ProductId ?? Guid.NewGuid()))
-                .ForMember(dest => dest.Image1, opt => opt.Ignore())
-                .ForMember(dest => dest.Image2, opt => opt.Ignore())
-                .ForMember(dest => dest.Image3, opt => opt.Ignore());
+                .ForMember(dest => dest.ImageUrl, opt => opt.Ignore());
 
             CreateMap<ApplicationUser, UserManagementDto>()
             // Example of explicit mapping if property names don't match exactly

@@ -68,6 +68,16 @@ namespace LewisAPI.Controllers
             _usersRepo = usersRepo;
         }
 
+        private const string InventoryVersionKey = "inventory_version";
+
+        private const int MAX_FILE_SIZE = 500 * 1024;
+
+        private void BumpInventoryVersion()
+        {
+            _cache.Set(InventoryVersionKey, Guid.NewGuid());
+        }
+
+
         [HttpGet("inventory")]
         public async Task<IActionResult> GetInventory(
             [FromQuery] int page = 1,
@@ -75,23 +85,34 @@ namespace LewisAPI.Controllers
             [FromQuery] string? filter = null
         )
         {
-            string cacheKey = $"inventory_{page}_{limit}_{filter ?? "none"}";
-            if (!_cache.TryGetValue(cacheKey, out IEnumerable<ProductDto>? dtos))
+            // 1️⃣ Get current inventory cache version  
+            var version = _cache.GetOrCreate(InventoryVersionKey, e => Guid.NewGuid());
+
+            // 2️⃣ Build final cache key  
+            string cacheKey = $"inventory_{version}_{page}_{limit}_{filter ?? "none"}";
+
+            // 3️⃣ Try get cached results  
+            if (_cache.TryGetValue(cacheKey, out IEnumerable<ProductListDto>? dtos))
+                return Ok(dtos);
+
+            // 4️⃣ Not in cache → fetch from database  
+            try
             {
-                try
-                {
-                    var products = await _productRepo.GetAllAsync(page, limit, filter);
-                    dtos = _mapper.Map<IEnumerable<ProductDto>>(products);
-                    _cache.Set(cacheKey, dtos, TimeSpan.FromMinutes(5));
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError("An error occurred: {ErrorMessage}", ex.Message);
-                    return StatusCode(500, "An error occurred while fetching inventory.");
-                }
+                var products = await _productRepo.GetAllAsync(page, limit, filter);
+                dtos = _mapper.Map<IEnumerable<ProductListDto>>(products);
+
+                // 5️⃣ Store into cache  
+                _cache.Set(cacheKey, dtos, TimeSpan.FromMinutes(5));
+
+                return Ok(dtos);
             }
-            return Ok(dtos);
+            catch (Exception ex)
+            {
+                _logger.LogError("An error occurred: {ErrorMessage}", ex.Message);
+                return StatusCode(500, "An error occurred while fetching inventory.");
+            }
         }
+
 
         [HttpPost("products")]
         public async Task<IActionResult> CreateProduct([FromForm] CreateProductDto dto)
@@ -100,6 +121,17 @@ namespace LewisAPI.Controllers
                 return BadRequest(ModelState);
 
             var product = _mapper.Map<Product>(dto);
+
+            if (dto.ImageUrl != null)
+            {
+                if (dto.ImageUrl.Length > MAX_FILE_SIZE)
+                {
+                    return BadRequest($"Image file size exceeds the limit of {MAX_FILE_SIZE / 1024} KB.");
+                }
+                product.ImageUrl = await FileToByteArray(dto.ImageUrl);
+            }
+
+            
 
             try
             {
@@ -115,13 +147,12 @@ namespace LewisAPI.Controllers
                 );
 
                 // Invalidate cache for inventory
-                _cache.Remove("inventory_*"); // Simple wildcard invalidation; in practice, use CacheTag or remove specific keys
-                _cache.Remove("dashboard");
+                BumpInventoryVersion();
 
                 return CreatedAtAction(
-                    nameof(GetInventory), // Assuming exists
+                    nameof(GetProductById), // Assuming exists
                     new { id = created.ProductId },
-                    _mapper.Map<ProductDto>(created)
+                    _mapper.Map<ProductListDto>(created)
                 );
             }
             catch (Exception ex)
@@ -131,46 +162,6 @@ namespace LewisAPI.Controllers
             }
         }
 
-        [HttpPost("products/{id}/images")]
-        public async Task<IActionResult> UploadProductImages(
-            Guid id,
-            IFormFile? image1,
-            IFormFile? image2,
-            IFormFile? image3
-        )
-        {
-            var product = await _productRepo.GetByIdAsync(id);
-            if (product == null)
-                return NotFound();
-
-            if (image1 != null)
-                product.Image1 = await FileToByteArray(image1);
-            if (image2 != null)
-                product.Image2 = await FileToByteArray(image2);
-            if (image3 != null)
-                product.Image3 = await FileToByteArray(image3);
-
-            try
-            {
-                await _productRepo.UpdateAsync(product);
-
-                var user = await _userManager.GetUserAsync(User);
-                await LogInventoryChange(id, InventoryTransactionType.Update, 0, user?.Id);
-
-                _cache.Remove("inventory_*");
-                _cache.Remove("dashboard");
-
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    "Unexpected error occured while uploading images: {ErrorMessage}",
-                    ex.Message
-                );
-                return StatusCode(500, "An unexpected error occured while uploading images");
-            }
-        }
 
         [HttpPatch("products/{id}")]
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDto dto)
@@ -184,16 +175,27 @@ namespace LewisAPI.Controllers
                 if (existing == null)
                     return NotFound();
 
-                int qtyChange = dto.StockQty > 0 ? dto.StockQty - existing.StockQty : 0;
+                int qtyChange = dto.StockQty.HasValue && dto.StockQty.Value != existing.StockQty
+                    ? dto.StockQty.Value - existing.StockQty
+                    : 0;
+
+                // Map only provided fields (AutoMapper handles nulls)
                 _mapper.Map(dto, existing);
+
+                // If you added string? Image1 for base64 in UpdateProductDto (optional):
+                // if (!string.IsNullOrEmpty(dto.Image1))
+                // {
+                //     try { existing.ImageUrl = Convert.FromBase64String(dto.Image1); }
+                //     catch { return BadRequest("Invalid base64 for image."); }
+                // }
+                // But prefer the separate images endpoint—ignore base64 here for simplicity.
+
                 await _productRepo.UpdateAsync(existing);
 
                 var user = await _userManager.GetUserAsync(User);
                 await LogInventoryChange(id, InventoryTransactionType.Update, qtyChange, user?.Id);
 
-                // Invalidate cache
-                _cache.Remove("inventory_*");
-                _cache.Remove("dashboard");
+                BumpInventoryVersion();
 
                 return NoContent();
             }
@@ -207,21 +209,23 @@ namespace LewisAPI.Controllers
         [HttpPatch("products/{id}/images")]
         public async Task<IActionResult> UpdateProductImages(
             Guid id,
-            IFormFile? image1,
-            IFormFile? image2,
-            IFormFile? image3
+            IFormFile? imageUrl
         )
         {
             var product = await _productRepo.GetByIdAsync(id);
             if (product == null)
                 return NotFound();
 
-            if (image1 != null)
-                product.Image1 = await FileToByteArray(image1);
-            if (image2 != null)
-                product.Image2 = await FileToByteArray(image2);
-            if (image3 != null)
-                product.Image3 = await FileToByteArray(image3);
+            if (imageUrl != null)
+            {
+                // ✨ ADDED: File size validation
+                if (imageUrl.Length > MAX_FILE_SIZE)
+                {
+                    return BadRequest($"Image file size exceeds the limit of {MAX_FILE_SIZE / 1024} KB.");
+                }
+
+                product.ImageUrl = await FileToByteArray(imageUrl);
+            }
 
             try
             {
@@ -230,8 +234,7 @@ namespace LewisAPI.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 await LogInventoryChange(id, InventoryTransactionType.Update, 0, user?.Id);
 
-                _cache.Remove("inventory_*");
-                _cache.Remove("dashboard");
+                BumpInventoryVersion();
 
                 return NoContent();
             }
@@ -246,6 +249,7 @@ namespace LewisAPI.Controllers
         }
 
         [HttpDelete("products/{id}")]
+        [Authorize(Roles = "Manager, Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             try
@@ -265,8 +269,7 @@ namespace LewisAPI.Controllers
                 );
 
                 // Invalidate cache
-                _cache.Remove("inventory_*");
-                _cache.Remove("dashboard");
+                BumpInventoryVersion();
 
                 return NoContent();
             }
@@ -307,9 +310,7 @@ namespace LewisAPI.Controllers
                     var dto = importDtos[i];
                     _logger.LogInformation("Processing images for SKU: {SKU}", dto.SKU);
 
-                    entitiesList[i].Image1 = await GetImageBytesAsync(dto.Image1);
-                    entitiesList[i].Image2 = await GetImageBytesAsync(dto.Image2);
-                    entitiesList[i].Image3 = await GetImageBytesAsync(dto.Image3);
+                    entitiesList[i].ImageUrl = await GetImageBytesAsync(dto.ImageUrl);
                 }
 
                 // 3. Save to database
@@ -320,7 +321,7 @@ namespace LewisAPI.Controllers
                 var totalQty = entitiesList.Sum(p => p.StockQty);
                 await LogInventoryChange(null, InventoryTransactionType.Import, totalQty, user?.Id);
 
-                _cache.Remove("inventory_*");
+                BumpInventoryVersion();
 
                 return Ok($"Imported {importDtos.Count} products.");
             }
@@ -343,7 +344,7 @@ namespace LewisAPI.Controllers
 
             return product == null
                 ? NotFound()
-                : Ok(_mapper.Map<ProductDto>(product));
+                : Ok(_mapper.Map<ProductListDto>(product));
         }
 
         [HttpGet("products/export")]
@@ -352,7 +353,7 @@ namespace LewisAPI.Controllers
             try
             {
                 var products = await _productRepo.ExportBatchAsync();
-                var dtos = _mapper.Map<IEnumerable<ProductDto>>(products);
+                var dtos = _mapper.Map<IEnumerable<ProductListDto>>(products);
 
                 using var memoryStream = new MemoryStream();
                 using var writer = new StreamWriter(memoryStream);
@@ -383,7 +384,7 @@ namespace LewisAPI.Controllers
                 try
                 {
                     var lowStock = await _context
-                        .Products.Where(p => p.StockQty < p.ReorderThreshold && !p.IsDeleted)
+                        .Products.Where(p => p.StockQty < 10 && !p.IsDeleted)
                         .ToListAsync();
 
                     var sales = await _context
@@ -397,7 +398,79 @@ namespace LewisAPI.Controllers
 
                     var recent = await _context
                         .Orders.OrderByDescending(o => o.OrderDate)
-                        .Take(10)
+                        .Take(4)
+                        .ToListAsync();
+
+                    var totalRevenue = await _context.Orders.SumAsync(o => o.Total);
+
+                    var totalOrders = await _context.Orders.CountAsync();
+
+                    var productsInStock = await _context.Products
+                        .Where(p => p.StockQty > 0 && !p.IsDeleted)
+                        .CountAsync();
+
+                    var lowestStock = await _context.Products
+                        .Where(p => !p.IsDeleted)
+                        .OrderBy(p => p.StockQty)
+                        .Take(4)
+                        .ToListAsync();
+
+                    var todaysOrdersCount = await _context.Orders
+                        .Where(o => o.OrderDate.Date == DateTime.UtcNow.Date)
+                        .CountAsync();
+
+                    var pendingOrdersCount = await _context.Orders
+                        .Where(o => o.Status == OrderStatus.Pending)
+                        .CountAsync();
+
+                    var avgOrderValue = await _context.Orders
+                        .AverageAsync(o => o.Total);
+
+                    var sixMonthsAgo = DateTime.UtcNow.AddMonths(-6);
+                    var revenueTrend = await _context.Orders
+                        .Where(o => o.OrderDate >= sixMonthsAgo)
+                        .GroupBy(o => new { o.OrderDate.Year, o.OrderDate.Month })
+                        .OrderBy(g => g.Key.Year)
+                        .ThenBy(g => g.Key.Month)
+                        .Select(g => new
+                        {
+                            Period = $"{g.Key.Year}-{g.Key.Month:D2}",
+                            Revenue = g.Sum(o => o.Total)
+                        })
+                        .ToListAsync();
+
+                    var orderStatusDistribution = await _context.Orders
+                        .GroupBy(o => o.Status)
+                        .Select(g => new { Status = g.Key, Count = g.Count() })
+                        .ToListAsync();
+
+                    var OrderTrend = await _context.Orders
+                        .Where(o => o.OrderDate >= sixMonthsAgo)
+                        .GroupBy(o => new { o.OrderDate.Year, o.OrderDate.Month })
+                        .OrderBy(g => g.Key.Year)
+                        .ThenBy(g => g.Key.Month)
+                        .Select(g => new
+                        {
+                            Period = $"{g.Key.Year}-{g.Key.Month:D2}",
+                            Count = g.Count()
+                        })
+                        .ToListAsync();
+
+                    var Recent = await _context
+                        .Orders
+                        .Include(o => o.Customer)
+                        .ThenInclude(c => c.User)
+                        .OrderByDescending(o => o.OrderDate)
+                        .Take(4)
+                        .ToListAsync();
+
+                    var topCategoriesBySales = await _context.OrderItems
+                        .Include(oi => oi.Product)
+                        .ThenInclude(p => p.Category)
+                        .Where(oi => oi.Product != null && oi.Product.Category != null && !oi.Product.IsDeleted)
+                        .GroupBy(oi => oi.Product.Category.Name)
+                        .Select(g => new { Category = g.Key, Sales = g.Sum(oi => oi.LineTotal) })
+                        .OrderByDescending(g => g.Sales)
                         .ToListAsync();
 
                     dashboardData = new
@@ -405,7 +478,19 @@ namespace LewisAPI.Controllers
                         LowStock = lowStock,
                         Sales = sales,
                         Outstanding = outstanding,
-                        RecentOrders = recent,
+                        RecentOrders = Recent,
+                        Recent = recent,
+                        TotalRevenue = totalRevenue,
+                        TotalOrders = totalOrders,
+                        orderTrend = OrderTrend,
+                        ProductsInStock = productsInStock,
+                        LowestStock = lowestStock,
+                        TodaysOrdersCount = todaysOrdersCount,
+                        PendingOrdersCount = pendingOrdersCount,
+                        AvgOrderValue = avgOrderValue,
+                        RevenueTrend = revenueTrend,
+                        OrderStatusDistribution = orderStatusDistribution,
+                        TopCategoriesBySales = topCategoriesBySales
                     };
                     _cache.Set(cacheKey, dashboardData, TimeSpan.FromMinutes(5));
                 }
@@ -573,8 +658,7 @@ namespace LewisAPI.Controllers
                 await _auditRepo.LogAsync(audit);
 
                 // Invalidate order caches
-                _cache.Remove("orders_*");
-                _cache.Remove("dashboard");
+                BumpInventoryVersion();
 
                 return NoContent();
             }
@@ -600,8 +684,7 @@ namespace LewisAPI.Controllers
                     user?.Id
                 );
 
-                _cache.Remove("inventory_*");
-                _cache.Remove("dashboard");
+                BumpInventoryVersion();
 
                 return NoContent();
             }
@@ -636,7 +719,7 @@ namespace LewisAPI.Controllers
         }
 
         [HttpPost("ban/{id}")]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> BanUser(Guid id)
         {
             if (id == Guid.Empty)
@@ -655,6 +738,28 @@ namespace LewisAPI.Controllers
             {
                 _logger.LogError(ex, "Error banning user {UserId}", id);
                 return StatusCode(500, "Internal server error while banning user");
+            }
+        }
+
+        [HttpPost("unban/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UnBanUser(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest("Invalid User ID");
+            }
+
+            try
+            {
+                await _usersRepo.UnBanUserAsync(id);
+                _logger.LogInformation("User has been unbanned {userid}", id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unbanning user {userId}", id);
+                return StatusCode(500, ex.Message);
             }
         }
 
@@ -695,35 +800,24 @@ namespace LewisAPI.Controllers
             await _auditRepo.LogAsync(audit);
         }
 
-        private async Task<byte[]?> GetImageBytesAsync(string? imageStr)
+        private async Task<byte[]> GetImageBytesAsync(string urlOrPath)
         {
-            if (string.IsNullOrEmpty(imageStr)) return null;
+            if (string.IsNullOrEmpty(urlOrPath)) return null;
 
-            if (imageStr.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            // If it's a web URL, download it to save as binary
+            if (urlOrPath.StartsWith("http"))
             {
-                try
-                {
-                    using var client = _httpClientFactory.CreateClient();
-                    return await client.GetByteArrayAsync(imageStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning("Failed to download image from URL {Url}: {Message}", imageStr, ex.Message);
-                    return null;
-                }
+                using var client = _httpClientFactory.CreateClient();
+                return await client.GetByteArrayAsync(urlOrPath);
             }
-            else
+
+            // If it's a local file path (Server side import)
+            if (System.IO.File.Exists(urlOrPath))
             {
-                try
-                {
-                    return Convert.FromBase64String(imageStr);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning("Failed to decode base64 image: {Message}", ex.Message);
-                    return null;
-                }
+                return await System.IO.File.ReadAllBytesAsync(urlOrPath);
             }
+
+            return null;
         }
 
         //[HttpGet("products/{id}")]
@@ -740,9 +834,11 @@ namespace LewisAPI.Controllers
 
         private async Task<byte[]> FileToByteArray(IFormFile file)
         {
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-            return memoryStream.ToArray();
+            using (var memoryStream = new MemoryStream())
+            {
+                await file.CopyToAsync(memoryStream);
+                return memoryStream.ToArray();
+            }
         }
     }
 }

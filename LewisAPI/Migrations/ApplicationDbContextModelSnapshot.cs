@@ -478,7 +478,7 @@ namespace LewisAPI.Migrations
 
                     b.Property<decimal>("CostPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18, 2");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -489,13 +489,7 @@ namespace LewisAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<byte[]>("Image1")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("Image2")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("Image3")
+                    b.Property<byte[]>("ImageUrl")
                         .HasColumnType("bytea");
 
                     b.Property<bool>("IsDeleted")
@@ -508,12 +502,6 @@ namespace LewisAPI.Migrations
 
                     b.Property<int>("ReorderThreshold")
                         .HasColumnType("integer");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea");
 
                     b.Property<string>("SKU")
                         .IsRequired()

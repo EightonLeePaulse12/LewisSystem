@@ -34,6 +34,8 @@ namespace LewisAPI.Controllers
             _logger = logger;
         }
 
+        private const int MAX_FILE_SIZE_BYTES = 500 * 1024;
+
         [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
         {
@@ -130,6 +132,7 @@ namespace LewisAPI.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
+            if (file.Length > MAX_FILE_SIZE_BYTES) return BadRequest($"File size exceeds the limit of {MAX_FILE_SIZE_BYTES / 1024}KB.");
             try
             {
                 var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);

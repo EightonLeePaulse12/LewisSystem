@@ -8,6 +8,7 @@
         public DateTime CreatedDate { get; set; }
         public byte[] ProfilePicture { get; set; }
         public DateTime LastLogin { get; set; }
+        public DateTimeOffset? LockoutEnd { get; set; }
         public string UserRole { get; set; }
     }
 }

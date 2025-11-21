@@ -199,6 +199,8 @@ namespace LewisAPI
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 });
 
+            builder.Services.AddHttpContextAccessor();
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>
             {
@@ -247,6 +249,8 @@ namespace LewisAPI
                             .GetResult();
                     }
                 }
+
+                Seeder.Seed(dbContext);
             }
 
             app.UseCors("AllowAll");

@@ -12,15 +12,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LewisAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251111074533_FinalPush")]
-    partial class FinalPush
+    [Migration("20251121070414_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -481,7 +481,7 @@ namespace LewisAPI.Migrations
 
                     b.Property<decimal>("CostPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18, 2");
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -489,17 +489,10 @@ namespace LewisAPI.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("Dimensions")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<byte[]>("Image1")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("Image2")
-                        .HasColumnType("bytea");
-
-                    b.Property<byte[]>("Image3")
+                    b.Property<byte[]>("ImageUrl")
                         .HasColumnType("bytea");
 
                     b.Property<bool>("IsDeleted")
