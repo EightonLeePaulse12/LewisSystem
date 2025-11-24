@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace LewisAPI.Infrastructure.Data
 {
@@ -52,6 +53,12 @@ namespace LewisAPI.Infrastructure.Data
             builder.Entity<AuditLog>().HasIndex(al => al.Timestamp);
 
             builder.Entity<AuditLog>().HasIndex(al => al.EntityType);
+
+            builder.Entity<AuditLog>()
+                .HasOne(a => a.User)
+                .WithMany()
+                .HasForeignKey(a => a.UserId)
+                .IsRequired(false);
 
             // One-to-one for Order-Delivery
             builder
@@ -132,11 +139,6 @@ namespace LewisAPI.Infrastructure.Data
             builder.Entity<StoreSettings>().HasKey(s => s.Id);
         }
 
-        // Enum conversions if needed (Postgres handles enums as int by default, but for string storage if preferred)
-        //Example: modelBuilder.Entity<Product>().Property(p => p.Status).HasConversion<string>();
-        // But keeping as int for efficiency.
-
-        // Add any seed data if desired, e.g., categories
-        // modelBuilder.Entity<Category>().HasData(new Category { Id = 1, Name = "Furniture" });
+        
     }
 }

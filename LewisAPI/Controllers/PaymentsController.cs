@@ -231,7 +231,7 @@ namespace LewisAPI.Controllers
                 var auditLog = new AuditLog
                 {
                     LogId = Guid.NewGuid(),
-                    UserId = userId,
+                    UserId = userId != null || userId != Guid.Empty ? userId : null,
                     Action = "Confirm Payment",
                     EntityType = "Payment",
                     EntityId = payment.PaymentId.ToString(),

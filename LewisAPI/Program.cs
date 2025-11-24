@@ -231,27 +231,27 @@ namespace LewisAPI
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate();
-                var roleManager = scope.ServiceProvider.GetRequiredService<
-                    RoleManager<IdentityRole<Guid>>
-                >();
-                string[] roles = { "Admin", "Manager", "Customer" };
-                foreach (var role in roles)
-                {
-                    if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
-                    {
-                        roleManager
-                            .CreateAsync(new IdentityRole<Guid>(role))
-                            .GetAwaiter()
-                            .GetResult();
-                    }
-                }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            //    dbContext.Database.Migrate();
+            //    var roleManager = scope.ServiceProvider.GetRequiredService<
+            //        RoleManager<IdentityRole<Guid>>
+            //    >();
+            //    string[] roles = { "Admin", "Manager", "Customer" };
+            //    foreach (var role in roles)
+            //    {
+            //        if (!roleManager.RoleExistsAsync(role).GetAwaiter().GetResult())
+            //        {
+            //            roleManager
+            //                .CreateAsync(new IdentityRole<Guid>(role))
+            //                .GetAwaiter()
+            //                .GetResult();
+            //        }
+            //    }
 
-                Seeder.Seed(dbContext);
-            }
+            //    Seeder.Seed(dbContext);
+            //}
 
             app.UseCors("AllowAll");
 

@@ -44,7 +44,6 @@ namespace LewisAPI.Controllers
             IAuditLogRepository auditRepo,
             ApplicationDbContext context,
             IOrderRepository orderRepo
-
         )
         {
             _orderService = orderService;
@@ -190,21 +189,11 @@ namespace LewisAPI.Controllers
                     try
                     {
                         // Generate installment schedule
-                        var installments = _installmentService.GenerateSchedule(
-                            principal,
-                            interestRate,
-                            dto.TermMonths.Value,
-                            agreement.StartDate,
+                        var installments = await _paymentService.GenerateInstallmentScheduleAsync(
+                            agreement,
                             deposit: 0,
-                            setupFee: 0
+                            userId: userId
                         );
-
-                        // Assign AgreementId to each installment
-                        foreach (var installment in installments)
-                        {
-                            installment.InstallmentId = Guid.NewGuid();
-                            installment.AgreementId = agreement.AgreementId;
-                        }
 
                         agreement.Installments = installments;
                         order.CreditAgreement = agreement;
@@ -224,7 +213,7 @@ namespace LewisAPI.Controllers
                 var auditLog = new AuditLog
                 {
                     LogId = Guid.NewGuid(),
-                    UserId = userId,
+                    UserId = userId != Guid.Empty ? userId : null,
                     Action = "Create Order",
                     EntityType = "Order",
                     EntityId = order.OrderId.ToString(),
@@ -309,7 +298,7 @@ namespace LewisAPI.Controllers
                 var auditLog = new AuditLog
                 {
                     LogId = Guid.NewGuid(),
-                    UserId = userId,
+                    UserId = userId != Guid.Empty ? userId : null,
                     Action = "Cancel Order",
                     EntityType = "Order",
                     EntityId = id.ToString(),
@@ -352,12 +341,6 @@ namespace LewisAPI.Controllers
                 if (orderToUpdate == null)
                     return NotFound(new { success = false, message = "Order not found." });
 
-                // Create a new order object for updates to avoid tracking issues
-
-
-                if (orderToUpdate == null)
-                    return NotFound(new { success = false, message = "Order not found." });
-
                 // Update order status if provided
                 if (request.Status.HasValue)
                 {
@@ -392,7 +375,7 @@ namespace LewisAPI.Controllers
                 _context.AuditLogs.Add(new AuditLog
                 {
                     LogId = Guid.NewGuid(),
-                    UserId = userId,
+                    UserId = userId != Guid.Empty ? userId : null,
                     Action = "Update Order",
                     EntityType = "Order",
                     EntityId = id.ToString(),

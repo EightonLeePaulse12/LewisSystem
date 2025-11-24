@@ -790,7 +790,7 @@ namespace LewisAPI.Controllers
             var audit = new AuditLog
             {
                 LogId = Guid.NewGuid(),
-                UserId = performedBy,
+                UserId = performedBy != Guid.Empty ? performedBy : Guid.Empty,
                 Action = type.ToString(),
                 EntityType = "Product",
                 EntityId = productId?.ToString() ?? "Batch",

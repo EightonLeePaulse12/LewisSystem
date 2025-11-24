@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LewisAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class FinalMigrate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -192,7 +192,7 @@ namespace LewisAPI.Migrations
                 columns: table => new
                 {
                     LogId = table.Column<Guid>(type: "uuid", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: true),
                     Action = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     EntityType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     EntityId = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
@@ -206,8 +206,7 @@ namespace LewisAPI.Migrations
                         name: "FK_AuditLogs_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -248,8 +247,7 @@ namespace LewisAPI.Migrations
                     ReorderThreshold = table.Column<int>(type: "integer", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     ImageUrl = table.Column<byte[]>(type: "bytea", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "bytea", rowVersion: true, nullable: false)
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {

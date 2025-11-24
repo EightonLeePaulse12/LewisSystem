@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LewisAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251121080240_FixedRowVersion")]
-    partial class FixedRowVersion
+    [Migration("20251124093416_FinalMigrate")]
+    partial class FinalMigrate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -132,7 +132,7 @@ namespace LewisAPI.Migrations
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uuid");
 
                     b.HasKey("LogId");
@@ -506,12 +506,6 @@ namespace LewisAPI.Migrations
                     b.Property<int>("ReorderThreshold")
                         .HasColumnType("integer");
 
-                    b.Property<uint>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("xid")
-                        .HasColumnName("xmin");
-
                     b.Property<string>("SKU")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -695,9 +689,7 @@ namespace LewisAPI.Migrations
                 {
                     b.HasOne("LewisAPI.Models.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });
