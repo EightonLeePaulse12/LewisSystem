@@ -134,7 +134,7 @@ namespace LewisAPI.Services
             var auditLog = new AuditLog
             {
                 LogId = Guid.NewGuid(),
-                UserId = userId != null || userId != Guid.Empty ? userId : null,
+                UserId = userId != Guid.Empty ? userId : null,
                 Action = "Create",
                 EntityType = "CreditAgreement",
                 EntityId = agreement.AgreementId.ToString(),

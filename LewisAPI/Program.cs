@@ -19,7 +19,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using QuestPDF.Infrastructure;
 using Serilog;
-using Stripe;
 
 namespace LewisAPI
 {
@@ -41,13 +40,6 @@ namespace LewisAPI
                 .CreateBootstrapLogger();
 
             builder.Host.UseSerilog();
-
-            builder.WebHost.UseKestrel(options =>
-            {
-                options.ListenAnyIP(8080);
-            });
-
-            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             builder.Services.AddCors(options =>
             {
@@ -161,8 +153,7 @@ namespace LewisAPI
 
             builder
                 .Services.AddHealthChecks()
-                .AddDbContextCheck<ApplicationDbContext>()
-                .AddCheck("Stripe", () => HealthCheckResult.Healthy());
+                .AddDbContextCheck<ApplicationDbContext>();
 
             builder.Services.AddHangfire(config =>
                 config
