@@ -10,6 +10,13 @@ export const Route = createFileRoute("/")({
     if (isAuthenticated && userRole === "Admin") {
       throw redirect({ to: "/admin/manage/dashboard" });
     }
+    if (
+      (isAuthenticated && userRole === "Customer") ||
+      userRole === "Guest" ||
+      userRole === null
+    ) {
+      throw redirect({ to: "/public/home" });
+    }
   },
   component: RouteComponent,
 });
@@ -24,7 +31,7 @@ function RouteComponent() {
         </div>
       ) : (
         <>
-        <GuestNavbar />
+          <GuestNavbar />
         </>
       )}
       <main>

@@ -4,21 +4,21 @@ import { redirect } from "@tanstack/react-router";
 import { CustomerNavbar } from "@/components/NavigationMenus/CustomerNavbar";
 
 export const Route = createFileRoute("/customer")({
+  beforeLoad: ({ context }) => {
+    const { isAuthenticated, userRole } = context.auth;
+    if (!isAuthenticated || userRole !== "Customer") {
+      throw redirect({ to: "/public/home" });
+    }
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { isAuthenticated, userRole } = useAuth();
-
   return (
     <div>
-      {isAuthenticated && userRole === "Customer" ? (
-        <div>
-          <CustomerNavbar />
-        </div>
-      ) : (
-        redirect("/")
-      )}
+      <div>
+        <CustomerNavbar />
+      </div>
       <main>
         <Outlet />
       </main>
