@@ -12,7 +12,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-
+import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,12 +24,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import {
   DownloadReport,
   DownloadOverdueReport,
   getDashboard,
 } from "@/api/manage";
+import {
+  TrendingUp,
+  PieChart,
+  BarChart,
+  AlertTriangle,
+  ShoppingCart,
+  DollarSign,
+  Download,
+} from "lucide-react";
 
 // Register Chart.js components
 ChartJS.register(
@@ -81,8 +89,14 @@ export default function ReportsPage() {
     queryFn: getDashboard,
   });
 
-  if (isLoading) return <div>Loading dashboard...</div>;
-  if (error) return <div>Error loading dashboard</div>;
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen text-slate-600">
+        Loading reports...
+      </div>
+    );
+  if (error)
+    return <div className="text-red-600">Error loading reports: {error.message}</div>;
 
   // --- Destructure dashboard data ---
   const {
@@ -94,15 +108,17 @@ export default function ReportsPage() {
     recentOrders = [],
   } = dashboard;
 
-  // --- Chart Data ---
+  // --- Chart Data with theme colors ---
   const revenueData = {
     labels: revenueTrend.map((r) => r.period),
     datasets: [
       {
         label: "Revenue",
         data: revenueTrend.map((r) => r.revenue),
-        borderColor: "#22c55e",
-        backgroundColor: "rgba(34,197,94,0.2)",
+        borderColor: "#dc2626", // red-600
+        backgroundColor: "rgba(220,38,38,0.2)", // red-600/20
+        tension: 0.4,
+        pointBackgroundColor: "#dc2626",
       },
     ],
   };
@@ -111,16 +127,15 @@ export default function ReportsPage() {
     labels: orderStatusDistribution.map((o) => o.status),
     datasets: [
       {
-        label: "Orders",
         data: orderStatusDistribution.map((o) => o.count),
         backgroundColor: [
-          "#3b82f6",
-          "#f97316",
-          "#ef4444",
-          "#facc15",
-          "#22c55e",
-          "#6366f1",
-          "#f43f5e",
+          "#dc2626", // red-600
+          "#fbbf24", // yellow-400
+          "#334155", // slate-700
+          "#f43f5e", // rose-500
+          "#6d28d9", // violet-700
+          "#0ea5e9", // sky-500
+          "#84cc16", // lime-500
         ],
       },
     ],
@@ -132,224 +147,307 @@ export default function ReportsPage() {
       {
         label: "Sales",
         data: topCategoriesBySales.map((c) => c.sales),
-        backgroundColor: "#3b82f6",
+        backgroundColor: "#dc2626", // red-600
+        borderColor: "#dc2626",
+        borderWidth: 1,
       },
     ],
   };
 
   return (
-    <div className="container p-4 mx-auto space-y-8 max-w-7xl">
+    <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
+      <div className="container px-4 sm:px-6 py-16 mx-auto max-w-7xl space-y-16">
+        <h1 className="text-4xl font-extrabold tracking-tight text-center text-slate-900 md:text-5xl">
+          Reports Dashboard
+        </h1>
 
-      <h1 className="mb-6 text-3xl font-bold">Reports Dashboard</h1>
+        {/* Top Charts: Revenue + Order Status */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <Card className="overflow-hidden shadow-md rounded-2xl">
+            <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+              <CardTitle className="text-2xl font-bold text-slate-900">
+                Revenue Trend
+              </CardTitle>
+              <TrendingUp className="w-6 h-6 text-red-600" />
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px]">
+                <Line data={revenueData} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Top Charts: Revenue + Order Status */}
-      <div className="grid gap-6 md:grid-cols-2">
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Revenue Trend</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Line data={revenueData} />
-          </CardContent>
-        </Card>
+          <Card className="overflow-hidden shadow-md rounded-2xl">
+            <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+              <CardTitle className="text-2xl font-bold text-slate-900">
+                Order Status Distribution
+              </CardTitle>
+              <PieChart className="w-6 h-6 text-red-600" />
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px]">
+                <Pie data={orderStatusData} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Order Status Distribution</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Pie data={orderStatusData} />
-          </CardContent>
-        </Card>
-      </div>
+        {/* Mid Charts: Top Categories + Low Stock */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <Card className="overflow-hidden shadow-md rounded-2xl">
+            <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+              <CardTitle className="text-2xl font-bold text-slate-900">
+                Top Categories by Sales
+              </CardTitle>
+              <BarChart className="w-6 h-6 text-red-600" />
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px]">
+                <Bar data={topCategoriesData} options={{ responsive: true, maintainAspectRatio: false }} />
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Mid Charts: Top Categories + Low Stock */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Categories by Sales</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Bar data={topCategoriesData} />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Low Stock Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2">
-              {lowestStock.map((p) => (
-                <li key={p.productId} className="flex justify-between">
-                  <span>{p.name}</span>
-                  <span
-                    className={
-                      p.stockQty < p.reorderThreshold
-                        ? "text-red-500"
-                        : "text-green-500"
-                    }
+          <Card className="overflow-hidden shadow-md rounded-2xl">
+            <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+              <CardTitle className="text-2xl font-bold text-slate-900">
+                Low Stock Alerts
+              </CardTitle>
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              <ul className="space-y-4">
+                {lowestStock.map((p) => (
+                  <li
+                    key={p.productId}
+                    className="flex items-center justify-between text-slate-700"
                   >
-                    {p.stockQty} units
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Orders + Avg Order Value */}
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>Recent Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4">
-              {recentOrders.map(
-                (order) =>
-                  order && (
-                    <div
-                      key={order.orderId}
-                      className="flex justify-between py-2 border-b"
+                    <span className="font-medium text-lg">{p.name}</span>
+                    <Badge
+                      className={`text-sm ${
+                        p.stockQty < p.reorderThreshold
+                          ? "bg-red-600 text-white"
+                          : "bg-green-600 text-white"
+                      } font-medium px-3 py-1`}
                     >
-                      <div>{order.orderId.slice(0, 8)}...</div>
-                      <div>${order.total.toFixed(2)}</div>
-                      <div>{order.status}</div>
-                    </div>
-                  )
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                      {p.stockQty} units
+                    </Badge>
+                  </li>
+                )) || (
+                  <li className="text-center text-slate-500">No low stock items</li>
+                )}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Avg Order Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">
-              ${avgOrderValue.toFixed(2)}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        {/* Recent Orders + Avg Order Value */}
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <Card className="overflow-hidden shadow-md rounded-2xl">
+            <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+              <CardTitle className="text-2xl font-bold text-slate-900">
+                Recent Orders
+              </CardTitle>
+              <ShoppingCart className="w-6 h-6 text-red-600" />
+            </CardHeader>
+            <CardContent className="p-8 space-y-6">
+              <div className="space-y-4">
+                {recentOrders.map(
+                  (order) =>
+                    order && (
+                      <div
+                        key={order.orderId}
+                        className="flex items-center justify-between py-4 border-b border-slate-100 last:border-0 text-slate-700"
+                      >
+                        <span className="font-medium text-lg">{order.orderId.slice(0, 8)}...</span>
+                        <span className="text-lg text-slate-900">${order.total.toFixed(2)}</span>
+                        <Badge className="text-sm bg-slate-200 text-slate-700 font-medium px-3 py-1">
+                          {order.status}
+                        </Badge>
+                      </div>
+                    )
+                ) || (
+                  <div className="text-center text-slate-500">No recent orders</div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Download Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Sales Report */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Sales Report</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Label htmlFor="sales-start">Start Date</Label>
-            <Input
-              id="sales-start"
-              type="date"
-              value={salesStart}
-              onChange={(e) => setSalesStart(e.target.value)}
-            />
-            <Label htmlFor="sales-end">End Date</Label>
-            <Input
-              id="sales-end"
-              type="date"
-              value={salesEnd}
-              onChange={(e) => setSalesEnd(e.target.value)}
-            />
-            <Label htmlFor="sales-format">Format</Label>
-            <Select value={salesFormat} onValueChange={setSalesFormat}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="csv">CSV</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              className="w-full mt-2"
-              onClick={() =>
-                handleDownload("sales", salesStart, salesEnd, salesFormat)
-              }
-            >
-              Download
-            </Button>
-          </CardContent>
-        </Card>
+          <Card className="shadow-md rounded-2xl bg-red-50 hover:bg-red-100 transition-colors">
+            <CardHeader className="flex items-center justify-between px-8 py-6 bg-red-50">
+              <CardTitle className="text-lg font-medium text-slate-600">
+                Avg Order Value
+              </CardTitle>
+              <DollarSign className="w-6 h-6 text-red-600" />
+            </CardHeader>
+            <CardContent className="p-8 text-center">
+              <div className="text-2xl font-bold text-slate-900">
+                ${avgOrderValue.toFixed(2)}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Payments Report */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Payments Report</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Label htmlFor="payments-start">Start Date</Label>
-            <Input
-              id="payments-start"
-              type="date"
-              value={paymentsStart}
-              onChange={(e) => setPaymentsStart(e.target.value)}
-            />
-            <Label htmlFor="payments-end">End Date</Label>
-            <Input
-              id="payments-end"
-              type="date"
-              value={paymentsEnd}
-              onChange={(e) => setPaymentsEnd(e.target.value)}
-            />
-            <Label htmlFor="payments-format">Format</Label>
-            <Select value={paymentsFormat} onValueChange={setPaymentsFormat}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="csv">CSV</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              className="w-full mt-2"
-              onClick={() =>
-                handleDownload(
-                  "payments",
-                  paymentsStart,
-                  paymentsEnd,
-                  paymentsFormat
-                )
-              }
-            >
-              Download
-            </Button>
-          </CardContent>
-        </Card>
+        {/* Download Reports Section */}
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold text-center text-slate-900">
+            Download Reports
+          </h2>
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+            {/* Sales Report */}
+            <Card className="shadow-md rounded-2xl">
+              <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+                <CardTitle className="text-2xl font-bold text-slate-900">
+                  Sales Report
+                </CardTitle>
+                <Download className="w-6 h-6 text-red-600" />
+              </CardHeader>
+              <CardContent className="space-y-6 p-8">
+                <div>
+                  <Label htmlFor="sales-start" className="text-sm font-medium text-slate-600">
+                    Start Date
+                  </Label>
+                  <Input
+                    id="sales-start"
+                    type="date"
+                    value={salesStart}
+                    onChange={(e) => setSalesStart(e.target.value)}
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="sales-end" className="text-sm font-medium text-slate-600">
+                    End Date
+                  </Label>
+                  <Input
+                    id="sales-end"
+                    type="date"
+                    value={salesEnd}
+                    onChange={(e) => setSalesEnd(e.target.value)}
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="sales-format" className="text-sm font-medium text-slate-600">
+                    Format
+                  </Label>
+                  <Select value={salesFormat} onValueChange={setSalesFormat}>
+                    <SelectTrigger className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="csv">CSV</SelectItem>
+                      <SelectItem value="pdf">PDF</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                  onClick={() =>
+                    handleDownload("sales", salesStart, salesEnd, salesFormat)
+                  }
+                >
+                  Download
+                </Button>
+              </CardContent>
+            </Card>
 
-        {/* Overdue Report */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Overdue Report</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Label htmlFor="overdue-format">Format</Label>
-            <Select value={overdueFormat} onValueChange={setOverdueFormat}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="csv">CSV</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button
-              className="w-full mt-2"
-              onClick={() => handleOverdueDownload(overdueFormat)}
-            >
-              Download
-            </Button>
-          </CardContent>
-        </Card>
+            {/* Payments Report */}
+            <Card className="shadow-md rounded-2xl">
+              <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+                <CardTitle className="text-2xl font-bold text-slate-900">
+                  Payments Report
+                </CardTitle>
+                <Download className="w-6 h-6 text-red-600" />
+              </CardHeader>
+              <CardContent className="space-y-6 p-8">
+                <div>
+                  <Label htmlFor="payments-start" className="text-sm font-medium text-slate-600">
+                    Start Date
+                  </Label>
+                  <Input
+                    id="payments-start"
+                    type="date"
+                    value={paymentsStart}
+                    onChange={(e) => setPaymentsStart(e.target.value)}
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="payments-end" className="text-sm font-medium text-slate-600">
+                    End Date
+                  </Label>
+                  <Input
+                    id="payments-end"
+                    type="date"
+                    value={paymentsEnd}
+                    onChange={(e) => setPaymentsEnd(e.target.value)}
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="payments-format" className="text-sm font-medium text-slate-600">
+                    Format
+                  </Label>
+                  <Select value={paymentsFormat} onValueChange={setPaymentsFormat}>
+                    <SelectTrigger className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="csv">CSV</SelectItem>
+                      <SelectItem value="pdf">PDF</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                  onClick={() =>
+                    handleDownload(
+                      "payments",
+                      paymentsStart,
+                      paymentsEnd,
+                      paymentsFormat
+                    )
+                  }
+                >
+                  Download
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Overdue Report */}
+            <Card className="shadow-md rounded-2xl">
+              <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
+                <CardTitle className="text-2xl font-bold text-slate-900">
+                  Overdue Report
+                </CardTitle>
+                <Download className="w-6 h-6 text-red-600" />
+              </CardHeader>
+              <CardContent className="space-y-6 p-8">
+                <div>
+                  <Label htmlFor="overdue-format" className="text-sm font-medium text-slate-600">
+                    Format
+                  </Label>
+                  <Select value={overdueFormat} onValueChange={setOverdueFormat}>
+                    <SelectTrigger className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="csv">CSV</SelectItem>
+                      <SelectItem value="pdf">PDF</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <Button
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                  onClick={() => handleOverdueDownload(overdueFormat)}
+                >
+                  Download
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

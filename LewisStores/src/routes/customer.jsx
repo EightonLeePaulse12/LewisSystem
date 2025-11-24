@@ -19,7 +19,7 @@ function RouteComponent() {
       ) : (
         redirect("/")
       )}
-      <main className="p-4">
+      <main>
         <Outlet />
       </main>
     </div>

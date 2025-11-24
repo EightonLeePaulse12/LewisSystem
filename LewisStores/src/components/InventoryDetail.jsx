@@ -78,7 +78,7 @@ const InventoryDetail = ({ inventoryId }) => {
       toast.success("Product images updated");
       queryClient.invalidateQueries({ queryKey: ["inventory", "product"] });
       queryClient.invalidateQueries({ queryKey: ["product", inventoryId] });
-      navigate("/manage/inventory");
+      navigate("/admin/manage/inventory");
     },
     onError: (error) =>
       toast.error("Failed to update images: " + error.message),
@@ -101,8 +101,7 @@ const InventoryDetail = ({ inventoryId }) => {
     const file = e.target.files[0];
     if (file) {
       setImages((prev) => ({ ...prev, imageUrl: file }));
-      // Optional: Create a preview for the selected file (not the existing one)
-      // setCurrentImageUrl(URL.createObjectURL(file));  // Uncomment if you want to show preview immediately
+      setCurrentImageUrl(URL.createObjectURL(file));  // Show preview of new image
     }
   };
 
@@ -114,7 +113,7 @@ const InventoryDetail = ({ inventoryId }) => {
       if (hasNewImage) {
         await imagesMutation.mutateAsync(images);
       } else {
-        navigate("/manage/inventory");
+        navigate("/admin/manage/inventory");
       }
     } catch (error) {
       console.log(error);
@@ -123,18 +122,25 @@ const InventoryDetail = ({ inventoryId }) => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <Loader2 className="animate-spin" size={48} />
+      <div className="flex items-center justify-center h-screen text-slate-600">
+        <Loader2 className="w-8 h-8 text-red-600 animate-spin" />
       </div>
     );
   }
 
   if (!product) {
     return (
-      <div className="container max-w-6xl py-10 mx-auto">
-        <h2 className="mb-4 text-3xl font-bold">Product Not Found</h2>
-        <Link to="/manage/inventory">
-          <Button>Back to Inventory</Button>
+      <div className="container px-6 py-12 mx-auto max-w-7xl space-y-12">
+        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          Product Not Found
+        </h2>
+        <Link to="/admin/manage/inventory">
+          <Button
+            variant="outline"
+            className="h-12 px-8 text-base font-semibold text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+          >
+            Back to Inventory
+          </Button>
         </Link>
       </div>
     );
@@ -143,117 +149,153 @@ const InventoryDetail = ({ inventoryId }) => {
   const isPending = updateMutation.isPending || imagesMutation.isPending;
 
   return (
-    <div className="container max-w-6xl py-10 mx-auto space-y-8">
-      <h2 className="text-3xl font-bold">Edit Product</h2>
+    <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
+      <div className="container px-6 py-12 mx-auto max-w-7xl space-y-12">
+        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
+          Edit Product
+        </h2>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Update Product Details</CardTitle>
-          <CardDescription>
-            Modify the product information and images.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Card className="overflow-hidden shadow-sm rounded-xl">
+          <CardHeader className="bg-slate-50">
+            <CardTitle className="text-xl font-bold text-slate-900">
+              Update Product Details
+            </CardTitle>
+            <CardDescription className="text-slate-500">
+              Modify the product information and images.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6 md:p-8">
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <Label htmlFor="name" className="text-sm font-medium text-slate-600">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="sku" className="text-sm font-medium text-slate-600">
+                    SKU
+                  </Label>
+                  <Input
+                    id="sku"
+                    name="sku"
+                    value={formData.sku}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="stockQty" className="text-sm font-medium text-slate-600">
+                    Stock Quantity
+                  </Label>
+                  <Input
+                    id="stockQty"
+                    name="stockQty"
+                    type="number"
+                    value={formData.stockQty}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="unitPrice" className="text-sm font-medium text-slate-600">
+                    Unit Price
+                  </Label>
+                  <Input
+                    id="unitPrice"
+                    name="unitPrice"
+                    type="number"
+                    step="0.01"
+                    value={formData.unitPrice}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="reorderThreshold" className="text-sm font-medium text-slate-600">
+                    Reorder Threshold
+                  </Label>
+                  <Input
+                    id="reorderThreshold"
+                    name="reorderThreshold"
+                    type="number"
+                    value={formData.reorderThreshold}
+                    onChange={handleInputChange}
+                    required
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
+              </div>
               <div>
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                <Label htmlFor="description" className="text-sm font-medium text-slate-600">
+                  Description
+                </Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
-                  required
+                  className="mt-2 rounded-xl bg-slate-50 border-slate-200 focus:bg-white transition-all"
                 />
               </div>
-              <div>
-                <Label htmlFor="sku">SKU</Label>
-                <Input
-                  id="sku"
-                  name="sku"
-                  value={formData.sku}
-                  onChange={handleInputChange}
-                  required
-                />
+              <div className="space-y-4">
+                <Label className="text-sm font-medium text-slate-600">Image</Label>
+                {currentImageUrl && (
+                  <img
+                    src={currentImageUrl}
+                    alt="Current product image"
+                    loading="lazy"
+                    className="object-cover w-full max-w-md h-64 rounded-xl border border-slate-200 shadow-sm"
+                  />
+                )}
+                <div>
+                  <Label htmlFor="imageUrl" className="text-sm font-medium text-slate-600">
+                    New Image (optional)
+                  </Label>
+                  <Input
+                    id="imageUrl"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                  />
+                </div>
               </div>
-              <div>
-                <Label htmlFor="stockQty">Stock Quantity</Label>
-                <Input
-                  id="stockQty"
-                  name="stockQty"
-                  type="number"
-                  value={formData.stockQty}
-                  onChange={handleInputChange}
-                  required
-                />
+              <div className="flex flex-col gap-4 md:flex-row">
+                <Button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20 md:w-auto"
+                >
+                  {isPending ? (
+                    <Loader2 className="mr-2 animate-spin" size={16} />
+                  ) : null}
+                  {isPending ? "Updating..." : "Update Product"}
+                </Button>
+                <Link to="/admin/manage/inventory">
+                  <Button
+                    variant="outline"
+                    className="w-full h-12 px-8 text-base font-semibold text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 md:w-auto"
+                  >
+                    Cancel
+                  </Button>
+                </Link>
               </div>
-              <div>
-                <Label htmlFor="unitPrice">Unit Price</Label>
-                <Input
-                  id="unitPrice"
-                  name="unitPrice"
-                  type="number"
-                  step="0.01"
-                  value={formData.unitPrice}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="reorderThreshold">Reorder Threshold</Label>
-                <Input
-                  id="reorderThreshold"
-                  name="reorderThreshold"
-                  type="number"
-                  value={formData.reorderThreshold}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-4">
-              <Label>Image</Label>
-              {currentImageUrl && (
-                <img
-                  src={currentImageUrl}
-                  alt="Current product image"
-                  loading="lazy"
-                  className="object-cover w-full h-32 mt-2 border rounded-md"
-                />
-              )}
-              <div>
-                <Label htmlFor="imageUrl">New Image (optional)</Label>
-                <Input
-                  id="imageUrl"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                />
-              </div>
-            </div>
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isPending}>
-                {isPending ? (
-                  <Loader2 className="mr-2 animate-spin" size={16} />
-                ) : null}
-                {isPending ? "Updating..." : "Update Product"}
-              </Button>
-              <Link to={`/manage/inventory/${inventoryId}`}>
-                <Button variant="outline">Cancel</Button>
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

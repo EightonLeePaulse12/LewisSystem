@@ -9,10 +9,12 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PublicRouteImport } from './routes/public'
 import { Route as CustomerRouteImport } from './routes/customer'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as PublicRouteRouteImport } from './routes/public/route'
 import { Route as RouteRouteImport } from './routes/route'
+import { Route as PublicHomeRouteImport } from './routes/public/home'
+import { Route as PublicContactRouteImport } from './routes/public/contact'
 import { Route as PublicAboutRouteImport } from './routes/public/about'
 import { Route as CustomerProfileRouteImport } from './routes/customer/profile'
 import { Route as CustomerCheckoutRouteImport } from './routes/customer/checkout'
@@ -36,11 +38,6 @@ import { Route as AdminManageInventoryAddRouteImport } from './routes/admin/mana
 import { Route as AdminManageInventoryInventoryIdRouteImport } from './routes/admin/manage/inventory/$inventoryId'
 import { Route as AdminManageInventoryEditProductIdRouteImport } from './routes/admin/manage/inventory/edit/$productId'
 
-const PublicRoute = PublicRouteImport.update({
-  id: '/public',
-  path: '/public',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CustomerRoute = CustomerRouteImport.update({
   id: '/customer',
   path: '/customer',
@@ -51,15 +48,30 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicRouteRoute = PublicRouteRouteImport.update({
+  id: '/public',
+  path: '/public',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RouteRoute = RouteRouteImport.update({
   id: '/',
   path: '',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PublicHomeRoute = PublicHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
+const PublicContactRoute = PublicContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => PublicRouteRoute,
+} as any)
 const PublicAboutRoute = PublicAboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => PublicRoute,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const CustomerProfileRoute = CustomerProfileRouteImport.update({
   id: '/profile',
@@ -89,12 +101,12 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 const PublicProductsIndexRoute = PublicProductsIndexRouteImport.update({
   id: '/products/',
   path: '/products/',
-  getParentRoute: () => PublicRoute,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const PublicProductsProductIdRoute = PublicProductsProductIdRouteImport.update({
   id: '/products/$productId',
   path: '/products/$productId',
-  getParentRoute: () => PublicRoute,
+  getParentRoute: () => PublicRouteRoute,
 } as any)
 const CustomerOrdersManageRoute = CustomerOrdersManageRouteImport.update({
   id: '/orders/manage',
@@ -174,15 +186,17 @@ const AdminManageInventoryEditProductIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/public': typeof PublicRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
-  '/public': typeof PublicRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/customer/cart': typeof CustomerCartRoute
   '/customer/checkout': typeof CustomerCheckoutRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/public/about': typeof PublicAboutRoute
+  '/public/contact': typeof PublicContactRoute
+  '/public/home': typeof PublicHomeRoute
   '/admin/manage/auditLogs': typeof AdminManageAuditLogsRoute
   '/admin/manage/dashboard': typeof AdminManageDashboardRoute
   '/admin/manage/reports': typeof AdminManageReportsRoute
@@ -201,15 +215,17 @@ export interface FileRoutesByFullPath {
   '/admin/manage/inventory/edit/$productId': typeof AdminManageInventoryEditProductIdRoute
 }
 export interface FileRoutesByTo {
+  '/public': typeof PublicRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
-  '/public': typeof PublicRouteWithChildren
   '/login': typeof AuthLoginRoute
   '/register': typeof AuthRegisterRoute
   '/customer/cart': typeof CustomerCartRoute
   '/customer/checkout': typeof CustomerCheckoutRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/public/about': typeof PublicAboutRoute
+  '/public/contact': typeof PublicContactRoute
+  '/public/home': typeof PublicHomeRoute
   '/admin/manage/auditLogs': typeof AdminManageAuditLogsRoute
   '/admin/manage/dashboard': typeof AdminManageDashboardRoute
   '/admin/manage/reports': typeof AdminManageReportsRoute
@@ -230,15 +246,17 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof RouteRoute
+  '/public': typeof PublicRouteRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/customer': typeof CustomerRouteWithChildren
-  '/public': typeof PublicRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
   '/_auth/register': typeof AuthRegisterRoute
   '/customer/cart': typeof CustomerCartRoute
   '/customer/checkout': typeof CustomerCheckoutRoute
   '/customer/profile': typeof CustomerProfileRoute
   '/public/about': typeof PublicAboutRoute
+  '/public/contact': typeof PublicContactRoute
+  '/public/home': typeof PublicHomeRoute
   '/admin/manage/auditLogs': typeof AdminManageAuditLogsRoute
   '/admin/manage/dashboard': typeof AdminManageDashboardRoute
   '/admin/manage/reports': typeof AdminManageReportsRoute
@@ -259,15 +277,17 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/public'
     | '/admin'
     | '/customer'
-    | '/public'
     | '/login'
     | '/register'
     | '/customer/cart'
     | '/customer/checkout'
     | '/customer/profile'
     | '/public/about'
+    | '/public/contact'
+    | '/public/home'
     | '/admin/manage/auditLogs'
     | '/admin/manage/dashboard'
     | '/admin/manage/reports'
@@ -286,15 +306,17 @@ export interface FileRouteTypes {
     | '/admin/manage/inventory/edit/$productId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/public'
     | '/admin'
     | '/customer'
-    | '/public'
     | '/login'
     | '/register'
     | '/customer/cart'
     | '/customer/checkout'
     | '/customer/profile'
     | '/public/about'
+    | '/public/contact'
+    | '/public/home'
     | '/admin/manage/auditLogs'
     | '/admin/manage/dashboard'
     | '/admin/manage/reports'
@@ -314,15 +336,17 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/public'
     | '/admin'
     | '/customer'
-    | '/public'
     | '/_auth/login'
     | '/_auth/register'
     | '/customer/cart'
     | '/customer/checkout'
     | '/customer/profile'
     | '/public/about'
+    | '/public/contact'
+    | '/public/home'
     | '/admin/manage/auditLogs'
     | '/admin/manage/dashboard'
     | '/admin/manage/reports'
@@ -343,22 +367,15 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   RouteRoute: typeof RouteRoute
+  PublicRouteRoute: typeof PublicRouteRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   CustomerRoute: typeof CustomerRouteWithChildren
-  PublicRoute: typeof PublicRouteWithChildren
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/public': {
-      id: '/public'
-      path: '/public'
-      fullPath: '/public'
-      preLoaderRoute: typeof PublicRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/customer': {
       id: '/customer'
       path: '/customer'
@@ -373,6 +390,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/public': {
+      id: '/public'
+      path: '/public'
+      fullPath: '/public'
+      preLoaderRoute: typeof PublicRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: ''
@@ -380,12 +404,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RouteRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/public/home': {
+      id: '/public/home'
+      path: '/home'
+      fullPath: '/public/home'
+      preLoaderRoute: typeof PublicHomeRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
+    '/public/contact': {
+      id: '/public/contact'
+      path: '/contact'
+      fullPath: '/public/contact'
+      preLoaderRoute: typeof PublicContactRouteImport
+      parentRoute: typeof PublicRouteRoute
+    }
     '/public/about': {
       id: '/public/about'
       path: '/about'
       fullPath: '/public/about'
       preLoaderRoute: typeof PublicAboutRouteImport
-      parentRoute: typeof PublicRoute
+      parentRoute: typeof PublicRouteRoute
     }
     '/customer/profile': {
       id: '/customer/profile'
@@ -427,14 +465,14 @@ declare module '@tanstack/react-router' {
       path: '/products'
       fullPath: '/public/products'
       preLoaderRoute: typeof PublicProductsIndexRouteImport
-      parentRoute: typeof PublicRoute
+      parentRoute: typeof PublicRouteRoute
     }
     '/public/products/$productId': {
       id: '/public/products/$productId'
       path: '/products/$productId'
       fullPath: '/public/products/$productId'
       preLoaderRoute: typeof PublicProductsProductIdRouteImport
-      parentRoute: typeof PublicRoute
+      parentRoute: typeof PublicRouteRoute
     }
     '/customer/orders/manage': {
       id: '/customer/orders/manage'
@@ -537,6 +575,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface PublicRouteRouteChildren {
+  PublicAboutRoute: typeof PublicAboutRoute
+  PublicContactRoute: typeof PublicContactRoute
+  PublicHomeRoute: typeof PublicHomeRoute
+  PublicProductsProductIdRoute: typeof PublicProductsProductIdRoute
+  PublicProductsIndexRoute: typeof PublicProductsIndexRoute
+}
+
+const PublicRouteRouteChildren: PublicRouteRouteChildren = {
+  PublicAboutRoute: PublicAboutRoute,
+  PublicContactRoute: PublicContactRoute,
+  PublicHomeRoute: PublicHomeRoute,
+  PublicProductsProductIdRoute: PublicProductsProductIdRoute,
+  PublicProductsIndexRoute: PublicProductsIndexRoute,
+}
+
+const PublicRouteRouteWithChildren = PublicRouteRoute._addFileChildren(
+  PublicRouteRouteChildren,
+)
+
 interface AdminRouteChildren {
   AdminManageAuditLogsRoute: typeof AdminManageAuditLogsRoute
   AdminManageDashboardRoute: typeof AdminManageDashboardRoute
@@ -590,26 +648,11 @@ const CustomerRouteWithChildren = CustomerRoute._addFileChildren(
   CustomerRouteChildren,
 )
 
-interface PublicRouteChildren {
-  PublicAboutRoute: typeof PublicAboutRoute
-  PublicProductsProductIdRoute: typeof PublicProductsProductIdRoute
-  PublicProductsIndexRoute: typeof PublicProductsIndexRoute
-}
-
-const PublicRouteChildren: PublicRouteChildren = {
-  PublicAboutRoute: PublicAboutRoute,
-  PublicProductsProductIdRoute: PublicProductsProductIdRoute,
-  PublicProductsIndexRoute: PublicProductsIndexRoute,
-}
-
-const PublicRouteWithChildren =
-  PublicRoute._addFileChildren(PublicRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   RouteRoute: RouteRoute,
+  PublicRouteRoute: PublicRouteRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   CustomerRoute: CustomerRouteWithChildren,
-  PublicRoute: PublicRouteWithChildren,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
 }

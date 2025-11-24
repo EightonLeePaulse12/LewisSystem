@@ -11,6 +11,7 @@
     "generate-routes": "@tanstack/router-cli generate"
   },
   "dependencies": {
+    "@formspree/react": "^3.0.0",
     "@hookform/resolvers": "^5.2.2",
     "@paystack/inline-js": "^2.22.7",
     "@radix-ui/react-accordion": "^1.2.12",

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import ShoppingCart from "@/components/ShoppingCart";
+import Cart from "@/components/ShoppingCart";
 
 export const Route = createFileRoute("/customer/cart")({
   component: CartComponent,
@@ -24,5 +24,5 @@ function CartComponent() {
     );
   }
 
-  return <ShoppingCart />;
+  return <Cart />;
 }

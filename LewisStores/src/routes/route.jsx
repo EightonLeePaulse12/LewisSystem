@@ -23,9 +23,11 @@ function RouteComponent() {
           <CustomerNavbar />
         </div>
       ) : (
+        <>
         <GuestNavbar />
+        </>
       )}
-      <main className="p-4">
+      <main>
         <Outlet />
       </main>
     </div>
