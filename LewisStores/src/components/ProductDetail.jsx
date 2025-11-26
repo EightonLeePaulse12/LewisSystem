@@ -18,9 +18,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner"; // Optional: for feedback
+import { useAuth } from "@/hooks/useAuth";
 
 export default function ProductDetails({ productId }) {
   const { addItem } = useCart();
+  const { isAuthenticated } = useAuth();
 
   const { data: product, isLoading } = useQuery({
     queryKey: ["product", productId],
@@ -41,7 +43,7 @@ export default function ProductDetails({ productId }) {
   // --- Loading State ---
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100">
+      <div className="flex items-center justify-center min-h-screen p-4 bg-linear-to-br from-blue-50 to-red-100">
         <div className="container max-w-4xl mx-auto">
           <div className="mb-6">
             <Skeleton className="w-32 h-10 rounded-md" />
@@ -74,7 +76,7 @@ export default function ProductDetails({ productId }) {
   // --- Error / Not Found State ---
   if (!product) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100">
+      <div className="flex items-center justify-center min-h-screen p-4 bg-linear-to-br from-blue-50 to-red-100">
         <Card className="max-w-md mx-auto text-center border-red-100 shadow-lg">
           <CardContent className="pt-10 pb-10 space-y-4">
             <div className="flex items-center justify-center w-16 h-16 mx-auto bg-red-100 rounded-full">
@@ -100,7 +102,7 @@ export default function ProductDetails({ productId }) {
 
   // --- Success State ---
   return (
-    <div className="min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100">
+    <div className="min-h-screen p-4 bg-linear-to-br from-blue-50 to-red-100">
       <div className="container max-w-5xl py-8 mx-auto">
         {/* Navigation Back */}
         <div className="mb-6">
@@ -184,7 +186,7 @@ export default function ProductDetails({ productId }) {
                 <Separator className="my-2" />
 
                 {/* Description */}
-                <div className="flex-grow py-4">
+                <div className="py-4 grow">
                   <h3 className="mb-2 text-sm font-semibold text-gray-900">
                     Description
                   </h3>
@@ -207,7 +209,14 @@ export default function ProductDetails({ productId }) {
 
                   <Button
                     size="lg"
-                    onClick={handleAddToCart}
+                    onClick={
+                      isAuthenticated
+                        ? handleAddToCart
+                        : () =>
+                            toast.error(
+                              "Please log in to add items to your cart."
+                            )
+                    }
                     disabled={product.stockQty <= 0}
                     className={cn(
                       "w-full text-base font-semibold shadow-md transition-all duration-200",

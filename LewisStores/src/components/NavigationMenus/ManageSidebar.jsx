@@ -14,18 +14,12 @@ import {
   Menu,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
 
 // --- MOCKS FOR PREVIEW (Replace these with your actual imports in production) ---
 
 // Mock Router
 const useLocation = () => ({ pathname: "/admin/manage/dashboard" });
-
-
-// Mock Auth Hook
-const useAuth = () => ({
-  userRole: "Admin",
-  logout: () => console.log("Logging out..."),
-});
 
 // Mock UI Components (Simplified versions of Shadcn/your components)
 const Badge = ({ children, className }) => (
@@ -38,7 +32,7 @@ const Badge = ({ children, className }) => (
 
 const TooltipProvider = ({ children }) => <>{children}</>;
 const Tooltip = ({ children }) => (
-  <div className="group relative">{children}</div>
+  <div className="relative group">{children}</div>
 );
 const TooltipTrigger = ({ children }) => <>{children}</>;
 const TooltipContent = ({ children, className }) => (
@@ -113,7 +107,7 @@ const SidebarTrigger = ({ className }) => {
   const { toggleSidebar } = useSidebar();
   return (
     <button onClick={toggleSidebar} className={className}>
-      <Menu className="h-5 w-5" />
+      <Menu className="w-5 h-5" />
       <span className="sr-only">Toggle Sidebar</span>
     </button>
   );
@@ -179,20 +173,20 @@ const ManageSidebar = React.memo(() => {
     <TooltipProvider>
       <Sidebar
         collapsible="icon"
-        className="border-r border-slate-800 bg-slate-900 text-slate-300 shadow-2xl font-sans sticky top-0 left-0"
+        className="sticky top-0 left-0 font-sans border-r shadow-2xl border-slate-800 bg-slate-900 text-slate-300"
       >
         {/* --- Header --- */}
-        <SidebarHeader className="h-20 border-b border-slate-800/50 flex items-center justify-between px-4 bg-slate-950/30">
+        <SidebarHeader className="flex items-center justify-between h-20 px-4 border-b border-slate-800/50 bg-slate-950/30">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-red-600 to-red-800 text-white shadow-lg shadow-red-900/30 ring-1 ring-white/10">
-              <ShieldCheck className="h-6 w-6" />
+            <div className="flex items-center justify-center w-10 h-10 text-white shadow-lg shrink-0 rounded-xl bg-gradient-to-br from-red-600 to-red-800 shadow-red-900/30 ring-1 ring-white/10">
+              <ShieldCheck className="w-6 h-6" />
             </div>
             <div
               className={`flex flex-col fade-in transition-all duration-300 ${
                 isCollapsed ? "hidden w-0 opacity-0" : "flex w-auto opacity-100"
               }`}
             >
-              <span className="font-bold text-white tracking-tight text-lg leading-none">
+              <span className="text-lg font-bold leading-none tracking-tight text-white">
                 Lewis Admin
               </span>
               <span className="text-[10px] uppercase tracking-wider text-red-500 font-bold mt-1">
@@ -201,7 +195,7 @@ const ManageSidebar = React.memo(() => {
             </div>
           </div>
           {/* Collapse Trigger - Always visible for easy access */}
-          <SidebarTrigger className="text-slate-400 hover:text-white hover:bg-slate-800 p-2 rounded-lg transition-colors" />
+          <SidebarTrigger className="p-2 transition-colors rounded-lg text-slate-400 hover:text-white hover:bg-slate-800" />
         </SidebarHeader>
 
         <SidebarContent className="flex flex-col h-full bg-slate-900 scrollbar-thin scrollbar-thumb-slate-700">
@@ -216,7 +210,7 @@ const ManageSidebar = React.memo(() => {
             </SidebarGroupLabel>
 
             <SidebarGroupContent>
-              <SidebarMenu className="space-y-2 px-3">
+              <SidebarMenu className="px-3 space-y-2">
                 {visibleItems.map((item) => {
                   const isActive = location.pathname === item.to;
                   return (
@@ -238,7 +232,7 @@ const ManageSidebar = React.memo(() => {
                           >
                             <Link
                               to={item.to}
-                              className="flex items-center gap-3 w-full"
+                              className="flex items-center w-full gap-3"
                             >
                               <item.icon
                                 className={`h-5 w-5 flex-shrink-0 transition-colors ${
@@ -259,7 +253,7 @@ const ManageSidebar = React.memo(() => {
 
                               {/* Active Indicator Strip (Visible only when active) */}
                               {isActive && (
-                                <div className="absolute left-0 top-1/2 -translate-y-1/2 h-6 w-1 rounded-r-full bg-white/20" />
+                                <div className="absolute left-0 w-1 h-6 -translate-y-1/2 rounded-r-full top-1/2 bg-white/20" />
                               )}
                             </Link>
                           </SidebarMenuButton>
@@ -267,7 +261,7 @@ const ManageSidebar = React.memo(() => {
                         {isCollapsed && (
                           <TooltipContent
                             side="right"
-                            className="bg-slate-800 text-white border-slate-700 font-medium z-50 ml-2"
+                            className="z-50 ml-2 font-medium text-white bg-slate-800 border-slate-700"
                           >
                             {item.title}
                           </TooltipContent>
@@ -282,7 +276,7 @@ const ManageSidebar = React.memo(() => {
         </SidebarContent>
 
         {/* --- Footer / User --- */}
-        <SidebarFooter className="border-t border-slate-800 bg-slate-950/50 p-4">
+        <SidebarFooter className="p-4 border-t border-slate-800 bg-slate-950/50">
           <SidebarMenu>
             <SidebarMenuItem>
               <div
@@ -290,8 +284,8 @@ const ManageSidebar = React.memo(() => {
                   isCollapsed ? "justify-center" : ""
                 }`}
               >
-                <div className="h-10 w-10 rounded-full bg-slate-800 border-2 border-slate-700 flex items-center justify-center shrink-0 shadow-sm overflow-hidden">
-                  <User className="h-5 w-5 text-slate-300" />
+                <div className="flex items-center justify-center w-10 h-10 overflow-hidden border-2 rounded-full shadow-sm bg-slate-800 border-slate-700 shrink-0">
+                  <User className="w-5 h-5 text-slate-300" />
                 </div>
                 <div
                   className={`overflow-hidden transition-all duration-300 ${
@@ -322,7 +316,7 @@ const ManageSidebar = React.memo(() => {
                       ${isCollapsed ? "justify-center" : ""}
                     `}
                   >
-                    <LogOut className="h-4 w-4" />
+                    <LogOut className="w-4 h-4" />
                     <span className={`${isCollapsed ? "hidden" : "block"}`}>
                       Sign Out
                     </span>
@@ -331,7 +325,8 @@ const ManageSidebar = React.memo(() => {
                 {isCollapsed && (
                   <TooltipContent
                     side="right"
-                    className="bg-red-700 text-white border-red-600"
+                    className="text-white bg-red-700 border-red-600"
+                    onClick={logout}
                   >
                     Logout
                   </TooltipContent>

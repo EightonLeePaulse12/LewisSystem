@@ -14,6 +14,7 @@ import {
   Menu,
 } from "lucide-react";
 import { Phone } from "lucide-react";
+import { Avatar } from "../ui/avatar";
 
 export function CustomerNavbar() {
   const { logout } = useAuth();
@@ -56,12 +57,15 @@ export function CustomerNavbar() {
       {/* RIGHT: Desktop Logout */}
       <div className="hidden md:flex">
         <Button
-          className="flex items-center font-bold text-white bg-red-600 hover:bg-red-700"
+          className="flex items-center mr-4 font-bold text-white bg-red-600 hover:bg-red-700"
           onClick={logout}
         >
           <LogOut className="w-4 h-4 mr-2" />
           Logout
         </Button>
+        <Link to={"/customer/profile"}>
+          <Avatar className="border-black border-1" />
+        </Link>
       </div>
 
       {/* MOBILE MENU */}

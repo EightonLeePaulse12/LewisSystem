@@ -98,19 +98,19 @@ const SingleOrderManagement = ({ orderId }) => {
             <div className="w-full max-w-xs space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>${order.data.subtotal.toFixed(2)}</span>
+                <span>R{order.data.subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Delivery Fee</span>
-                <span>${order.data.deliveryFee.toFixed(2)}</span>
+                <span>R{order.data.deliveryFee.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax</span>
-                <span>${order.data.tax.toFixed(2)}</span>
+                <span>R{order.data.tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>${order.data.total.toFixed(2)}</span>
+                <span>R{order.data.total.toFixed(2)}</span>
               </div>
             </div>
           </div>

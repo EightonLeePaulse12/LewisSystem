@@ -68,7 +68,7 @@ const InventoryList = () => {
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
-      <div className="container px-6 py-12 mx-auto max-w-7xl space-y-12">
+      <div className="container px-6 py-12 mx-auto space-y-12 max-w-7xl">
         <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
           Inventory Management
         </h2>
@@ -79,29 +79,29 @@ const InventoryList = () => {
               placeholder="Search products by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 pr-4 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+              className="pl-10 pr-4 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
             />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute w-5 h-5 -translate-y-1/2 left-3 top-1/2 text-slate-400" />
           </div>
           <div className="relative flex-1">
             <Input
               placeholder="Filter by category..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-10 pr-4 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+              className="pl-10 pr-4 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
             />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute w-5 h-5 -translate-y-1/2 left-3 top-1/2 text-slate-400" />
           </div>
           <div className="flex gap-4 md:ml-auto">
             <Link to="/admin/manage/inventory/add">
               <Button
                 size="lg"
-                className="h-12 px-6 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                className="h-12 px-6 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
               >
                 Add Product
               </Button>
             </Link>
-            <Link to="/manage/inventory/import">
+            <Link to="/admin/manage/inventory/import">
               <Button
                 size="lg"
                 variant="outline"
@@ -155,7 +155,7 @@ const InventoryList = () => {
                       <TableCell className="font-medium text-slate-900">
                         <Link
                           to={`/admin/manage/inventory/${product.productId}`}
-                          className="hover:text-red-600 transition-colors"
+                          className="transition-colors hover:text-red-600"
                         >
                           {product.name}
                         </Link>
@@ -175,7 +175,7 @@ const InventoryList = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-slate-900">
-                        R{product.costPrice.toFixed(2)}
+                        R{product.unitPrice.toFixed(2)}
                       </TableCell>
                       <TableCell className="flex gap-2">
                         <Link to={`/admin/manage/inventory/${product.productId}`}>
@@ -188,7 +188,7 @@ const InventoryList = () => {
                         </Link>
                         <Button
                           variant="destructive"
-                          className="bg-red-600 hover:bg-red-700 text-white"
+                          className="text-white bg-red-600 hover:bg-red-700"
                           onClick={() => deleteMutation.mutate(product.productId)}
                         >
                           Delete
@@ -197,7 +197,7 @@ const InventoryList = () => {
                     </TableRow>
                   )) || (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-slate-500 py-12">
+                      <TableCell colSpan={5} className="py-12 text-center text-slate-500">
                         No products found
                       </TableCell>
                     </TableRow>
@@ -205,7 +205,7 @@ const InventoryList = () => {
                 </TableBody>
               </Table>
             )}
-            <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-100">
+            <div className="flex items-center justify-between px-6 py-4 border-t bg-slate-50 border-slate-100">
               <Button
                 variant="outline"
                 className="text-slate-600 border-slate-200 hover:bg-slate-50"
@@ -214,7 +214,7 @@ const InventoryList = () => {
               >
                 Previous
               </Button>
-              <span className="text-slate-600 font-medium">Page {page}</span>
+              <span className="font-medium text-slate-600">Page {page}</span>
               <Button
                 variant="outline"
                 className="text-slate-600 border-slate-200 hover:bg-slate-50"

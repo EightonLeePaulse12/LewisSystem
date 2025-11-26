@@ -10,23 +10,42 @@ export function GuestNavbar() {
           LEWIS
         </Link>
         <div className="flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-1 text-gray-700 hover:text-red-600">
+          <Link
+            to="/"
+            className="flex items-center space-x-1 text-gray-700 hover:text-red-600"
+          >
             <Home className="w-5 h-5" />
             <span className="hidden font-medium md:inline">Home</span>
           </Link>
-          <Link to="/public/about" className="flex items-center space-x-1 text-gray-700 hover:text-red-600">
+          <Link
+            to="/public/about"
+            className="flex items-center space-x-1 text-gray-700 hover:text-red-600"
+          >
             <Info className="w-5 h-5" />
             <span className="hidden font-medium md:inline">About Us</span>
           </Link>
-          <Link to="/public/products" className="flex items-center space-x-1 text-gray-700 hover:text-red-600">
+          <Link
+            to="/public/products"
+            className="flex items-center space-x-1 text-gray-700 hover:text-red-600"
+          >
             <ShoppingBag className="w-5 h-5" />
             <span className="hidden font-medium md:inline">Products</span>
+          </Link>
+          <Link
+            to="/public/contact"
+            className="flex items-center space-x-1 text-gray-700 hover:text-red-600"
+          >
+            <Info className="w-5 h-5" />
+            <span className="hidden font-medium md:inline">Contact Us</span>
           </Link>
         </div>
       </div>
       <div className="flex items-center space-x-4">
         <Link to="/login">
-          <Button variant="outline" className="flex items-center text-red-600 border-red-600 hover:bg-red-50">
+          <Button
+            variant="outline"
+            className="flex items-center text-red-600 border-red-600 hover:bg-red-50"
+          >
             <LogIn className="w-4 h-4 mr-2" />
             Login
           </Button>

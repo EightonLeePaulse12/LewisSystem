@@ -156,7 +156,7 @@ export default function ReportsPage() {
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
-      <div className="container px-4 sm:px-6 py-16 mx-auto max-w-7xl space-y-16">
+      <div className="container px-4 py-16 mx-auto space-y-16 sm:px-6 max-w-7xl">
         <h1 className="text-4xl font-extrabold tracking-tight text-center text-slate-900 md:text-5xl">
           Reports Dashboard
         </h1>
@@ -222,7 +222,7 @@ export default function ReportsPage() {
                     key={p.productId}
                     className="flex items-center justify-between text-slate-700"
                   >
-                    <span className="font-medium text-lg">{p.name}</span>
+                    <span className="text-lg font-medium">{p.name}</span>
                     <Badge
                       className={`text-sm ${
                         p.stockQty < p.reorderThreshold
@@ -259,9 +259,9 @@ export default function ReportsPage() {
                         key={order.orderId}
                         className="flex items-center justify-between py-4 border-b border-slate-100 last:border-0 text-slate-700"
                       >
-                        <span className="font-medium text-lg">{order.orderId.slice(0, 8)}...</span>
-                        <span className="text-lg text-slate-900">${order.total.toFixed(2)}</span>
-                        <Badge className="text-sm bg-slate-200 text-slate-700 font-medium px-3 py-1">
+                        <span className="text-lg font-medium">{order.orderId.slice(0, 8)}...</span>
+                        <span className="text-lg text-slate-900">R{order.total.toFixed(2)}</span>
+                        <Badge className="px-3 py-1 text-sm font-medium bg-slate-200 text-slate-700">
                           {order.status}
                         </Badge>
                       </div>
@@ -273,7 +273,7 @@ export default function ReportsPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-md rounded-2xl bg-red-50 hover:bg-red-100 transition-colors">
+          <Card className="transition-colors shadow-md rounded-2xl bg-red-50 hover:bg-red-100">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-red-50">
               <CardTitle className="text-lg font-medium text-slate-600">
                 Avg Order Value
@@ -302,7 +302,7 @@ export default function ReportsPage() {
                 </CardTitle>
                 <Download className="w-6 h-6 text-red-600" />
               </CardHeader>
-              <CardContent className="space-y-6 p-8">
+              <CardContent className="p-8 space-y-6">
                 <div>
                   <Label htmlFor="sales-start" className="text-sm font-medium text-slate-600">
                     Start Date
@@ -312,7 +312,7 @@ export default function ReportsPage() {
                     type="date"
                     value={salesStart}
                     onChange={(e) => setSalesStart(e.target.value)}
-                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                    className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
                   />
                 </div>
                 <div>
@@ -324,7 +324,7 @@ export default function ReportsPage() {
                     type="date"
                     value={salesEnd}
                     onChange={(e) => setSalesEnd(e.target.value)}
-                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                    className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
                   />
                 </div>
                 <div>
@@ -332,7 +332,7 @@ export default function ReportsPage() {
                     Format
                   </Label>
                   <Select value={salesFormat} onValueChange={setSalesFormat}>
-                    <SelectTrigger className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -342,7 +342,7 @@ export default function ReportsPage() {
                   </Select>
                 </div>
                 <Button
-                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
                   onClick={() =>
                     handleDownload("sales", salesStart, salesEnd, salesFormat)
                   }
@@ -360,7 +360,7 @@ export default function ReportsPage() {
                 </CardTitle>
                 <Download className="w-6 h-6 text-red-600" />
               </CardHeader>
-              <CardContent className="space-y-6 p-8">
+              <CardContent className="p-8 space-y-6">
                 <div>
                   <Label htmlFor="payments-start" className="text-sm font-medium text-slate-600">
                     Start Date
@@ -370,7 +370,7 @@ export default function ReportsPage() {
                     type="date"
                     value={paymentsStart}
                     onChange={(e) => setPaymentsStart(e.target.value)}
-                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                    className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
                   />
                 </div>
                 <div>
@@ -382,7 +382,7 @@ export default function ReportsPage() {
                     type="date"
                     value={paymentsEnd}
                     onChange={(e) => setPaymentsEnd(e.target.value)}
-                    className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all"
+                    className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
                   />
                 </div>
                 <div>
@@ -390,7 +390,7 @@ export default function ReportsPage() {
                     Format
                   </Label>
                   <Select value={paymentsFormat} onValueChange={setPaymentsFormat}>
-                    <SelectTrigger className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -400,7 +400,7 @@ export default function ReportsPage() {
                   </Select>
                 </div>
                 <Button
-                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
                   onClick={() =>
                     handleDownload(
                       "payments",
@@ -423,13 +423,13 @@ export default function ReportsPage() {
                 </CardTitle>
                 <Download className="w-6 h-6 text-red-600" />
               </CardHeader>
-              <CardContent className="space-y-6 p-8">
+              <CardContent className="p-8 space-y-6">
                 <div>
                   <Label htmlFor="overdue-format" className="text-sm font-medium text-slate-600">
                     Format
                   </Label>
                   <Select value={overdueFormat} onValueChange={setOverdueFormat}>
-                    <SelectTrigger className="mt-2 rounded-full bg-slate-50 border-slate-200 focus:bg-white transition-all">
+                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -439,7 +439,7 @@ export default function ReportsPage() {
                   </Select>
                 </div>
                 <Button
-                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20"
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
                   onClick={() => handleOverdueDownload(overdueFormat)}
                 >
                   Download

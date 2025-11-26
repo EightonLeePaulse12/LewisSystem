@@ -42,26 +42,38 @@ export default function ContactForm() {
   });
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+  try {
+    const response = await fetch("https://formspree.io/f/meonakpz", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
+
+    if (response.ok) {
       toast.success("Message sent successfully!", {
-        description: "We'll get back to you within 24 hours.",
+        description: "We'll get back to you shortly.",
       });
-      // Reset form
       setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 2000);
-  };
+    } else {
+      toast.error("Failed to send message. Try again?");
+    }
+  } catch(error) {
+    toast.error("Network error — please try again", error);
+  }
+
+  setIsLoading(false);
+};
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-red-100">
+    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-50 to-red-100">
       <div className="container max-w-6xl mx-auto">
         
         {/* Main Grid Container */}
@@ -87,7 +99,7 @@ export default function ContactForm() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-slate-200">Email Us</h3>
-                    <p className="text-sm text-slate-400">support@lewissystems.com</p>
+                    <p className="text-sm text-slate-400">support@lewisstores.com</p>
                   </div>
                 </div>
 
@@ -97,7 +109,7 @@ export default function ContactForm() {
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-slate-200">Call Us</h3>
-                    <p className="text-sm text-slate-400">+1 (555) 123-4567</p>
+                    <p className="text-sm text-slate-400">0800 111 123</p>
                     <p className="text-xs text-slate-500">Mon-Fri from 8am to 5pm</p>
                   </div>
                 </div>
@@ -109,8 +121,8 @@ export default function ContactForm() {
                   <div>
                     <h3 className="text-sm font-semibold text-slate-200">Visit Us</h3>
                     <p className="text-sm text-slate-400">
-                      123 Innovation Drive<br />
-                      Tech City, TC 90210
+                      Universal House, 53A Victoria Road<br />
+                      Woodstock, Cape Town, 7925, South Africa
                     </p>
                   </div>
                 </div>

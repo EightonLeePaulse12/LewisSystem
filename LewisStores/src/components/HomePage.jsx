@@ -181,7 +181,7 @@ const HomePage = () => {
       {/* --- Hero Section --- */}
       <section className="relative overflow-hidden text-white bg-slate-900">
         {/* Background Gradient/Image Placeholder */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 opacity-90"></div>
+        <div className="absolute inset-0 z-0 bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 opacity-90"></div>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 mix-blend-overlay z-0"></div>
 
         <div className="container relative z-10 px-6 py-20 mx-auto text-center md:py-32 md:text-left">
@@ -191,16 +191,16 @@ const HomePage = () => {
             </Badge>
             <h2 className="mb-6 text-4xl font-black leading-tight tracking-tight md:text-6xl">
               Transform Your Home <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-yellow-400">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-red-400 to-yellow-400">
                 For Less
               </span>
             </h2>
             <p className="max-w-lg mb-8 text-lg leading-relaxed md:text-xl text-slate-300">
               Discover premium furniture and appliances with flexible payment
-              plans. Free delivery on orders over R5 000.
+              plans. Variety of Delivery Options Available.
             </p>
             <div className="flex flex-col justify-center gap-4 md:flex-row md:justify-start">
-              <Link to="/products">
+              <Link to="/public/products">
                 <Button
                   size="lg"
                   className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 border-none shadow-lg md:w-auto hover:bg-red-700 shadow-red-900/20"
@@ -208,7 +208,7 @@ const HomePage = () => {
                   Shop Now
                 </Button>
               </Link>
-              <Link to="/specials">
+              <Link to="#">
                 <Button
                   variant="outline"
                   size="lg"
@@ -282,27 +282,27 @@ const HomePage = () => {
             {[
               {
                 name: "Lounge Suites",
-                img: "/public/lounge.jpg",
+                img: "/src/assets/lounge.jpg",
                 color: "bg-orange-100",
-                link: "/lounge",
+                link: "/public/products",
               },
               {
                 name: "Bedroom Suites",
-                img: "/public/bedroom.jpg",
+                img: "/src/assets/bedroom.jpg",
                 color: "bg-blue-100",
-                link: "/bedroom",
+                link: "/public/products",
               },
               {
                 name: "Dining Room",
-                img: "/public/dinningroom.jpg",
+                img: "/src/assets/dinningroom.jpg",
                 color: "bg-green-100",
-                link: "/dining",
+                link: "/public/products",
               },
               {
                 name: "Kitchen & Appliances",
-                img: "/public/appliance.jpg",
+                img: "/src/assets/appliance.jpg",
                 color: "bg-purple-100",
-                link: "/appliances",
+                link: "/public/products",
               },
             ].map((cat) => (
               <Link
@@ -331,7 +331,7 @@ const HomePage = () => {
                     }}
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-80"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-slate-900/80 via-transparent to-transparent opacity-80"></div>
 
                 <div className="absolute bottom-0 left-0 w-full p-6">
                   <h4 className="mb-2 text-xl font-bold text-white">
@@ -358,7 +358,7 @@ const HomePage = () => {
             start shopping online today for exclusive web-only deals.
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
-            <Link to="/products">
+            <Link to="/public/products">
               <Button
                 size="lg"
                 className="w-full h-12 px-8 font-bold text-red-700 bg-white sm:w-auto hover:bg-red-50"

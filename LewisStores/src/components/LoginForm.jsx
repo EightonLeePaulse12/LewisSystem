@@ -59,7 +59,9 @@ export function LoginForm({ className, ...props }) {
 
       AuthLogin(token, id, userData, userRole);
       toast.success("Successfully logged in!");
-      // Removed manual navigation and setTimeout—beforeLoad in the route will handle redirects on next load
+      setTimeout(() => {
+        // window.location.reload();
+      }, 1000)
     },
     onError: (error) => {
       // Set error to root form field for display

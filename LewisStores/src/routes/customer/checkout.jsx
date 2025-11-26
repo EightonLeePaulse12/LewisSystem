@@ -283,7 +283,7 @@ function RouteComponent() {
                           <p className="mt-2 text-sm font-medium">
                             Estimated Monthly Payment:{" "}
                             <span className="font-bold">
-                              ${monthlyPayment || "0.00"}
+                              R{monthlyPayment || "0.00"}
                             </span>
                           </p>
                         </div>
@@ -348,19 +348,19 @@ function RouteComponent() {
             <CardContent className="space-y-3">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>R{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Delivery</span>
-                <span>${deliveryFee.toFixed(2)}</span>
+                <span>R{deliveryFee.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Tax (15%)</span>
-                <span>${tax.toFixed(2)}</span>
+                <span>R{tax.toFixed(2)}</span>
               </div>
               <div className="flex justify-between pt-2 font-bold border-t">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>R{total.toFixed(2)}</span>
               </div>
             </CardContent>
 

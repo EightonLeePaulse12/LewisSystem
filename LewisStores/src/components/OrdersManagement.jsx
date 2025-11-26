@@ -181,7 +181,7 @@ const OrdersManagement = () => {
                     <TableCell>
                       {new Date(order.orderDate).toLocaleDateString()}
                     </TableCell>
-                    <TableCell>${order.total.toFixed(2)}</TableCell>
+                    <TableCell>R{order.total.toFixed(2)}</TableCell>
                     <TableCell>
                       <Badge
                         variant={

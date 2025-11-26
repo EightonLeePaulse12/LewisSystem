@@ -43,7 +43,7 @@ export default function ProductsSection() {
   return (
     <div
       className={cn(
-        "min-h-screen bg-gradient-to-br from-blue-50 to-red-100 p-4"
+        "min-h-screen bg-linear-to-br from-blue-50 to-red-100 p-4"
       )}
     >
       <div className="container mx-auto">
@@ -144,7 +144,7 @@ export default function ProductsSection() {
 
                           <div className="flex items-center justify-between">
                             <p className="text-lg font-bold text-red-600">
-                              ${product.unitPrice.toFixed(2)}
+                              R{product.unitPrice.toFixed(2)}
                             </p>
                             <p className="text-xs text-gray-600">
                               Stock:{" "}
