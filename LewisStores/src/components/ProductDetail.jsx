@@ -178,7 +178,7 @@ export default function ProductDetails({ productId }) {
                 {/* Price */}
                 <div className="mt-4 mb-6">
                   <span className="text-3xl font-bold text-red-600">
-                    ${product.unitPrice.toFixed(2)}
+                    R{product.unitPrice.toFixed(2)}
                   </span>
                   <span className="ml-2 text-sm text-gray-400">USD</span>
                 </div>

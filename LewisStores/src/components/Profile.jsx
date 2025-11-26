@@ -1,5 +1,3 @@
-// In your Profile.jsx
-
 import React, { useEffect, useState, useRef } from "react";
 import {
   Card,
@@ -11,49 +9,34 @@ import {
 } from "@/components/ui/card";
 import UserOrders from "@/components/UserOrders";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Loader2, Upload, User } from "lucide-react";
+import {
+  Loader2,
+  Upload,
+  User,
+  Mail,
+  Phone,
+  Camera,
+  Save,
+  ShieldCheck,
+  Settings,
+} from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-// ⚠️ FIX 4: Import the new UploadProfilePicture function from your auth file
 import { GetProfile, UpdateProfile, UploadProfilePicture } from "@/api/auth";
-
-import { getOrders } from "@/api/manage";
-import { MAX_FILE_SIZE } from "@/constants/general";
-// ⚠️ FIX 5: Remove the mock UploadProfilePicture function here since it's now in '@/api/auth'
-// (Assuming you've moved the correct implementation into the api/auth file as requested)
+import { Field, FieldLabel, FieldDescription } from "@/components/ui/field"; // Assuming same path as RegisterForm
 
 const Profile = () => {
   const queryClient = useQueryClient();
 
-  // ⚠️ FIX 6: The isUploading state is redundant; use imageMutation.isPending
-  // const [isUploading, setIsUploading] = useState(false);
+  // const [isUploading, setIsUploading] = useState(false); // Redundant
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
     email: "",
   });
 
-  const { data: ordersResponse } = useQuery({
-    queryKey: ["userOrders", 1, 10], // Include page and limit in key for potential pagination
-    queryFn: async () => {
-      const res = await getOrders(1, 10);
-      return res; // Assuming res is { data: [...] } or directly the array; adjust if needed
-    },
-    refetchOnWindowFocus: true, // Enable refetch when window gains focus to update status after navigation
-  });
-
-  // Extract orders array safely
-  const orders = Array.isArray(ordersResponse?.data)
-    ? ordersResponse.data
-    : Array.isArray(ordersResponse)
-    ? ordersResponse
-    : [];
-
-  // This state holds the temporary local URL or the fetched base64 URL
   const [previewUrl, setPreviewUrl] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -63,36 +46,28 @@ const Profile = () => {
     refetchOnWindowFocus: false,
   });
 
-  // ⚠️ FIX 7: useMutation takes the function itself, not the function call.
-  // The payload is passed in textMutation.mutate(payload).
   const textMutation = useMutation({
-    mutationFn: UpdateProfile, // Passed the function, not the call
+    mutationFn: UpdateProfile,
     onSuccess: () => {
       toast.success("Profile details updated successfully");
-      // Invalidate to pull fresh name/phone number
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
     onError: (error) => {
       console.error("Text update failed:", error);
-      // Get the error message from the Error object thrown in UpdateProfile
       toast.error(error.message || "Failed to update profile details");
     },
   });
 
   const imageMutation = useMutation({
     mutationFn: UploadProfilePicture,
-    // ⚠️ Removed redundant onMutate/onSettled hooks for isUploading state
     onSuccess: (data) => {
       toast.success(data?.message || "Profile picture updated!");
-      // Invalidate to pull the fresh image data from the server
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
     onError: (error) => {
       console.error("Image upload failed:", error);
-      // Get the error message from the Error object thrown in UploadProfilePicture
       toast.error(error.message || "Failed to upload profile picture.");
 
-      // Revert the preview to the current profile picture (if one exists)
       if (userProfile?.profilePicture) {
         setPreviewUrl(userProfile.profilePicture);
       } else {
@@ -101,7 +76,6 @@ const Profile = () => {
     },
   });
 
-  // ⚠️ FIX 8: Cleanup the useEffect to use the object URL cleanup and avoid relying on previewUrl in the dependency array.
   useEffect(() => {
     if (userProfile) {
       setFormData({
@@ -110,30 +84,23 @@ const Profile = () => {
         email: userProfile.email || "",
       });
 
-      // Set initial preview to the fetched base64 URL
       if (userProfile.profilePicture) {
         setPreviewUrl(userProfile.profilePicture);
       }
     }
 
-    // Cleanup function for the object URL to prevent memory leaks.
-    // This is primarily for the temporary object URL created in handleFileChange.
     return () => {
-      // Check if the current previewUrl is a temporary object URL before revoking
       if (previewUrl && previewUrl.startsWith("blob:")) {
         URL.revokeObjectURL(previewUrl);
       }
     };
-    // Depend only on userProfile to run when data is fetched/updated
   }, [userProfile, previewUrl]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ⚠️ FIX 9: Mutate with the correct payload for the UpdateProfile endpoint
     textMutation.mutate({
       name: formData.name,
       phoneNumber: formData.phoneNumber,
-      // Only name and phoneNumber are required by the C# UpdateProfile method's DTO
     });
   };
 
@@ -142,165 +109,221 @@ const Profile = () => {
     console.log(file);
 
     if (file) {
-      // 1. Create a **local object URL** to display the preview immediately
       const url = URL.createObjectURL(file);
-      // ⚠️ FIX 10: Revoke the previous temporary URL if one exists before setting the new one
       if (previewUrl && previewUrl.startsWith("blob:")) {
         URL.revokeObjectURL(previewUrl);
       }
-      setPreviewUrl(url); // This ensures the new image shows instantly
-
-      // Clear the input value so the same file can be selected again if needed
+      setPreviewUrl(url);
       event.target.value = null;
 
-      // 2. Prepare FormData for the API call
       const formDataPayload = new FormData();
       formDataPayload.append("file", file);
 
-      // 3. Trigger the image mutation
       imageMutation.mutate(formDataPayload);
     }
   };
 
   if (isLoading) {
     return (
-      <div className="flex justify-center p-10">
-        <Loader2 className="animate-spin" />
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
       </div>
     );
   }
 
-  const currentAvatarSource = previewUrl || ""; // Use the preview state as the source of truth
+  const currentAvatarSource = previewUrl || "";
 
   return (
-    <div className="container max-w-3xl py-10 mx-auto space-y-8">
-      {/* ⚠️ FIX 11: Removed the unnecessary <img> tag which also used the wrong source */}
-      {/* <div>...</div> */}
+    <div className="container max-w-6xl py-10 mx-auto space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col gap-2">
+        <h2 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-gray-900">
+          <Settings className="w-8 h-8 text-red-500" />
+          Account Settings
+        </h2>
+        <p className="text-gray-600">
+          Manage your account profile, contact information, and view your order
+          history.
+        </p>
+      </div>
 
-      <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
-      <p className="text-muted-foreground">
-        Manage your account settings and profile preferences.
-      </p>
-      <Separator />
-
-      {/* --- Profile Picture Card --- */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Profile Picture</CardTitle>
-          <CardDescription>
-            Click the image to upload a new photo.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
-          {/* Avatar Display & Click Handler */}
-          <div
-            className="relative cursor-pointer group"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Avatar className="w-24 h-24 transition-opacity border-4 shadow-sm border-muted group-hover:opacity-75">
-              {/* ⚠️ FIX 12: Use component state 'previewUrl' for the image source */}
-              <AvatarImage
-                src={currentAvatarSource} // Use the state that holds the temp or fetched URL
-                className="object-cover"
-              />
-              <AvatarFallback className="text-4xl">
-                <User />
-              </AvatarFallback>
-            </Avatar>
-            <div className="absolute inset-0 flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-100">
-              <Upload className="w-6 h-6 text-white drop-shadow-md" />
-            </div>
-          </div>
-          {/* Hidden File Input */}
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileChange}
-            disabled={imageMutation.isPending}
-          />
-          {/* Upload Button */}
-          <div className="flex-1 space-y-2">
-            <h3 className="font-medium">Upload a new photo</h3>
-            <p className="text-sm text-muted-foreground">Supports JPG.</p>
-            <Button
-              variant="outline"
-              disabled={imageMutation.isPending}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {imageMutation.isPending && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              )}
-              {imageMutation.isPending ? "Uploading..." : "Select Image"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* --- Personal Information Card --- */}
-      <Card>
-        <form onSubmit={handleSubmit}>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-            <CardDescription>
-              Update your personal details here.
-            </CardDescription>
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        {/* --- Left Column: Profile Picture Card --- */}
+        <Card className="h-full border-0 shadow-xl lg:col-span-1 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="pb-2 text-center">
+            <CardTitle className="text-xl">Profile Picture</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {/* Name Input */}
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  placeholder="John Doe"
-                  disabled={textMutation.isPending}
-                />
+          <CardContent className="flex flex-col items-center gap-6 pt-6">
+            {/* Avatar Display & Click Handler */}
+            <div className="relative group">
+              <div
+                className="relative w-40 h-40 overflow-hidden border-4 border-white rounded-full shadow-2xl cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Avatar className="w-full h-full">
+                  <AvatarImage
+                    src={currentAvatarSource}
+                    className="object-cover"
+                  />
+                  <AvatarFallback className="text-6xl text-gray-400 bg-gray-100">
+                    <User />
+                  </AvatarFallback>
+                </Avatar>
+
+                {/* Hover Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center transition-opacity duration-200 opacity-0 bg-black/40 group-hover:opacity-100">
+                  <Camera className="w-10 h-10 text-white" />
+                </div>
+
+                {/* Loading Overlay */}
+                {imageMutation.isPending && (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/60">
+                    <Loader2 className="w-10 h-10 text-red-500 animate-spin" />
+                  </div>
+                )}
               </div>
-              {/* Phone Number Input */}
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  value={formData.phoneNumber}
-                  onChange={(e) =>
-                    setFormData({ ...formData, phoneNumber: e.target.value })
-                  }
-                  placeholder="+1 234 567 890"
-                  disabled={textMutation.isPending}
-                />
-              </div>
+
+              {/* Edit Badge */}
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute p-2 text-white transition-colors bg-red-500 rounded-full shadow-lg bottom-2 right-2 hover:bg-red-600"
+              >
+                <Upload className="w-4 h-4" />
+              </button>
             </div>
-            {/* Email Input (Read-only) */}
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                value={formData.email}
-                disabled
-                className="bg-muted"
-              />
-              <p className="text-[0.8rem] text-muted-foreground">
-                Email cannot be changed.
+
+            {/* Hidden File Input */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileChange}
+              disabled={imageMutation.isPending}
+            />
+
+            <div className="space-y-1 text-center">
+              <p className="text-sm font-medium text-gray-900">
+                {formData.name || "User"}
+              </p>
+              <p className="text-xs text-gray-500">
+                Supports JPG, PNG (Max 5MB)
               </p>
             </div>
           </CardContent>
-          <CardFooter className="px-6 py-4 border-t bg-muted/50">
-            <Button type="submit" disabled={textMutation.isPending}>
-              {textMutation.isPending && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              )}
-              {textMutation.isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
-      {orders && <UserOrders />}
+        </Card>
+
+        {/* --- Right Column: Personal Information Form --- */}
+        <Card className="border-0 shadow-xl lg:col-span-2 bg-white/80 backdrop-blur-sm">
+          <form onSubmit={handleSubmit}>
+            <CardHeader className="pb-6 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-red-500" />
+                <CardTitle className="text-xl">Personal Information</CardTitle>
+              </div>
+              <CardDescription>
+                Update your personal details and contact information.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent className="pt-6 space-y-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Name Input */}
+                <Field>
+                  <FieldLabel
+                    htmlFor="name"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Full Name
+                  </FieldLabel>
+                  <div className="relative">
+                    <User className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      placeholder="John Doe"
+                      disabled={textMutation.isPending}
+                      className="py-3 pl-10 pr-4 transition-all duration-200 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+                </Field>
+
+                {/* Phone Number Input */}
+                <Field>
+                  <FieldLabel
+                    htmlFor="phone"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Phone Number
+                  </FieldLabel>
+                  <div className="relative">
+                    <Phone className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                    <Input
+                      id="phone"
+                      value={formData.phoneNumber}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          phoneNumber: e.target.value,
+                        })
+                      }
+                      placeholder="+1 234 567 890"
+                      disabled={textMutation.isPending}
+                      className="py-3 pl-10 pr-4 transition-all duration-200 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    />
+                  </div>
+                </Field>
+
+                {/* Email Input (Read-only) */}
+                <Field className="md:col-span-2">
+                  <FieldLabel
+                    htmlFor="email"
+                    className="text-sm font-medium text-gray-700"
+                  >
+                    Email Address
+                  </FieldLabel>
+                  <div className="relative">
+                    <Mail className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+                    <Input
+                      id="email"
+                      value={formData.email}
+                      disabled
+                      className="py-3 pl-10 pr-4 text-gray-500 border-gray-200 rounded-lg cursor-not-allowed bg-gray-50"
+                    />
+                  </div>
+                  <FieldDescription className="mt-1 text-xs text-gray-400">
+                    Email address cannot be changed for security reasons.
+                  </FieldDescription>
+                </Field>
+              </div>
+            </CardContent>
+
+            <CardFooter className="flex justify-end px-6 py-4 bg-gray-50/50 rounded-b-xl">
+              <Button
+                type="submit"
+                disabled={textMutation.isPending}
+                className="bg-red-500 hover:bg-red-600 text-white min-w-[140px] shadow-md"
+              >
+                {textMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Changes
+                  </>
+                )}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 };

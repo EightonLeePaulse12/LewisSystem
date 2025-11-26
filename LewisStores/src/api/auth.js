@@ -90,3 +90,20 @@ export const UploadProfilePicture = async (formDataPayload) => {
     throw new Error("Network error. Please try again.");
   }
 };
+
+export const GetProfilePicture = async (userId) => {
+  try {
+    // Set responseType to 'blob' since the endpoint returns an image file (binary data)
+    const response = await axios.get(`${API_URL}auth/profile-picture/${userId}`, {
+      ...headers(),
+      responseType: 'blob',  // Ensures the response is treated as binary data (e.g., for images)
+    });
+    console.log(response);
+    return response.data;  // Return the blob data (the image)
+  } catch (e) {
+    if (e instanceof AxiosError && e.response) {
+      throw new Error(e.response.data?.message || "Failed to fetch profile picture");
+    }
+    throw new Error("Network error. Please try again.");
+  }
+};

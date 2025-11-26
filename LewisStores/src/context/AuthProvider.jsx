@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useCookies } from "react-cookie";
 import { AuthContext } from "./AuthContext";
 import { toast } from "sonner";
+import API_URL from "@/constants/ApiUrl";
+import { GetProfilePicture } from "@/api/auth";
 
 export const AuthProvider = ({ children }) => {
   const [cookies, setCookie, removeCookie] = useCookies([
@@ -16,6 +18,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.getItem("userDetails") || null
   );
   const [userRole, setUserRole] = useState(cookies.userRole || null);
+  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
   // initialize isAuthenticated from existing cookie/token
   const [isAuthenticated, setIsAuthenticated] = useState(!!cookies.token);
 
@@ -29,6 +32,10 @@ export const AuthProvider = ({ children }) => {
     setStoredId(newId);
     setUserDetails(userDetails);
     setUserRole(userRole);
+    if (userDetails && userDetails.id) {
+      const profileUrl = GetProfilePicture(userDetails.id);
+      setProfilePictureUrl(profileUrl);
+    }
   };
 
   const logout = () => {
@@ -43,6 +50,11 @@ export const AuthProvider = ({ children }) => {
       setStoredId(null);
       setUserDetails(null);
       setUserRole(null);
+
+      if (userDetails && userDetails.id) {
+        setProfilePictureUrl(null);
+      }
+
       // Show feedback
       toast.success("Logged out successfully!");
       // Reload and redirect (simplified)
@@ -69,6 +81,7 @@ export const AuthProvider = ({ children }) => {
           logout,
           storedId,
           isAuthenticated,
+          profilePictureUrl,
         }}
       >
         {children}

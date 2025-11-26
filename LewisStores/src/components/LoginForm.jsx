@@ -60,7 +60,7 @@ export function LoginForm({ className, ...props }) {
       AuthLogin(token, id, userData, userRole);
       toast.success("Successfully logged in!");
       setTimeout(() => {
-        // window.location.reload();
+        window.location.reload();
       }, 1000)
     },
     onError: (error) => {

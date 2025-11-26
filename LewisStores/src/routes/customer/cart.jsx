@@ -17,7 +17,7 @@ function CartComponent() {
         <div className="container py-8 mx-auto text-center">
           <h1 className="mb-4 text-2xl font-bold">Your Cart is Empty</h1>
           <Link to="/products">
-            <Button>Continue Shopping</Button>
+            <Button className="bg-red-500">Continue Shopping</Button>
           </Link>
         </div>
       </>

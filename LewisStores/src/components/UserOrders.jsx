@@ -1,12 +1,7 @@
-import React from "react";
+import React, { memo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -61,16 +56,17 @@ const UserOrders = () => {
   };
 
   return (
-    <div className={cn("min-h-screen bg-gradient-to-br from-blue-50 to-red-100 p-4")}>
+    <div className={cn("min-h-screen p-4")}>
       <div className="container max-w-5xl mx-auto">
-        
         {/* Header Section */}
         <div className="mb-8 text-center">
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full shadow-lg shadow-red-200">
             <ShoppingBag className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900">My Orders</h1>
-          <p className="mt-2 text-gray-600">Track and manage your recent purchases</p>
+          <p className="mt-2 text-gray-600">
+            Track and manage your recent purchases
+          </p>
         </div>
 
         {/* Main Content Card */}
@@ -86,7 +82,10 @@ const UserOrders = () => {
               // Skeleton Loading State
               <div className="p-6 space-y-4">
                 {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center justify-between p-2">
+                  <div
+                    key={i}
+                    className="flex items-center justify-between p-2"
+                  >
                     <div className="flex items-center gap-4">
                       <Skeleton className="w-12 h-12 rounded-lg" />
                       <div className="space-y-2">
@@ -106,9 +105,11 @@ const UserOrders = () => {
               // Empty State
               <div className="py-16 text-center">
                 <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full">
-                    <ShoppingBag className="w-8 h-8 text-gray-400" />
+                  <ShoppingBag className="w-8 h-8 text-gray-400" />
                 </div>
-                <p className="text-lg font-medium text-gray-900">No orders found</p>
+                <p className="text-lg font-medium text-gray-900">
+                  No orders found
+                </p>
                 <p className="mt-1 text-sm text-gray-500">
                   Looks like you haven't placed any orders yet.
                 </p>
@@ -141,10 +142,12 @@ const UserOrders = () => {
                         <TableCell>
                           <div className="flex items-center gap-2 text-gray-600">
                             <Calendar className="w-4 h-4 text-gray-400" />
-                            {new Date(order.OrderDate || order.orderDate).toLocaleDateString(undefined, {
-                                year: 'numeric',
-                                month: 'short',
-                                day: 'numeric'
+                            {new Date(
+                              order.OrderDate || order.orderDate
+                            ).toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
                             })}
                           </div>
                         </TableCell>
@@ -162,7 +165,7 @@ const UserOrders = () => {
                           </Badge>
                         </TableCell>
                         <TableCell className="pr-6 text-right">
-                            <ChevronRight className="w-5 h-5 ml-auto text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-red-500" />
+                          <ChevronRight className="w-5 h-5 ml-auto text-gray-400 transition-transform group-hover:translate-x-1 group-hover:text-red-500" />
                         </TableCell>
                       </TableRow>
                     ))}
@@ -177,4 +180,4 @@ const UserOrders = () => {
   );
 };
 
-export default UserOrders;
+export default memo(UserOrders);

@@ -117,7 +117,7 @@ const OrderDetail = ({ orderId }) => {
   // --- Error State ---
   if (detailsError) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100">
+      <div className="flex items-center justify-center min-h-screen p-4">
         <Card className="w-full max-w-md border-red-200 shadow-lg">
           <CardHeader className="text-center">
             <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
@@ -129,7 +129,7 @@ const OrderDetail = ({ orderId }) => {
             <CardDescription>{detailsError.message}</CardDescription>
           </CardHeader>
           <CardFooter className="flex justify-center">
-            <Link to="/customer/orders">
+            <Link to="/customer/orders/manage">
               <Button
                 variant="outline"
                 className="text-red-700 border-red-200 hover:bg-red-50"
@@ -143,15 +143,14 @@ const OrderDetail = ({ orderId }) => {
       </div>
     );
   }
-
   // --- Success State ---
   return (
-    <div className="min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100 lg:p-8">
+    <div className="min-h-screen p-4 lg:p-8">
       <div className="container max-w-6xl mx-auto">
         {/* Navigation & Header */}
         <div className="flex flex-col justify-between gap-4 mb-8 md:flex-row md:items-center">
           <div className="flex items-center gap-4">
-            <Link to="/customer/orders">
+            <Link to="/customer/orders/manage">
               <Button
                 variant="ghost"
                 className="transition-colors bg-white/50 hover:bg-white hover:text-red-600"
@@ -213,7 +212,7 @@ const OrderDetail = ({ orderId }) => {
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-gray-900">
-                            ${item.lineTotal.toFixed(2)}
+                            R{item.lineTotal.toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -282,19 +281,19 @@ const OrderDetail = ({ orderId }) => {
                 <div className="flex justify-between text-gray-600">
                   <span>Subtotal</span>
                   <span className="font-medium text-gray-900">
-                    ${orderDetails.subtotal?.toFixed(2) || "0.00"}
+                    R{orderDetails.subtotal?.toFixed(2) || "0.00"}
                   </span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Delivery Fee</span>
                   <span className="font-medium text-gray-900">
-                    ${orderDetails.deliveryFee?.toFixed(2) || "0.00"}
+                    R{orderDetails.deliveryFee?.toFixed(2) || "0.00"}
                   </span>
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Tax</span>
                   <span className="font-medium text-gray-900">
-                    ${orderDetails.tax?.toFixed(2) || "0.00"}
+                    R{orderDetails.tax?.toFixed(2) || "0.00"}
                   </span>
                 </div>
 
@@ -303,7 +302,7 @@ const OrderDetail = ({ orderId }) => {
                 <div className="flex items-center justify-between pt-2">
                   <span className="text-lg font-bold text-gray-900">Total</span>
                   <span className="text-2xl font-bold text-red-600">
-                    ${orderDetails.total?.toFixed(2)}
+                    R{orderDetails.total?.toFixed(2)}
                   </span>
                 </div>
               </CardContent>
@@ -368,7 +367,7 @@ const OrderDetail = ({ orderId }) => {
                   Have an issue with your order? Contact our support team for
                   assistance.
                 </p>
-                <Link to="/contact" className="w-full mt-2">
+                <Link to="/public/contact" className="w-full mt-2">
                   <Button
                     variant="outline"
                     className="w-full text-blue-700 bg-white border-blue-200 hover:bg-blue-100"

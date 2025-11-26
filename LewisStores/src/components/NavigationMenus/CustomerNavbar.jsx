@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
-
 import {
   Home,
   Info,
@@ -14,10 +13,22 @@ import {
   Menu,
 } from "lucide-react";
 import { Phone } from "lucide-react";
-import { Avatar } from "../ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
+import { User } from "lucide-react";
+import { GetProfile } from "@/api/auth";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 
 export function CustomerNavbar() {
   const { logout } = useAuth();
+
+  const { data: userProfile } = useQuery({
+    queryKey: ["userProfile"],
+    queryFn: GetProfile,
+    refetchOnWindowFocus: false,
+  });
+
+  const profilePic = useMemo(() => userProfile?.profilePicture || "", [userProfile]);
 
   const navItems = [
     { to: "/public/home", label: "Home", icon: Home },
@@ -55,7 +66,7 @@ export function CustomerNavbar() {
       </div>
 
       {/* RIGHT: Desktop Logout */}
-      <div className="hidden md:flex">
+      <div className="hidden md:flex md:items-center md:justify-center">
         <Button
           className="flex items-center mr-4 font-bold text-white bg-red-600 hover:bg-red-700"
           onClick={logout}
@@ -64,7 +75,15 @@ export function CustomerNavbar() {
           Logout
         </Button>
         <Link to={"/customer/profile"}>
-          <Avatar className="border-black border-1" />
+          <Avatar className="w-12 h-12 border-4 shadow-sm border-muted hover:opacity-75">
+            <AvatarImage
+              src={profilePic}
+              className="w-full h-full"
+            />
+            <AvatarFallback className="text-4xl">
+              <User />
+            </AvatarFallback>
+          </Avatar>
         </Link>
       </div>
 
