@@ -117,7 +117,7 @@ export default function ProductsSection() {
                               src={product.imageUrl}
                               alt={product.name}
                               loading="lazy"
-                              className="object-cover w-full h-full transition-transform duration-200 group-hover:scale-105"
+                              className=""
                             />
                           ) : (
                             <div className="flex items-center justify-center w-full h-full bg-gray-100">
