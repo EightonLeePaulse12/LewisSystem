@@ -94,7 +94,7 @@ const OrderDetail = ({ orderId }) => {
   // --- Loading State ---
   if (isDetailsLoading) {
     return (
-      <div className="min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100 lg:p-8">
+      <div className="min-h-screen p-4 bg-linear-to-br from-blue-50 to-red-100 lg:p-8">
         <div className="container max-w-5xl mx-auto space-y-6">
           <div className="flex items-center gap-4 mb-8">
             <Skeleton className="w-32 h-10 rounded-md" />
@@ -193,7 +193,7 @@ const OrderDetail = ({ orderId }) => {
                         className="flex items-start justify-between p-6 transition-colors hover:bg-gray-50/50"
                       >
                         <div className="flex items-start gap-4">
-                          <div className="flex items-center justify-center flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg">
+                          <div className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-lg shrink-0">
                             <Package className="w-8 h-8 text-gray-400" />
                           </div>
                           <div>

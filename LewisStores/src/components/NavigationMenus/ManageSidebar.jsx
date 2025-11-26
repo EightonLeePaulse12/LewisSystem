@@ -71,7 +71,7 @@ const Sidebar = ({ className, children, collapsible }) => {
       data-state={state}
       data-collapsible={collapsible}
       className={`group/sidebar flex flex-col h-screen transition-all duration-300 ease-in-out ${
-        isCollapsed ? "w-[80px]" : "w-[280px]"
+        isCollapsed ? "w-20" : "w-[280px]"
       } ${className}`}
     >
       {children}
@@ -178,7 +178,7 @@ const ManageSidebar = React.memo(() => {
         {/* --- Header --- */}
         <SidebarHeader className="flex items-center justify-between h-20 px-4 border-b border-slate-800/50 bg-slate-950/30">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="flex items-center justify-center w-10 h-10 text-white shadow-lg shrink-0 rounded-xl bg-gradient-to-br from-red-600 to-red-800 shadow-red-900/30 ring-1 ring-white/10">
+            <div className="flex items-center justify-center w-10 h-10 text-white shadow-lg shrink-0 rounded-xl bg-linear-to-br from-red-600 to-red-800 shadow-red-900/30 ring-1 ring-white/10">
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div
@@ -235,7 +235,7 @@ const ManageSidebar = React.memo(() => {
                               className="flex items-center w-full gap-3"
                             >
                               <item.icon
-                                className={`h-5 w-5 flex-shrink-0 transition-colors ${
+                                className={`h-5 w-5 shrink-0 transition-colors ${
                                   isActive
                                     ? "text-white"
                                     : "text-slate-400 group-hover:text-red-400"
