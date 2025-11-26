@@ -104,7 +104,7 @@ const About = () => {
                 alt="Beautiful living room"
                 className="relative w-full rounded-2xl shadow-2xl transition transform group-hover:scale-[1.01] duration-500 object-cover h-[500px]"
                 onError={(e) => {
-                    e.target.src = "https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=2070&auto=format&fit=crop"; // Fallback image
+                    e.target.src = "/src/assets/beautiful living room.jpg"; // Fallback image
                 }}
               />
             </div>
