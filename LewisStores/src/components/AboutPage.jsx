@@ -266,7 +266,7 @@ const About = () => {
           <p className="max-w-2xl mx-auto mb-10 text-xl text-red-100">
             Visit us in-store or browse our extensive collection online to find the perfect pieces for your space.
           </p>
-          <Link to="/products">
+          <Link to="/public/products">
             <Button size="lg" className="px-10 text-lg font-bold text-red-700 transition-all bg-white rounded-full shadow-2xl hover:bg-red-50 h-14 hover:scale-105">
               Shop Now <ArrowRight className="w-5 h-5 ml-2" />
             </Button>

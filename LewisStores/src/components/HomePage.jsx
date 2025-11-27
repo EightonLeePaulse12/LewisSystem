@@ -284,19 +284,25 @@ const HomePage = () => {
                 name: "Lounge Suites",
                 img: "/src/assets/lounge.jpg",
                 color: "bg-orange-100",
-                link: "/public/products/lounge",
+                link: "/public/products",
               },
               {
                 name: "Bedroom Suites",
                 img: "/src/assets/bedroom.jpg",
                 color: "bg-blue-100",
-                link: "/public/products/bedroom",
+                link: "/public/products",
               },
               {
                 name: "Kitchen & Appliances",
-                img: "/src/assets/kitchen.jpg",
+                img: "/src/assets/appliance.jpg",
                 color: "bg-green-100",
-                link: "/public/products/kitchen"
+                link: "/public/products",
+              },
+              {
+                name: "Dining",
+                img: "/src/assets/dinningroom.jpg",
+                color: "bg-red-100",
+                link: "/public/products",
               },
             ].map((cat) => (
               <Link
