@@ -1,7 +1,51 @@
 ProductId,SKU,Name,Description,CategoryId,UnitPrice,CostPrice,Weight,Dimensions,StockQty,ReorderThreshold,Status,ImageUrl,IsDeleted
-4f302cb6-4bd2-4027-a0a0-af3b984a986a,3292144425574,Licensed Frozen Hat,The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality,459,757.70,0.00,27.3124641628615901,25x42x4,300,46,Active,https://picsum.photos/640/480/?image=537,False
-7f3f68ef-6339-4124-a0ab-78a036197771,8421717296760,Awesome Plastic Computer,New range of formal shirts are designed keeping you in mind. With fits and styling that will make you stand apart,326,103.76,0.00,5.7847769711009592,58x8x64,300,27,Active,https://picsum.photos/640/480/?image=1039,False
-423fd16c-a138-4183-9467-78cd7862e516,8749296992003,Practical Granite Gloves,"The automobile layout consists of a front-engine design, with transaxle-type transmissions mounted at the rear of the engine and four wheel drive",413,197.56,94.87,10.4334041181834616,52x6x75,392,47,Active,https://picsum.photos/640/480/?image=728,False
-296a2f23-ccd6-445b-b690-5f237a0fc5cd,2528010463700,Small Granite Fish,"Andy shoes are designed to keeping in mind durability as well as trends, the most stylish range of shoes & sandals",413,951.57,572.93,39.9356622961837016,80x79x97,56,22,Active,https://picsum.photos/640/480/?image=1004,False
-137a5a23-3420-4cf9-92d9-8f140d2c9369,1633066438402,Incredible Fresh Table,"The Nagasaki Lander is the trademarked name of several series of Nagasaki sport bikes, that started with the 1984 ABC800J",459,673.39,0.00,44.8868385466146504,90x1x94,300,46,Active,https://picsum.photos/640/480/?image=966,False
-95f216c1-c3a3-4c42-a1b8-da7f39114aec,5435485885548,Ergonomic Soft Hat,The slim & simple Maple Gaming Keyboard from Dev Byte comes with a sleek body and 7- Color RGB LED Back-lighting for smart functionality,459,627.72,0.00,3.941416945538719,7x45x9,300,12,Active,https://picsum.photos/640/480/?image=980,False
+0fe76f21-6ddb-436b-b3e0-fffa5a3fae42,BRD-MAT-026,Memory Foam Mattress,Pressure-relieving queen size memory foam.,1,6999.99,0.00,32,200x150x25,30,6,Active,http://localhost:5192/api/products/images/0fe76f21-6ddb-436b-b3e0-fffa5a3fae42,False
+0bfe807a-5b52-4ef3-a2c4-203a35799043,DRN-CHR-032,Modern Plastic Dining Chair,Lightweight moulded plastic dining chair.,2,649.99,0.00,4.1,50x45x92,140,30,Active,http://localhost:5192/api/products/images/0bfe807a-5b52-4ef3-a2c4-203a35799043,False
+0675a24a-6b65-4ddd-b0de-48ac8b24feca,KIT-OVN-023,Built-In Oven Stainless Steel,Integrated oven suitable for modular kitchen units.,4,5799.99,0.00,32,60x55x45,12,3,Active,http://localhost:5192/api/products/images/0675a24a-6b65-4ddd-b0de-48ac8b24feca,False
+13d36b5b-a6a3-46e5-a7d6-f4dc6d56415c,KIT-RCK-050,4-Tier Kitchen Rack,Powder-coated metal rack for storage and appliances.,4,1399.99,0.00,12,60x35x140,60,15,Active,http://localhost:5192/api/products/images/13d36b5b-a6a3-46e5-a7d6-f4dc6d56415c,False
+11c3787a-5327-4c74-a94a-a8ea7f7249bd,LNG-SFA-035,Velvet Sofa,Deep blue velvet sofa with plush cushioning.,3,11499.99,0.00,56,215x90x90,10,3,Active,http://localhost:5192/api/products/images/11c3787a-5327-4c74-a94a-a8ea7f7249bd,False
+18007bd8-6ea2-47ca-9ca6-3e8fa6a6d0d1,LNG-CHS-048,Recliner Lounger,Electric reclining lounger with footrest extension.,3,9999.99,0.00,50,200x95x105,8,2,Active,http://localhost:5192/api/products/images/18007bd8-6ea2-47ca-9ca6-3e8fa6a6d0d1,False
+19c3539c-206e-4b35-83b8-668c4515088e,DRN-SID-046,Glass Display Sideboard,Dining room display shelf with tempered glass doors.,2,5699.99,3000.00,45,160x42x95,14,5,Active,,False
+1c2951ac-18dc-49e0-bfc0-8bc41d44728c,BRD-DRS-005,6-Drawer Dresser,Wide low dresser with smooth sliding drawers.,1,3999.99,2000.00,35,120x45x90,22,6,Inactive,,False
+1de502a1-9c57-4dc4-8320-6c97f5424072,KIT-STL-024,Marble Kitchen Stool,High counter stool with marble seat.,4,1599.99,700.00,9.4,45x45x75,48,10,Active,,False
+1fb88e7d-935a-46ab-88bc-88f5c8d10a43,BRD-MAT-027,Hybrid Spring Mattress,Spring and gel foam hybrid comfort technology.,1,7899.99,4300.00,34,200x150x26,24,5,Inactive,,False
+236bb96c-0c71-4554-9b0f-44c1391ed6be,KIT-FRD-021,Compact Fridge," energy efficient 140L compact fridge.",4,4999.99,3100.00,42,120x50x50,30,6,Active,,False
+28975e36-1374-4d60-b7a0-fee3242cae80,BRD-BED-044,Storage King Bed,King bed with under-bed drawers for storage.,1,13999.99,8800.00,75,220x185x120,9,2,Active,,False
+2e5c87a1-0fd1-4aa0-bf40-58b238199fc1,BRD-BED-001,Queen Oak Bed Frame,Solid oak queen-sized bed frame with slatted support.,1,8999.99,5200.00,55.4,210x160x110,20,5,Active,,False
+31be6e47-5b69-428e-92a1-cfa85a0d0714,DRN-CHR-033,High Back Dining Chair,Tall cushioned dining chair with linen finish.,2,1199.99,550.00,5.9,58x48x100,70,14,Inactive,,False
+35f2a91a-5b05-481e-bec6-f1ddfc387ad8,KIT-TBL-043,Rolling Kitchen Cart,Portable kitchen cart with drawer and spice rack.,4,2899.99,1400.00,26,95x60x90,22,6,Inactive,,False
+35f6ac4b-911e-4edc-a63e-60563a64cb23,DRN-CHR-010,Fabric Dining Chair,Set of upholstered dining chairs with oak legs.,2,899.00,390.00,5.5,55x45x95,120,25,Active,,False
+3e144bad-9271-4ab3-8483-58dc218a1797,LNG-SFA-014,3-Seater Leather Sofa,Premium brown leather sofa with deep cushioning.,3,15999.99,10200.00,80,220x95x90,8,2,Active,,False
+4090b2b5-92fd-453e-84df-0410cf74c068,BRD-BED-003,Upholstered King Bed,Tufted velvet king bed with soft padded headboard.,1,12999.99,7800.00,68,225x180x120,15,4,Active,,False
+42086b2d-6c9e-4a36-bf51-3709940fca24,LNG-TBL-038,Round Glass Coffee Table,Minimalist round coffee table with smoked glass top.,3,1799.99,950.00,12,90x90x42,38,10,Active,,False
+4545dbc3-9ad6-4a43-bfdd-eee17a5a8e0f,LNG-SFA-015,Fabric Corner Sofa,L-shape lounge couch with washable covers.,3,17999.99,11000.00,92,260x170x90,5,2,Inactive,,False
+4837c6cc-9c0b-4818-8404-40607828fd5c,LNG-TBL-018,Glass Top Coffee Table,Tempered glass top with chrome frame legs.,3,1999.99,900.00,14.5,120x60x45,42,10,Active,,False
+4ae46b87-bf76-4caa-9ff6-4744507350b5,LNG-CHS-016,Reclining Lounge Chair,Adjustable recliner with padded headrest.,3,4999.99,2800.00,28,95x80x110,18,6,Active,,False
+4fd0651e-3bd2-4ebb-bca5-10c3d47adabd,DRN-TBL-008,8-Seater Dining Table,Large oak dining table with water-resistant finish.,2,9999.99,6100.00,60.4,240x95x78,10,3,Active,,False
+5a0bdcef-92a8-4211-8a15-8ad47f8d1d9c,KIT-TBL-042,Kitchen Island Table,Solid oak kitchen island with dual shelves.,4,9999.99,6500.00,72,160x85x90,8,2,Active,,False
+5c72640b-7701-4867-a1e2-7d079e30da04,DRN-SID-047,Large Buffet Cabinet,Premium buffet unit with cutlery compartments.,2,7499.99,4200.00,50.5,190x45x100,12,3,Inactive,,False
+65f473d8-d7bf-441c-8e3f-a0a29e8cb1ab,BRD-WRD-006,Sliding Door Wardrobe,Two door wardrobe with rail and storage shelves.,1,7499.50,4100.00,70.2,200x60x210,18,4,Active,,False
+6d87ae2b-d46c-409d-8b32-82423ccfa028,BRD-CAB-004,Three Drawer Bedside Cabinet,Oak veneer bedside cabinet with silver handles.,1,1299.90,640.00,12.5,45x38x58,60,15,Active,,False
+792b0ac3-5718-4ca5-b170-1d2221243998,BRD-DRW-028,Tall Narrow Drawer Unit,Five-drawer tall unit for compact bedroom storage.,1,2199.00,900.00,23.5,50x45x135,37,8,Active,,False
+7b695b69-9b66-4b44-a32d-f245ad4e5e53,DRN-SID-012,Dining Room Sideboard,Two-door sideboard with wine rack slot.,2,4999.99,2500.00,41.2,140x40x90,24,6,Inactive,,False
+7cfbdf8c-16c8-4710-98d0-2b64838468f2,LNG-CHS-017,Swivel Lounge Chair,360-degree swivel lounge chair with cushion.,3,3299.00,1500.00,19.4,78x72x100,25,5,Active,,False
+83336d47-fa47-4412-9829-cf19b00fdadc,KIT-APPL-041,Microwave Oven 30L,30L microwave with grill function and LED menu.,4,1899.99,900.00,12,50x40x32,55,12,Inactive,,False
+8fa2b931-af6c-4c05-884a-1a6f9486e7c4,BRD-BED-045,Kids Twin Bed Frame,Compact twin bed suitable for children's rooms.,1,2899.99,1500.00,25,195x100x85,30,7,Inactive,,False
+931b1721-f7f5-4ed7-a904-a2e5afaaa47e,KIT-APPL-040,Dishwasher 12-Place,Energy efficient dishwasher with 6 wash modes.,4,7999.99,4300.00,65,60x60x86,16,4,Active,,False
+9cf25a02-60a6-4b40-9e9c-49cc8aed944a,DRN-TBL-030,Glass Dining Table,6-person tempered glass dining table.,2,7999.50,4800.00,54.3,200x90x78,14,4,Active,,False
+a31a2e32-84f7-45e4-b1ef-244f2d8c3d76,DRN-TBL-031,Industrial Dining Table,Steel frame with reclaimed wood top.,2,8999.99,5400.00,58,210x95x75,12,3,Inactive,,False
+a56e092b-05e3-44ad-99ad-2b440d064dca,LNG-SFA-034,Retro Style Sofa,Vintage inspired fabric sofa with tapered legs.,3,9999.99,6300.00,52,210x85x85,12,3,Active,,False
+a986069e-b3c1-4a38-9478-1cd5f410ba2f,BRD-DRW-029,Compact Bedside Drawer,Two drawer bedside unit with oak finish.,1,999.99,450.00,9.5,45x35x55,52,12,Inactive,,False
+acc15aa9-2f2e-413e-87f2-a1696b38c6b0,DRN-TBL-009,Round Walnut Dining Table,"4-seater round table, rich walnut tone.",2,6299.99,3500.00,40,120x120x75,16,4,Active,,False
+ada41c1e-209a-4d5b-b859-a5e48cbb825a,LNG-CHS-036,Leather Armchair,"Single seat leather armchair, chestnut finish.",3,4499.99,2400.00,28,95x90x100,25,6,Active,,False
+b6a9d113-500c-4528-a77f-071fed0d59bb,KIT-FRD-020,Double Door Refrigerator,Stainless steel fridge-freezer combo.,4,13999.99,9000.00,78,180x85x70,14,3,Active,,False
+b8aaa48e-93e2-4233-a1f6-9185bd5c0371,LNG-CHS-037,Fabric Armchair,Grey upholstered armchair with soft padding.,3,3299.99,1700.00,24.5,90x85x95,30,8,Inactive,,False
+ca95698d-630d-49dd-a9a4-04169348afab,BRD-WRD-007,Compact Mirrored Wardrobe,Single mirrored wardrobe ideal for smaller bedrooms.,1,5499.00,2900.00,48,180x50x200,25,5,Active,,False
+cae50dc9-28fa-4c10-8a62-441d972f5a48,KIT-STL-025,Wooden Bar Stool,Tall wooden bar stool ideal for kitchen islands.,4,1199.99,530.00,7.3,40x40x80,70,15,Inactive,,False
+d58eb520-4c74-4695-8d50-b11a1ded20d0,LNG-CHS-049,Minimalist Lounge Chair,Steel frame lounge chair with leather seat.,3,3799.99,2100.00,16,92x76x92,26,6,Inactive,,False
+d6966bae-c146-47f8-a200-52a744d34974,KIT-OVN-022,Electric Convection Oven,60L oven with multi-level heating and timer.,4,3299.99,1900.00,26.5,60x55x42,22,5,Active,,False
+e035ee25-7724-40a2-a47c-81252ff28a09,DRN-SID-013,Compact Buffet Cabinet,"Two-drawer compact buffet cabinet, oak finish.",2,2899.99,1450.00,28,110x38x85,35,8,Active,,False
+e09e86f4-e6dd-4657-9dc1-5e86941062db,LNG-TBL-039,Oak Coffee Table,Sturdy oak finish coffee table with shelf.,3,2599.99,1350.00,18,115x60x45,40,10,Inactive,,False
+f073e31f-e505-4f95-aed1-899467cd15a2,DRN-CHR-011,Leather Dining Chair,Soft brown leather high-back dining chair.,2,1299.90,650.00,6.3,60x46x98,80,20,Active,,False
+f4aa77fa-11e0-46bd-bf7c-ab909d4b23e5,LNG-TBL-019,Wooden Coffee Table,Solid wood coffee table with matte varnish.,3,2299.50,1150.00,16,115x60x45,38,10,Inactive,,False
+fcf44b5e-5738-4d40-809a-4343d029018b,BRD-BED-002,Pine Single Bed,Lightweight durable single bed made from pine wood.,1,3499.50,1800.00,32,200x95x95,40,10,Active,,False

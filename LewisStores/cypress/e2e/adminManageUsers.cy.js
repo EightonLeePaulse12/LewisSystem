@@ -11,8 +11,8 @@ describe("Admin Manage Users Page", () => {
       cy.visit("http://localhost:5173/");
 
       cy.get("#loginButton").click();
-      cy.get("#email").type("tashreeqvoigt07@gmail.com");
-      cy.get("#password").type("Tashreeq11#!");
+      cy.get("#email").type("eightonleepaulse@gmail.com");
+      cy.get("#password").type("Ultrainstinct12_");
       cy.get("#submitLogin").click();
 
       cy.url().should("not.include", "/login");
@@ -42,7 +42,7 @@ describe("Admin Manage Users Page", () => {
     cy.get('#root a[href="/admin/manage/users"]').click();
     cy.contains(
       "#usersTableContainer table tbody tr",
-      "tashreeq.voigt@redacademy.co.za"
+      "jambrood69@gmail.com"
     ).within(() => {
       cy.contains("button", "Ban").click();
     });

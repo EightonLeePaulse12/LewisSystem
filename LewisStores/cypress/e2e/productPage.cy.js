@@ -9,12 +9,12 @@ describe("Product Page", () => {
   });
   it("Checks the product page visibility", () => {
     cy.get("#loginButton").click();
-    cy.get("#email").type("tashreeq.voigt@redacademy.co.za");
-    cy.get("#password").type("Tashreeq11#!");
+    cy.get("#email").type("jambrood69@gmail.com");
+    cy.get("#password").type("Ultrainstinct12_");
     cy.get("#submitLogin").click();
     cy.wait(2000);
     cy.get("#shopNowTopHomePageBtn").click(); //Navigates to the product page
-    cy.wait(1000)
+    cy.wait(1000);
     cy.get("#productCatalogTitle, #productCatalogSubtitle").should(
       "be.visible"
     );
@@ -41,7 +41,6 @@ describe("Product Page", () => {
     cy.get("#root div.gap-4 > div:nth-child(2)").should("be.visible");
 
     cy.wait(2000);
-    cy.get('#homePageBottomFooter').should("be.visible");
+    cy.get("#homePageBottomFooter").should("be.visible");
   });
 });
-

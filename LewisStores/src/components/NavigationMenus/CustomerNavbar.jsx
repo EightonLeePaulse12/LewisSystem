@@ -38,7 +38,7 @@ export function CustomerNavbar() {
     { to: "/public/about", label: "About Us", icon: Info, id: "About Us"},
     { to: "/public/products", label: "Products", icon: ShoppingBag },
     { to: "/customer/cart", label: "Cart", icon: ShoppingCart },
-    { to: "/customer/orders/manage", label: "My Orders", icon: Package },
+    { to: "/customer/orders/manage", label: "My Orders", icon: Package , id: "myOrders"},
     { to: "/public/contact", label: "Contact Us", icon: Phone },
   ];
 

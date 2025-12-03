@@ -9,8 +9,8 @@ describe("Admin Dashboard", () => {
       cy.visit("http://localhost:5173/");
 
       cy.get("#loginButton").click();
-      cy.get("#email").type("tashreeqvoigt07@gmail.com");
-      cy.get("#password").type("Tashreeq11#!");
+      cy.get("#email").type("eightonleepaulse@gmail.com");
+      cy.get("#password").type("Ultrainstinct12_");
       cy.get("#submitLogin").click();
 
       // confirm login worked
@@ -36,14 +36,18 @@ describe("Admin Dashboard", () => {
     cy.get(
       "#root div.mx-auto > div:nth-child(2) > div:nth-child(2), #totalOrders, #totalOrdersValue, #totalOrdersIcon"
     ).should("be.visible");
-    cy.get("#root div.mx-auto > div:nth-child(3) > div:nth-child(1), #productsInStock, #productsInStockValue, #productsInStockIcon").should(
-      "be.visible"
-    );
-    cy.get("#root div.mx-auto > div:nth-child(3) > div:nth-child(2), #lowStockItems, #lowStockItemsValue, #lowStockItemsIcon").should(
-      "be.visible"
-    );
-    cy.get("#root div.hover\\:bg-red-100, #orderId, #customerName, #orderDate, #orderTotal, #orderStatus").should("be.visible");
-    cy.get("#root div.hover\\:bg-red-100, #lowStockItemsName, #lowStockItemsQtyLeft, #lowStockItemsReorderStatus").should("be.visible");
+    cy.get(
+      "#root div.mx-auto > div:nth-child(3) > div:nth-child(1), #productsInStock, #productsInStockValue, #productsInStockIcon"
+    ).should("be.visible");
+    cy.get(
+      "#root div.mx-auto > div:nth-child(3) > div:nth-child(2), #lowStockItems, #lowStockItemsValue, #lowStockItemsIcon"
+    ).should("be.visible");
+    cy.get(
+      "#root div.hover\\:bg-red-100, #orderId, #customerName, #orderDate, #orderTotal, #orderStatus"
+    ).should("be.visible");
+    cy.get(
+      "#root div.hover\\:bg-red-100, #lowStockItemsName, #lowStockItemsQtyLeft, #lowStockItemsReorderStatus"
+    ).should("be.visible");
     cy.get("#root div.md\\:grid-cols-3 > div:nth-child(1)").should(
       "be.visible"
     );

@@ -10,8 +10,8 @@ describe("Audit Logs Page", () => {
       cy.visit("http://localhost:5173/");
 
       cy.get("#loginButton").click();
-      cy.get("#email").type("tashreeqvoigt07@gmail.com");
-      cy.get("#password").type("Tashreeq11#!");
+      cy.get("#email").type("eightonleepaulse@gmail.com");
+      cy.get("#password").type("Ultrainstinct12_");
       cy.get("#submitLogin").click();
 
       cy.url().should("not.include", "/login");
@@ -94,7 +94,7 @@ describe("Audit Logs Page", () => {
   it("Tests Audit Logs Pagination Functionality", () => {
     // Navigate to Audit Logs page
     cy.get('#root a[href="/admin/manage/auditLogs"]').click();
-    cy.get("#audit-logs-pagination-next").click().wait(1000);
-    cy.get("#audit-logs-pagination-prev").click().wait(1000);
+    cy.get("#audit-logs-next-page-button").click().wait(1000);
+    cy.get("#audit-logs-previous-page-button").click().wait(1000);
   });
 });

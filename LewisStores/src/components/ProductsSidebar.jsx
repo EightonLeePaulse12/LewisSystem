@@ -99,12 +99,12 @@ export function ProductsSidebar({
         </div>
         <div>
           <Label className="flex items-center gap-2 text-sm font-medium text-gray-700">
-            <DollarSign className="w-4 h-4" />
+            R
             Price Range
           </Label>
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <DollarSign className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+              <h2 className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3.5 top-3.5">R</h2>
               <Input
                 type="number"
                 placeholder="Min"
@@ -114,7 +114,7 @@ export function ProductsSidebar({
               />
             </div>
             <div className="relative flex-1">
-              <DollarSign className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3 top-1/2" />
+              <h2 className="absolute w-4 h-4 text-gray-400 transform -translate-y-1/2 left-3.5 top-3.5">R</h2>
               <Input
                 type="number"
                 placeholder="Max"

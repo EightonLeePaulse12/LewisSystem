@@ -10,8 +10,8 @@ describe("Admin Inventory Page", () => {
       cy.visit("http://localhost:5173/");
 
       cy.get("#loginButton").click();
-      cy.get("#email").type("tashreeqvoigt07@gmail.com");
-      cy.get("#password").type("Tashreeq11#!");
+      cy.get("#email").type("eightonleepaulse@gmail.com");
+      cy.get("#password").type("Ultrainstinct12_");
       cy.get("#submitLogin").click();
 
       cy.url().should("not.include", "/login");
@@ -24,7 +24,7 @@ describe("Admin Inventory Page", () => {
     cy.get('#root a[href="/admin/manage/inventory"]').click();
     cy.get(
       "#inventoryPageHeading, #inventorySearch, #inventorySearchIcon, #inventoryFilter, #inventoryFilterIcon, #addProductButton, #importProductButton, #exportProductButton"
-    ).should("be.visible")
+    ).should("be.visible");
     cy.wait(4000);
     cy.get("#inventoryCardTitle, #inventoryCardDescription").should(
       "be.visible"
@@ -118,24 +118,34 @@ describe("Admin Inventory Page", () => {
   });
   it("Edits an Existing Product", () => {
     cy.get('#root a[href="/admin/manage/inventory"]').click();
-    cy.get('table tbody tr').first().find('#inventoryProductActions button:contains("Edit")').click();
+    cy.get("table tbody tr")
+      .first()
+      .find('#inventoryProductActions button:contains("Edit")')
+      .click();
     cy.get('[name="stockQty"]').should("be.visible").clear().type("300");
     cy.get("#root button.bg-background").should("be.visible").click(); // Cancels the edit
-    cy.get('table tbody tr').first().find('#inventoryProductActions button:contains("Edit")').click();
+    cy.get("table tbody tr")
+      .first()
+      .find('#inventoryProductActions button:contains("Edit")')
+      .click();
     cy.get('[name="stockQty"]').should("be.visible").clear().type("300");
     cy.get("#updateProductButton").should("be.visible").click(); //Updates the product
     cy.wait(2000); // wait for 2 seconds to ensure update completes
   });
   it("Deletes a Product", () => {
     cy.get('#root a[href="/admin/manage/inventory"]').click();
-    cy.get('table tbody tr').first().find('#deleteProductButton').should('be.visible').click();
+    cy.get("table tbody tr")
+      .first()
+      .find("#deleteProductButton")
+      .should("be.visible")
+      .click();
     cy.wait(2000); // wait for deletion to complete
     cy.contains("Product deleted").should("be.visible"); // Verify success toast message
   });
   it("Checks Pagination Buttons", () => {
     // Navigate to Inventory page
     cy.get('#root a[href="/admin/manage/inventory"]').click();
-    cy.get("#inventory-pagination-next").should("be.visible")
-    cy.get("#inventory-pagination-prev").should("be.visible")
+    cy.get("#inventory-pagination-next").should("be.visible");
+    cy.get("#inventory-pagination-prev").should("be.visible");
   });
-})
+});

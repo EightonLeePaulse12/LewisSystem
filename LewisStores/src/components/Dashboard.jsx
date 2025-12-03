@@ -55,8 +55,17 @@ const Dashboard = () => {
   } = dashboard;
 
   const calculateTrend = (current, previous) => {
-    if (previous === 0) return 0;
-    const change = ((current - previous) / previous) * 100;
+    // 1. Coerce inputs to Numbers explicitly to handle strings (e.g., "100")
+    const curr = Number(current || 0);
+    const prev = Number(previous || 0);
+
+    // 2. Prevent division by zero (Infinity) or undefined
+    if (prev === 0) return 0;
+
+    // 3. Calculate
+    const change = ((curr - prev) / prev) * 100;
+
+    // 4. Return a fixed string
     return change.toFixed(1);
   };
 
@@ -115,7 +124,9 @@ const Dashboard = () => {
             {
               title: "Total Revenue",
               value: (
-                <span id="totalRevenue">{`R${totalRevenue?.toFixed(2) || 0}`}</span>
+                <span id="totalRevenue">{`R${
+                  totalRevenue?.toFixed(2) || 0
+                }`}</span>
               ),
               icon: (
                 <DollarSign
@@ -158,7 +169,12 @@ const Dashboard = () => {
             {
               title: <span id="lowStockItems">Low Stock Items</span>,
               value: <span id="lowStockItemsValue">{lowStockCount}</span>,
-              icon: <AlertTriangle id="lowStockItemsIcon" className="w-6 h-6 text-red-600" />,
+              icon: (
+                <AlertTriangle
+                  id="lowStockItemsIcon"
+                  className="w-6 h-6 text-red-600"
+                />
+              ),
               trendPct: lowStockTrendPct,
               trendUp: lowStockTrendUp,
               color: "bg-red-50 hover:bg-red-100",
@@ -168,6 +184,7 @@ const Dashboard = () => {
               key={idx}
               className={`transition-colors shadow-sm rounded-xl ${metric.color} group cursor-default`}
             >
+              {console.log(metric)}
               <CardHeader className="flex items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-slate-600">
                   {metric.title}
@@ -190,7 +207,11 @@ const Dashboard = () => {
                   ) : (
                     <ArrowDown className="w-4 h-4 mr-1" />
                   )}
-                  {Math.abs(Number(metric.trendPct))}% from last month
+                  {/* Check if it is NaN, otherwise render. Fallback to 0. */}
+                  {isNaN(Number(metric.trendPct))
+                    ? 0
+                    : Math.abs(Number(metric.trendPct))}
+                  % from last month
                 </p>
               </CardContent>
             </Card>
@@ -210,13 +231,21 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="text-slate-600" id="orderId">Order ID</TableHead>
+                    <TableHead className="text-slate-600" id="orderId">
+                      Order ID
+                    </TableHead>
                     <TableHead className="text-slate-600" id="customerName">
                       Customer Name
                     </TableHead>
-                    <TableHead className="text-slate-600" id="orderDate">Date</TableHead>
-                    <TableHead className="text-slate-600" id="orderTotal">Total</TableHead>
-                    <TableHead className="text-slate-600" id="orderStatus">Status</TableHead>
+                    <TableHead className="text-slate-600" id="orderDate">
+                      Date
+                    </TableHead>
+                    <TableHead className="text-slate-600" id="orderTotal">
+                      Total
+                    </TableHead>
+                    <TableHead className="text-slate-600" id="orderStatus">
+                      Status
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -277,9 +306,22 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="text-slate-600" id="lowStockItemsName">Name</TableHead>
-                    <TableHead className="text-slate-600" id="lowStockItemsQtyLeft">Qty Left</TableHead>
-                    <TableHead className="text-slate-600" id="lowStockItemsReorderStatus">
+                    <TableHead
+                      className="text-slate-600"
+                      id="lowStockItemsName"
+                    >
+                      Name
+                    </TableHead>
+                    <TableHead
+                      className="text-slate-600"
+                      id="lowStockItemsQtyLeft"
+                    >
+                      Qty Left
+                    </TableHead>
+                    <TableHead
+                      className="text-slate-600"
+                      id="lowStockItemsReorderStatus"
+                    >
                       Reorder Status
                     </TableHead>
                   </TableRow>

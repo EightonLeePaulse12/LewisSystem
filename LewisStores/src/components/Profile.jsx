@@ -131,7 +131,7 @@ const Profile = () => {
     );
   }
 
-  const currentAvatarSource = previewUrl || "";
+  const currentAvatarSource = previewUrl || userProfile?.profilePicture || "";
 
   return (
     <div className="container max-w-6xl py-10 mx-auto space-y-8">
@@ -142,8 +142,7 @@ const Profile = () => {
           Account Settings
         </h2>
         <p className="text-gray-600">
-          Manage your account profile, contact information, and view your order
-          history.
+          Manage your account profile & contact information
         </p>
       </div>
 
@@ -208,7 +207,7 @@ const Profile = () => {
                 {formData.name || "User"}
               </p>
               <p className="text-xs text-gray-500">
-                Supports JPG, PNG (Max 5MB)
+                Supports JPG, PNG (Max 500KB)
               </p>
             </div>
           </CardContent>

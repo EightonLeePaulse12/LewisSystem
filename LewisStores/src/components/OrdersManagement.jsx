@@ -177,7 +177,7 @@ const OrdersManagement = () => {
                 {filteredOrders.map((order) => (
                   <TableRow key={order.orderId}>
                     <TableCell>{order.orderId}</TableCell>
-                    <TableCell>{order.customer.customerId || "N/A"}</TableCell>
+                    <TableCell>{order.customerId || "N/A"}</TableCell>
                     <TableCell>
                       {new Date(order.orderDate).toLocaleDateString()}
                     </TableCell>
@@ -216,7 +216,7 @@ const OrdersManagement = () => {
                       </Select>
                     </TableCell>
                     <TableCell>
-                      <Link to={`/manage/orders/${order.orderId}`}>
+                      <Link to={`/admin/manage/orders/${order.orderId}`}>
                         <Button variant="outline" className="mt-4">
                           View Details
                         </Button>

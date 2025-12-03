@@ -26,8 +26,8 @@ describe("Admin Reports", () => {
       cy.visit("http://localhost:5173/");
 
       cy.get("#loginButton").click();
-      cy.get("#email").type("tashreeqvoigt07@gmail.com");
-      cy.get("#password").type("Tashreeq11#!");
+      cy.get("#email").type("eightonleepaulse@gmail.com");
+      cy.get("#password").type("Ultrainstinct12_");
       cy.get("#submitLogin").click();
 
       cy.url().should("not.include", "/login");
@@ -116,7 +116,7 @@ describe("Admin Reports", () => {
     cy.get("#downloadSalesReportButton").click();
     cy.wait(2000); // wait for 2 seconds to ensure download completes
   });
-  it('Downloads Payments Report via CSV', () => {
+  it("Downloads Payments Report via CSV", () => {
     // Navigate to Reports page
     cy.get('#root a[href="/admin/manage/reports"]').click();
     // Download Payments Report as CSV
@@ -125,7 +125,7 @@ describe("Admin Reports", () => {
     cy.get("#downloadPaymentsReportButton").click();
     cy.wait(2000); // wait for 2 seconds to ensure download completes
   });
-  it('Downloads Payments Report via PDF', () => {
+  it("Downloads Payments Report via PDF", () => {
     // Navigate to Reports page
     cy.get('#root a[href="/admin/manage/reports"]').click();
     // Download Payments Report as PDF
@@ -136,14 +136,14 @@ describe("Admin Reports", () => {
     cy.get("#downloadPaymentsReportButton").click();
     cy.wait(2000); // wait for 2 seconds to ensure download completes
   });
-  it('Downloads Overdue Report via CSV', () => {
+  it("Downloads Overdue Report via CSV", () => {
     // Navigate to Reports page
     cy.get('#root a[href="/admin/manage/reports"]').click();
     // Download Overdue Report as CSV
     cy.get("#downloadOverdueReportButton").click();
     cy.wait(2000); // wait for 2 seconds to ensure download completes
   });
-  it('Downloads Overdue Report via PDF', () => {
+  it("Downloads Overdue Report via PDF", () => {
     // Navigate to Reports page
     cy.get('#root a[href="/admin/manage/reports"]').click();
     // Download Overdue Report as PDF

@@ -34,8 +34,8 @@ describe("Login Form", () => {
     cy.get("#address").type("123 Test St");
     cy.get("#city").type("Cypress City");
     cy.get("#postalCode").type("1234");
-    cy.get("#password").type("RegisterTest!");
-    cy.get("#confirmPassword").type("RegisterTest!");
+    cy.get("#password").type("RegisterTest12!");
+    cy.get("#confirmPassword").type("RegisterTest12!");
     cy.get("#submitRegister").click();
     cy.wait(2000)
   });

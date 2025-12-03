@@ -13,13 +13,10 @@ import {
   ChevronLeft,
   Menu,
 } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
 
 // --- MOCKS FOR PREVIEW (Replace these with your actual imports in production) ---
-
-// Mock Router
-const useLocation = () => ({ pathname: "/admin/manage/dashboard" });
 
 // Mock UI Components (Simplified versions of Shadcn/your components)
 const Badge = ({ children, className }) => (
@@ -149,17 +146,19 @@ const menuItems = [
   },
   {
     title: "Manage Orders",
-    to: "/manage/orders",
+    to: "/admin/manage/orders",
     icon: PackageSearch,
-    show: (userRole) => userRole === "Manager",
+    show: true,
   },
 ];
 
 const ManageSidebar = React.memo(() => {
-  const { userRole, logout } = useAuth();
-  const location = useLocation();
+  const { userRole, logout, userDetails } = useAuth();
+  const jsonUserDetails = JSON.parse(userDetails);
+  console.log("User Details in Sidebar:", userDetails);
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const location = useLocation();
 
   // Filter items based on role
   const visibleItems = menuItems.filter((item) =>
@@ -169,6 +168,9 @@ const ManageSidebar = React.memo(() => {
   // Early return if no access
   if (!["Admin", "Manager"].includes(userRole)) return null;
 
+  
+  
+
   return (
     <TooltipProvider>
       <Sidebar
@@ -176,7 +178,10 @@ const ManageSidebar = React.memo(() => {
         className="sticky top-0 left-0 font-sans border-r shadow-2xl border-slate-800 bg-slate-900 text-slate-300"
       >
         {/* --- Header --- */}
-        <SidebarHeader className="flex items-center justify-between h-20 px-4 border-b border-slate-800/50 bg-slate-950/30" id= 'adminSidebar'>
+        <SidebarHeader
+          className="flex items-center justify-between h-20 px-4 border-b border-slate-800/50 bg-slate-950/30"
+          id="adminSidebar"
+        >
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="flex items-center justify-center w-10 h-10 text-white shadow-lg shrink-0 rounded-xl bg-linear-to-br from-red-600 to-red-800 shadow-red-900/30 ring-1 ring-white/10">
               <ShieldCheck className="w-6 h-6" />
@@ -186,10 +191,16 @@ const ManageSidebar = React.memo(() => {
                 isCollapsed ? "hidden w-0 opacity-0" : "flex w-auto opacity-100"
               }`}
             >
-              <span className="text-lg font-bold leading-none tracking-tight text-white" id= 'adminSidebarTitle'>
+              <span
+                className="text-lg font-bold leading-none tracking-tight text-white"
+                id="adminSidebarTitle"
+              >
                 Lewis Admin
               </span>
-              <span className="text-[10px] uppercase tracking-wider text-red-500 font-bold mt-1" id= 'adminSidebarEst'>
+              <span
+                className="text-[10px] uppercase tracking-wider text-red-500 font-bold mt-1"
+                id="adminSidebarEst"
+              >
                 Est. 1906
               </span>
             </div>
@@ -212,7 +223,9 @@ const ManageSidebar = React.memo(() => {
             <SidebarGroupContent>
               <SidebarMenu className="px-3 space-y-2">
                 {visibleItems.map((item) => {
-                  const isActive = location.pathname === item.to;
+                  const isActive = location.pathname.startsWith(item.to);
+                  console.log("PATHNAME:", location.pathname);
+                  console.log("ITEM TO:", item.to);
                   return (
                     <SidebarMenuItem key={item.title}>
                       <Tooltip delayDuration={0}>
@@ -294,8 +307,11 @@ const ManageSidebar = React.memo(() => {
                       : "w-auto opacity-100 block"
                   }`}
                 >
-                  <p className="text-sm font-bold text-white truncate" id= 'adminUserName'>
-                    Admin User
+                  <p
+                    className="text-sm font-bold text-white truncate"
+                    id="adminUserName"
+                  >
+                    {jsonUserDetails?.name}
                   </p>
                   <Badge
                     variant="outline"
@@ -318,7 +334,10 @@ const ManageSidebar = React.memo(() => {
                     id="adminSignOutButton"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span id="signOutText" className={`${isCollapsed ? "hidden" : "block"}`}>
+                    <span
+                      id="signOutText"
+                      className={`${isCollapsed ? "hidden" : "block"}`}
+                    >
                       Sign Out
                     </span>
                   </button>

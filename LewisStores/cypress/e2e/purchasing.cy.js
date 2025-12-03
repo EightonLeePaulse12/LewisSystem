@@ -10,10 +10,8 @@ describe("Purchasing a Product and checks visibilty during this process", () => 
   it("Purchases a product", () => {
     //Signing in customer account
     cy.get("#loginButton").should("be.visible").click();
-    cy.get("#email")
-      .should("be.visible")
-      .type("tashreeq.voigt@redacademy.co.za");
-    cy.get("#password").should("be.visible").type("Tashreeq11#!");
+    cy.get("#email").should("be.visible").type("jambrood69@gmail.com");
+    cy.get("#password").should("be.visible").type("Ultrainstinct12_");
     cy.get("#submitLogin").should("be.visible").click();
     cy.wait(1000);
 
@@ -38,10 +36,11 @@ describe("Purchasing a Product and checks visibilty during this process", () => 
     cy.get('#root input[placeholder="Postal Code"]').type("7785");
     cy.get("#terms").click().should("be.visible");
     cy.get("#root button.w-full").click();
+    cy.wait(5000)
 
     //Checks the tracking page
-    cy.get('#root a[href="/customer/orders/manage"] span.font-medium').click();
-    cy.get("#root tr:nth-child(1) td.text-right svg.lucide").click();
+    cy.contains("a", "My Orders").click();
+    cy.get("#root tr:nth-child(1) td.text-right").should("be.visible").click();
     cy.get("#root div.overflow-hidden").should("be.visible");
     cy.get("#root div.md\\:grid-cols-2 > div:nth-child(1)").should(
       "be.visible"
