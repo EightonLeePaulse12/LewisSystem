@@ -20,7 +20,12 @@ import { checkout } from "@/api/checkout";
 import API_URL from "@/constants/ApiUrl";
 import axios, { AxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 export const Route = createFileRoute("/customer/checkout")({
   beforeLoad: () => {
@@ -183,7 +188,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="min-h-screen p-4 bg-gradient-to-br from-blue-50 to-red-100">
+    <div className="min-h-screen p-4">
       <div className="container mx-auto">
         {/* PAGE HEADER */}
         <div className="mb-8 text-center">
@@ -201,12 +206,12 @@ function RouteComponent() {
             <Accordion type="single" collapsible className="mb-6">
               {/* DELIVERY OPTIONS */}
               <AccordionItem value="delivery">
-                <AccordionTrigger className="text-lg font-semibold">
+                <AccordionTrigger className="text-lg font-semibold ">
                   Delivery Options
                 </AccordionTrigger>
 
                 <AccordionContent>
-                  <Card>
+                  <Card className="border border-gray-200 shadow-sm">
                     <CardContent className="pt-4 space-y-3">
                       <RadioGroup
                         value={state.deliveryOption}
@@ -219,12 +224,12 @@ function RouteComponent() {
                       >
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="Standard" id="standard" />
-                          <Label htmlFor="standard">Standard — $10</Label>
+                          <Label htmlFor="standard">Standard — R10</Label>
                         </div>
 
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="Express" id="express" />
-                          <Label htmlFor="express">Express — $20</Label>
+                          <Label htmlFor="express">Express — R20</Label>
                         </div>
 
                         <div className="flex items-center space-x-2">
@@ -244,7 +249,7 @@ function RouteComponent() {
                 </AccordionTrigger>
 
                 <AccordionContent>
-                  <Card>
+                  <Card className="border border-gray-200 shadow-sm">
                     <CardContent className="pt-4 space-y-4">
                       <RadioGroup
                         value={state.paymentType}
@@ -264,7 +269,7 @@ function RouteComponent() {
                       </RadioGroup>
 
                       {state.paymentType === "Credit" && (
-                        <div className="p-3 border rounded-md bg-muted/40">
+                        <div className="p-3 bg-muted/40">
                           <Label htmlFor="term">Term Months (1–36)</Label>
                           <Input
                             id="term"

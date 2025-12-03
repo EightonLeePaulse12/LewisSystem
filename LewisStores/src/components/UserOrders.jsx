@@ -90,6 +90,7 @@ const UserOrders = () => {
                       <Skeleton className="w-12 h-12 rounded-lg" />
                       <div className="space-y-2">
                         <Skeleton className="h-4 w-[150px]" />
+                        {/* <Loader2 /> */}
                         <Skeleton className="h-3 w-[100px]" />
                       </div>
                     </div>
@@ -152,7 +153,7 @@ const UserOrders = () => {
                           </div>
                         </TableCell>
                         <TableCell className="font-bold text-gray-900">
-                          ${order.total.toFixed(2)}
+                          R{order.total.toFixed(2)}
                         </TableCell>
                         <TableCell>
                           <Badge
@@ -180,4 +181,4 @@ const UserOrders = () => {
   );
 };
 
-export default memo(UserOrders);
+export default UserOrders;

@@ -80,10 +80,10 @@ const SingleOrderManagement = ({ orderId }) => {
                       {item.quantity}
                     </TableCell>
                     <TableCell className="text-right">
-                      ${item.unitPrice.toFixed(2)}
+                      R{item.unitPrice.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">
-                      ${item.lineTotal.toFixed(2)}
+                      R{item.lineTotal.toFixed(2)}
                     </TableCell>
                   </TableRow>
                 ))}

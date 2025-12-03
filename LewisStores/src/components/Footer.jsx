@@ -25,16 +25,16 @@ export function Footer() {
           <h4 className="mb-3 text-lg font-bold text-red-600">Shop</h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link to="/all-products" className="text-gray-600 transition-colors hover:text-red-600">All Products</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">All Products</Link>
             </li>
             <li>
-              <Link to="/lounge" className="text-gray-600 transition-colors hover:text-red-600">Lounge Suites</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">Lounge Suites</Link>
             </li>
             <li>
-              <Link to="/bedroom" className="text-gray-600 transition-colors hover:text-red-600">Bedroom Suites</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">Bedroom Suites</Link>
             </li>
             <li>
-              <Link to="/appliances" className="text-gray-600 transition-colors hover:text-red-600">Appliances</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">Appliances</Link>
             </li>
           </ul>
         </div>
@@ -42,13 +42,13 @@ export function Footer() {
           <h4 className="mb-3 text-lg font-bold text-red-600">Customer Service</h4>
           <ul className="space-y-2 text-sm">
             <li>
-              <Link to="/delivery" className="text-gray-600 transition-colors hover:text-red-600">Delivery Information</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">Delivery Information</Link>
             </li>
             <li>
-              <Link to="/returns" className="text-gray-600 transition-colors hover:text-red-600">Returns Policy</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">Returns Policy</Link>
             </li>
             <li>
-              <Link to="/faq" className="text-gray-600 transition-colors hover:text-red-600">FAQ</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">FAQ</Link>
             </li>
           </ul>
         </div>
@@ -61,7 +61,7 @@ export function Footer() {
             </li>
             <li className="text-gray-600">0800 111 123</li>
             <li>
-              <Link to="/stores" className="text-gray-600 transition-colors hover:text-red-600">Find Nearest Store</Link>
+              <Link to="#" className="text-gray-600 transition-colors hover:text-red-600">Find Nearest Store</Link>
             </li>
           </ul>
         </div>

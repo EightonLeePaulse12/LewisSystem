@@ -235,8 +235,8 @@ const HomePage = () => {
                 icon: <CreditCard className="w-6 h-6 text-red-600" />,
               },
               {
-                title: "Free Delivery",
-                desc: "On orders over R5 000",
+                title: "Flexible Deliveries",
+                desc: "Flexible delivery options to suit you",
                 icon: <Truck className="w-6 h-6 text-red-600" />,
               },
               {
@@ -369,7 +369,7 @@ const HomePage = () => {
                 Start Shopping
               </Button>
             </Link>
-            <Link to="/stores">
+            <Link to="#">
               <Button
                 variant="outline"
                 size="lg"

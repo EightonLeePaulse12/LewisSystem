@@ -73,7 +73,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-50 to-red-100">
+    <div className="flex items-center justify-center min-h-screen border-gray-200 border-b-1">
       <div className="container max-w-6xl mx-auto">
         
         {/* Main Grid Container */}

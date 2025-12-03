@@ -180,7 +180,7 @@ export default function ProductDetails({ productId }) {
                   <span className="text-3xl font-bold text-red-600">
                     R{product.unitPrice.toFixed(2)}
                   </span>
-                  <span className="ml-2 text-sm text-gray-400">USD</span>
+                  <span className="ml-2 text-sm text-gray-400">ZAR</span>
                 </div>
 
                 <Separator className="my-2" />

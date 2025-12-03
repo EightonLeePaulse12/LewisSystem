@@ -98,7 +98,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
-      <div className="container px-4 sm:px-6 py-12 mx-auto max-w-7xl space-y-12">
+      <div className="container px-4 py-12 mx-auto space-y-12 sm:px-6 max-w-7xl">
         <h2
           className="text-4xl font-extrabold tracking-tight text-slate-900"
           id="dashHeading"
@@ -172,7 +172,7 @@ const Dashboard = () => {
                 <CardTitle className="text-sm font-medium text-slate-600">
                   {metric.title}
                 </CardTitle>
-                <div className="flex items-center justify-center w-10 h-10 transition-colors rounded-full bg-white group-hover:bg-red-50">
+                <div className="flex items-center justify-center w-10 h-10 transition-colors bg-white rounded-full group-hover:bg-red-50">
                   {metric.icon}
                 </div>
               </CardHeader>
@@ -190,7 +190,7 @@ const Dashboard = () => {
                   ) : (
                     <ArrowDown className="w-4 h-4 mr-1" />
                   )}
-                  {Math.abs(metric.trendPct)}% from last month
+                  {Math.abs(Number(metric.trendPct))}% from last month
                 </p>
               </CardContent>
             </Card>

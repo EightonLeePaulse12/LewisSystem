@@ -29,6 +29,7 @@ import { toast } from "sonner";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getOrderDetails, cancelOrder } from "@/api/checkout";
 import { cn } from "@/lib/utils";
+import { getProductById } from "@/api/manage";
 
 const OrderDetail = ({ orderId }) => {
   const queryClient = useQueryClient();
@@ -42,11 +43,22 @@ const OrderDetail = ({ orderId }) => {
     queryKey: ["orderDetails", orderId],
     queryFn: async () => {
       const res = await getOrderDetails(orderId);
+      console.log(res);
       return res;
     },
     enabled: !!orderId,
     refetchOnWindowFocus: false,
   });
+
+  const { data: productData } = useQuery({
+    queryKey: ["product"],
+    queryFn: () =>
+      getProductById(orderDetailsResponse?.data?.orderItems[0]?.productId),
+    enabled: !!orderDetailsResponse?.data?.orderItems[0]?.productId,
+    refetechOnWindowFocus: false,
+  });
+
+  console.log(productData);
 
   // Extract orderDetails object safely
   const orderDetails = orderDetailsResponse?.data || orderDetailsResponse;
@@ -194,7 +206,15 @@ const OrderDetail = ({ orderId }) => {
                       >
                         <div className="flex items-start gap-4">
                           <div className="flex items-center justify-center w-16 h-16 bg-gray-100 rounded-lg shrink-0">
-                            <Package className="w-8 h-8 text-gray-400" />
+                            {orderDetailsResponse !== null &&
+                            productData?.productId === item.productId ? (
+                              <img
+                                src={productData.imageUrl}
+                                className="object-cover w-full h-full rounded-2xl"
+                              />
+                            ) : (
+                              <Package className="w-8 h-8 text-gray-400" />
+                            )}
                           </div>
                           <div>
                             <p className="font-semibold text-gray-900">

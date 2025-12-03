@@ -66,7 +66,7 @@ export default function Cart() {
                         {item.name}
                       </h3>
                       <p className="text-sm text-gray-600">
-                        ${item.unitPrice.toFixed(2)}
+                        R{item.unitPrice.toFixed(2)}
                       </p>
                     </div>
 
@@ -102,7 +102,7 @@ export default function Cart() {
                     </div>
 
                     <p className="font-semibold text-gray-900 min-w-[80px] text-right">
-                      ${(item.quantity * item.unitPrice).toFixed(2)}
+                      R{(item.quantity * item.unitPrice).toFixed(2)}
                     </p>
 
                     <Button
@@ -130,7 +130,7 @@ export default function Cart() {
               <div className="flex justify-between mb-4 text-gray-700">
                 <span className="text-sm font-medium">Subtotal</span>
                 <span className="text-lg font-semibold">
-                  ${total.toFixed(2)}
+                  R{total.toFixed(2)}
                 </span>
               </div>
             </CardContent>
