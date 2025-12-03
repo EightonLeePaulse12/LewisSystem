@@ -51,21 +51,21 @@ export default function ProductsSection() {
           <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full">
             <Package className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900">Product Catalog</h1>
-          <p className="mt-2 text-gray-600">Discover our amazing collection</p>
+          <h1 className="text-4xl font-bold text-gray-900" id="productCatalogTitle">Product Catalog</h1>
+          <p className="mt-2 text-gray-600" id="productCatalogSubtitle">Discover our amazing collection</p>
         </div>
 
-        <div className="flex justify-end mb-4 lg:hidden">
+        <div className="flex justify-end mb-4 lg:hidden" id= "filterMobileButton">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
+              <Button variant="outline" className="flex items-center gap-2" id= 'filterButton'>
                 <Filter className="w-4 h-4" />
                 Filters
               </Button>
             </SheetTrigger>
 
             <SheetContent side="left" className="p-4 w-80">
-              <h2 className="mb-4 text-lg font-semibold">Filters</h2>
+              <h2 className="mb-4 text-lg font-semibold" id="filtersTitle">Filters</h2>
               <ProductsSidebar
                 onSearchChange={setSearch}
                 onCategoryChange={setCategory}

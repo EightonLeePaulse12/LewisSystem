@@ -87,11 +87,11 @@ export function LoginForm({ className, ...props }) {
     <div className={cn("flex flex-col gap-6 min-h-screen justify-center items-center to-indigo-100 p-4", className)} {...props}>
       <Card className="w-full max-w-md border-0 shadow-xl bg-white/80 backdrop-blur-sm">
         <CardHeader className="pb-6 text-center">
-          <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-500 rounded-full">
+          <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-500 rounded-full" id= "lockIcon">
             <Lock className="w-6 h-6 text-white" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">Welcome Back</CardTitle>
-          <CardDescription className="text-gray-600">
+          <CardTitle className="text-2xl font-bold text-gray-900" id= 'loginTitle'>Welcome Back</CardTitle>
+          <CardDescription className="text-gray-600" id= 'loginDescription'>
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
@@ -116,10 +116,11 @@ export function LoginForm({ className, ...props }) {
             </Field>
             <Field>
               <div className="flex items-center justify-between">
-                <FieldLabel htmlFor="password" className="text-sm font-medium text-gray-700">Password</FieldLabel>
+                <FieldLabel htmlFor="password" className="text-sm font-medium text-gray-700" >Password</FieldLabel>
                 <Link
                   to="#" // Placeholder for forgot password
                   className="text-sm text-red-500 transition-colors duration-200 hover:text-red-400 hover:underline"
+                  id= "forgotPasswordLink"
                 >
                   Forgot password?
                 </Link>
@@ -137,6 +138,7 @@ export function LoginForm({ className, ...props }) {
                   type="button"
                   className="absolute text-gray-400 transition-colors duration-200 transform -translate-y-1/2 right-3 top-1/2 hover:text-gray-600"
                   onClick={() => setShowPassword(!showPassword)}
+                  id= "showPasswordToggle"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -154,6 +156,7 @@ export function LoginForm({ className, ...props }) {
               type="submit"
               disabled={isLoading}
               className="w-full py-3 font-medium text-white transition-all duration-200 bg-red-500 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              id= 'submitLogin'
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -164,9 +167,9 @@ export function LoginForm({ className, ...props }) {
                 "Log in"
               )}
             </Button>
-            <FieldDescription className="text-sm text-center text-gray-600">
+            <FieldDescription className="text-sm text-center text-gray-600" id= 'signUpPrompt'>
               Don&apos;t have an account?{" "}
-              <Link to="/register" className="font-medium text-red-500 transition-colors duration-200 hover:text-red-700 underline-offset-4 hover:underline">
+              <Link to="/register" className="font-medium text-red-500 transition-colors duration-200 hover:text-red-700 underline-offset-4 hover:underline" id= 'signUpLink'>
                 Sign up
               </Link>
             </FieldDescription>

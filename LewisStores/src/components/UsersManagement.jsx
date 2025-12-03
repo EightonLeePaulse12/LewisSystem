@@ -61,8 +61,8 @@ const UsersManagement = () => {
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
       <div className="container px-6 py-12 mx-auto max-w-7xl space-y-12">
-        <h1 className="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-slate-900">
-          <Users className="w-8 h-8 text-red-600" /> User Management
+        <h1 className="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-slate-900" id='user-management-heading'>
+          <Users className="w-8 h-8 text-red-600" id="user-management-icon" /> User Management
         </h1>
 
         {/* LOADING SKELETON */}
@@ -73,18 +73,18 @@ const UsersManagement = () => {
             ))}
           </div>
         ) : isError ? (
-          <div className="text-red-600 font-medium">Failed to load users.</div>
+          <div className="text-red-600 font-medium" id="usersTableError">Failed to load users.</div>
         ) : (
-          <div className="overflow-hidden shadow-sm rounded-xl bg-white">
+          <div className="overflow-hidden shadow-sm rounded-xl bg-white" id="usersTableContainer">
             {/* TABLE */}
             <Table>
-              <TableCaption className="text-slate-500 py-4">Users in the system.</TableCaption>
+              <TableCaption className="text-slate-500 py-4" id="usersTableCaption">Users in the system.</TableCaption>
               <TableHeader>
-                <TableRow className="bg-slate-50">
-                  <TableHead className="text-slate-600">Name</TableHead>
-                  <TableHead className="text-slate-600">Email</TableHead>
-                  <TableHead className="text-slate-600">Status</TableHead>
-                  <TableHead className="text-right text-slate-600">Actions</TableHead>
+                <TableRow className="bg-slate-50" id="usersTableHeader">
+                  <TableHead className="text-slate-600" id="usersTableName">Name</TableHead>
+                  <TableHead className="text-slate-600" id="usersTableEmail">Email</TableHead>
+                  <TableHead className="text-slate-600" id="usersTableStatus">Status</TableHead>
+                  <TableHead className="text-right text-slate-600" id="usersTableActions">Actions</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -105,11 +105,11 @@ const UsersManagement = () => {
                       <TableCell className="text-slate-700">{u.email}</TableCell>
                       <TableCell>
                         {u.isBanned ? (
-                          <Badge className="bg-red-600 text-white font-medium">
+                          <Badge className="bg-red-600 text-white font-medium" id="userStatusBanned">
                             Banned
                           </Badge>
                         ) : (
-                          <Badge className="bg-green-600 text-white font-medium">
+                          <Badge className="bg-green-600 text-white font-medium" id="userStatusActive">
                             Active
                           </Badge>
                         )}
@@ -126,6 +126,7 @@ const UsersManagement = () => {
                               unBanMutation.isPending || banMutation.isPending
                             }
                             onClick={() => unBanMutation.mutate(u.id)}
+                            id="unbanUserButton"
                           >
                             {unBanMutation.isPending ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -141,6 +142,7 @@ const UsersManagement = () => {
                                 size="sm"
                                 className="h-10 px-4 bg-red-600 hover:bg-red-700 text-white"
                                 disabled={banMutation.isPending}
+                                id="banUserButton"
                               >
                                 {banMutation.isPending ? (
                                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -162,10 +164,11 @@ const UsersManagement = () => {
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>
-                                <AlertDialogCancel className="text-red-600 border-red-200 hover:bg-red-50">Cancel</AlertDialogCancel>
+                                <AlertDialogCancel className="text-red-600 border-red-200 hover:bg-red-50" id="cancelBanUserButton">Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   className="bg-red-600 hover:bg-red-700 text-white"
                                   onClick={() => banMutation.mutate(u.id)}
+                                  id="confirmBanUserButton"
                                 >
                                   Confirm Ban
                                 </AlertDialogAction>
@@ -181,12 +184,13 @@ const UsersManagement = () => {
             </Table>
 
             {/* PAGINATION */}
-            <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-100">
+            <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border-t border-slate-100" id="paginationControls">
               <Button
                 variant="outline"
                 className="text-slate-600 border-slate-200 hover:bg-slate-50"
                 disabled={page === 1}
                 onClick={() => setPage((p) => p - 1)}
+                id="previousManageUsers"
               >
                 Previous
               </Button>
@@ -201,6 +205,7 @@ const UsersManagement = () => {
                 className="text-slate-600 border-slate-200 hover:bg-slate-50"
                 disabled={page === totalPages}
                 onClick={() => setPage((p) => p + 1)}
+                id="nextManageUsers"
               >
                 Next
               </Button>

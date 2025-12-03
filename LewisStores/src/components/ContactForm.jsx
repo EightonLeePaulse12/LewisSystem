@@ -86,7 +86,7 @@ export default function ContactForm() {
             <div className="absolute top-[-50px] left-[-50px] w-32 h-32 bg-red-600 rounded-full opacity-20 blur-3xl"></div>
             <div className="absolute bottom-[-50px] right-[-50px] w-40 h-40 bg-blue-600 rounded-full opacity-20 blur-3xl"></div>
 
-            <div className="relative z-10">
+            <div className="relative z-10" id= 'contactPageTopBanner'>
               <h2 className="mb-2 text-3xl font-bold">Get in Touch</h2>
               <p className="mb-8 text-slate-300">
                 Have questions about our products or your order? We're here to help.
@@ -141,7 +141,7 @@ export default function ContactForm() {
 
           {/* RIGHT SIDE: The Form */}
           <div className="p-8 bg-white lg:col-span-3 lg:p-12">
-            <div className="mb-6">
+            <div className="mb-6" id= 'contactPageMsgHeader'>
               <h2 className="text-2xl font-bold text-gray-900">Send us a Message</h2>
               <p className="mt-1 text-sm text-gray-500">
                 Fill out the form below and we'll start a conversation.
@@ -190,17 +190,17 @@ export default function ContactForm() {
               {/* Subject Select */}
               <div className="space-y-2">
                 <Label htmlFor="subject" className="text-sm font-medium text-gray-700">Topic</Label>
-                <div className="relative">
+                <div className="relative" id= 'selectDropDown'>
                    <HelpCircle className="absolute z-10 w-4 h-4 text-gray-400 pointer-events-none left-3 top-3" />
                    <Select 
                       onValueChange={(val) => setFormData({ ...formData, subject: val })}
                       value={formData.subject}
                     >
-                    <SelectTrigger className="w-full border-gray-200 pl-9 bg-gray-50">
+                    <SelectTrigger className="w-full border-gray-200 pl-9 bg-gray-50" id= 'selectBtn'>
                       <SelectValue placeholder="What is this regarding?" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="general">General Inquiry</SelectItem>
+                      <SelectItem value="general" id='general'>General Inquiry</SelectItem>
                       <SelectItem value="support">Order Support</SelectItem>
                       <SelectItem value="sales">Sales & Bulk Orders</SelectItem>
                       <SelectItem value="feedback">Website Feedback</SelectItem>
@@ -230,6 +230,7 @@ export default function ContactForm() {
               <Button 
                 type="submit" 
                 className="w-full py-6 text-base font-medium text-white transition-all duration-200 bg-red-600 shadow-lg hover:bg-red-700 shadow-red-100"
+                id= 'sendMsg'
                 disabled={isLoading}
               >
                 {isLoading ? (

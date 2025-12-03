@@ -69,7 +69,7 @@ const InventoryList = () => {
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
       <div className="container px-6 py-12 mx-auto space-y-12 max-w-7xl">
-        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
+        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900" id="inventoryPageHeading">
           Inventory Management
         </h2>
 
@@ -80,8 +80,9 @@ const InventoryList = () => {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 pr-4 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
+              id="inventorySearch"
             />
-            <Search className="absolute w-5 h-5 -translate-y-1/2 left-3 top-1/2 text-slate-400" />
+            <Search className="absolute w-5 h-5 -translate-y-1/2 left-3 top-1/2 text-slate-400"  id="inventorySearchIcon" />
           </div>
           <div className="relative flex-1">
             <Input
@@ -89,14 +90,16 @@ const InventoryList = () => {
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               className="pl-10 pr-4 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white"
+              id="inventoryFilter"
             />
-            <Search className="absolute w-5 h-5 -translate-y-1/2 left-3 top-1/2 text-slate-400" />
+            <Search className="absolute w-5 h-5 -translate-y-1/2 left-3 top-1/2 text-slate-400"  id="inventoryFilterIcon" />
           </div>
           <div className="flex gap-4 md:ml-auto">
             <Link to="/admin/manage/inventory/add">
               <Button
                 size="lg"
                 className="h-12 px-6 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
+                id="addProductButton"
               >
                 Add Product
               </Button>
@@ -106,6 +109,7 @@ const InventoryList = () => {
                 size="lg"
                 variant="outline"
                 className="h-12 px-6 text-base font-semibold text-red-600 border-red-200 hover:bg-red-50"
+                id="importProductButton"
               >
                 Import CSV
               </Button>
@@ -115,6 +119,7 @@ const InventoryList = () => {
               variant="outline"
               className="h-12 px-6 text-base font-semibold text-red-600 border-red-200 hover:bg-red-50"
               onClick={handleExport}
+              id="exportProductButton"
             >
               Export CSV
             </Button>
@@ -123,10 +128,10 @@ const InventoryList = () => {
 
         <Card className="overflow-hidden shadow-sm rounded-xl">
           <CardHeader className="bg-slate-50">
-            <CardTitle className="text-xl font-bold text-slate-900">
+            <CardTitle className="text-xl font-bold text-slate-900" id="inventoryCardTitle">
               Products
             </CardTitle>
-            <CardDescription className="text-slate-500">
+            <CardDescription className="text-slate-500" id="inventoryCardDescription">
               Manage your inventory items
             </CardDescription>
           </CardHeader>
@@ -138,12 +143,12 @@ const InventoryList = () => {
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead className="text-slate-600">Name</TableHead>
-                    <TableHead className="text-slate-600">SKU</TableHead>
-                    <TableHead className="text-slate-600">Stock</TableHead>
-                    <TableHead className="text-slate-600">Price</TableHead>
-                    <TableHead className="text-slate-600">Actions</TableHead>
+                  <TableRow className="bg-slate-50" id="inventoryTableHeader">
+                    <TableHead className="text-slate-600" id="inventoryTableName">Name</TableHead>
+                    <TableHead className="text-slate-600" id="inventoryTableSKU">SKU</TableHead>
+                    <TableHead className="text-slate-600" id="inventoryTableStock">Stock</TableHead>
+                    <TableHead className="text-slate-600" id="inventoryTablePrice">Price</TableHead>
+                    <TableHead className="text-slate-600" id="inventoryTableActions">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -156,11 +161,12 @@ const InventoryList = () => {
                         <Link
                           to={`/admin/manage/inventory/${product.productId}`}
                           className="transition-colors hover:text-red-600"
+                          id="inventoryProductNameLink"
                         >
                           {product.name}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-slate-700">
+                      <TableCell className="text-slate-700" id="inventoryProductSKU">
                         {product.sku}
                       </TableCell>
                       <TableCell>
@@ -170,14 +176,15 @@ const InventoryList = () => {
                               ? "bg-red-600 text-white"
                               : "bg-green-600 text-white"
                           } font-medium`}
+                           id="inventoryStockBadge"
                         >
                           {product.stockQty}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-slate-900">
+                      <TableCell className="text-slate-900" id="inventoryProductPrice">
                         R{product.unitPrice.toFixed(2)}
                       </TableCell>
-                      <TableCell className="flex gap-2">
+                      <TableCell className="flex gap-2" id="inventoryProductActions">
                         <Link to={`/admin/manage/inventory/${product.productId}`}>
                           <Button
                             variant="outline"
@@ -190,6 +197,7 @@ const InventoryList = () => {
                           variant="destructive"
                           className="text-white bg-red-600 hover:bg-red-700"
                           onClick={() => deleteMutation.mutate(product.productId)}
+                          id="deleteProductButton"
                         >
                           Delete
                         </Button>
@@ -211,6 +219,7 @@ const InventoryList = () => {
                 className="text-slate-600 border-slate-200 hover:bg-slate-50"
                 onClick={() => setPage((p) => Math.max(p - 1, 1))}
                 disabled={page === 1}
+                id="inventory-pagination-prev"
               >
                 Previous
               </Button>
@@ -220,6 +229,7 @@ const InventoryList = () => {
                 className="text-slate-600 border-slate-200 hover:bg-slate-50"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={!inventory || inventory.length < 10}
+                id="inventory-pagination-next"
               >
                 Next
               </Button>

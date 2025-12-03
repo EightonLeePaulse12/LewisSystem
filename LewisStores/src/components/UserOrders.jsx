@@ -124,7 +124,7 @@ const UserOrders = () => {
                       <TableHead>Date Placed</TableHead>
                       <TableHead>Total Amount</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="pr-6 text-right">Action</TableHead>
+                      <TableHead className="pr-6 text-right" id ="goesIntoOrder">Action</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

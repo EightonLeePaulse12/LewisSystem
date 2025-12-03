@@ -184,7 +184,7 @@ const HomePage = () => {
         <div className="absolute inset-0 z-0 bg-linear-to-r from-slate-900 via-slate-800 to-slate-900 opacity-90"></div>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-40 mix-blend-overlay z-0"></div>
 
-        <div className="container relative z-10 px-6 py-20 mx-auto text-center md:py-32 md:text-left">
+        <div className="container relative z-10 px-6 py-20 mx-auto text-center md:py-32 md:text-left" id= 'topHomePageSection'>
           <div className="max-w-2xl">
             <Badge className="px-3 py-1 mb-6 text-sm font-bold tracking-wide text-yellow-900 uppercase bg-yellow-400 border-none hover:bg-yellow-500">
               Limited Time Offer
@@ -204,6 +204,7 @@ const HomePage = () => {
                 <Button
                   size="lg"
                   className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 border-none shadow-lg md:w-auto hover:bg-red-700 shadow-red-900/20"
+                  id= 'shopNowTopHomePageBtn'
                 >
                   Shop Now
                 </Button>
@@ -213,6 +214,7 @@ const HomePage = () => {
                   variant="outline"
                   size="lg"
                   className="w-full h-12 px-8 text-base text-white md:w-auto border-white/20 bg-white/5 hover:bg-white/10 backdrop-blur-sm"
+                  id= 'viewSpecialsTopHomePageBtn'
                 >
                   View Specials
                 </Button>
@@ -225,7 +227,7 @@ const HomePage = () => {
       {/* --- Features Grid --- */}
       <section className="py-12 bg-white border-b border-gray-100">
         <div className="container px-6 mx-auto">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4" id= 'featuresGridHomePage'>
             {[
               {
                 title: "Flexible Payments",
@@ -268,7 +270,7 @@ const HomePage = () => {
       {/* --- Shop by Category --- */}
       <section className="py-20 bg-slate-50">
         <div className="container px-6 mx-auto">
-          <div className="mb-16 text-center">
+          <div className="mb-16 text-center" id= 'categorySectionHomePage'>
             <h3 className="mb-4 text-3xl font-bold text-slate-900">
               Shop by Category
             </h3>
@@ -278,7 +280,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" id= 'shoppingCategoriesHomePage'>
             {[
               {
                 name: "Lounge Suites",
@@ -349,7 +351,7 @@ const HomePage = () => {
 
       {/* --- CTA Section --- */}
       <section className="px-6 py-20 text-center text-white bg-red-700">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto" id= 'bottomHomePageRedSection'>
           <h3 className="mb-6 text-3xl font-bold md:text-4xl">
             Ready to Upgrade Your Home?
           </h3>
@@ -362,6 +364,7 @@ const HomePage = () => {
               <Button
                 size="lg"
                 className="w-full h-12 px-8 font-bold text-red-700 bg-white sm:w-auto hover:bg-red-50"
+                id= 'startShoppingBottomHomePageBtn'
               >
                 Start Shopping
               </Button>
@@ -371,6 +374,7 @@ const HomePage = () => {
                 variant="outline"
                 size="lg"
                 className="w-full h-12 px-8 text-black border-white sm:w-auto hover:bg-red-800"
+                id= 'findAStoreBottomHomePageBtn'
               >
                 Find a Store
               </Button>

@@ -157,7 +157,7 @@ export default function ReportsPage() {
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
       <div className="container px-4 py-16 mx-auto space-y-16 sm:px-6 max-w-7xl">
-        <h1 className="text-4xl font-extrabold tracking-tight text-center text-slate-900 md:text-5xl">
+        <h1 className="text-4xl font-extrabold tracking-tight text-center text-slate-900 md:text-5xl" id= 'reportsDashboardHeading'>
           Reports Dashboard
         </h1>
 
@@ -165,13 +165,13 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <Card className="overflow-hidden shadow-md rounded-2xl">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-              <CardTitle className="text-2xl font-bold text-slate-900">
+              <CardTitle className="text-2xl font-bold text-slate-900" id= 'revenueTrendChartTitle'>
                 Revenue Trend
               </CardTitle>
-              <TrendingUp className="w-6 h-6 text-red-600" />
+              <TrendingUp id='revenueTrendIcon' className="w-6 h-6 text-red-600" />
             </CardHeader>
             <CardContent className="p-8">
-              <div className="h-[300px] sm:h-[400px] lg:h-[500px]">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px]" id='revenueLineGraph'>
                 <Line data={revenueData} options={{ responsive: true, maintainAspectRatio: false }} />
               </div>
             </CardContent>
@@ -179,13 +179,13 @@ export default function ReportsPage() {
 
           <Card className="overflow-hidden shadow-md rounded-2xl">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-              <CardTitle className="text-2xl font-bold text-slate-900">
+              <CardTitle className="text-2xl font-bold text-slate-900" id='orderStatusDistributionChartTitle'>
                 Order Status Distribution
               </CardTitle>
-              <PieChart className="w-6 h-6 text-red-600" />
+              <PieChart id='orderStatusDistributionIcon' className="w-6 h-6 text-red-600" />
             </CardHeader>
             <CardContent className="p-8">
-              <div className="h-[300px] sm:h-[400px] lg:h-[500px]">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px]" id='orderStatusDistributionChart'>
                 <Pie data={orderStatusData} options={{ responsive: true, maintainAspectRatio: false }} />
               </div>
             </CardContent>
@@ -196,13 +196,13 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <Card className="overflow-hidden shadow-md rounded-2xl">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-              <CardTitle className="text-2xl font-bold text-slate-900">
+              <CardTitle className="text-2xl font-bold text-slate-900" id='topCategoriesChartTitle'>
                 Top Categories by Sales
               </CardTitle>
-              <BarChart className="w-6 h-6 text-red-600" />
+              <BarChart id='topCategoriesChartIcon' className="w-6 h-6 text-red-600" />
             </CardHeader>
             <CardContent className="p-8">
-              <div className="h-[300px] sm:h-[400px] lg:h-[500px]">
+              <div className="h-[300px] sm:h-[400px] lg:h-[500px]" id='topCategoriesChart'>
                 <Bar data={topCategoriesData} options={{ responsive: true, maintainAspectRatio: false }} />
               </div>
             </CardContent>
@@ -210,10 +210,10 @@ export default function ReportsPage() {
 
           <Card className="overflow-hidden shadow-md rounded-2xl">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-              <CardTitle className="text-2xl font-bold text-slate-900">
+              <CardTitle className="text-2xl font-bold text-slate-900" id='lowStockAlertsChartTitle'>
                 Low Stock Alerts
               </CardTitle>
-              <AlertTriangle className="w-6 h-6 text-red-600" />
+              <AlertTriangle className="w-6 h-6 text-red-600" id='lowStockAlertsChartIcon' />
             </CardHeader>
             <CardContent className="p-8 space-y-6">
               <ul className="space-y-4">
@@ -245,10 +245,10 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <Card className="overflow-hidden shadow-md rounded-2xl">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-              <CardTitle className="text-2xl font-bold text-slate-900">
+              <CardTitle className="text-2xl font-bold text-slate-900" id='recentOrdersTitle'>
                 Recent Orders
               </CardTitle>
-              <ShoppingCart className="w-6 h-6 text-red-600" />
+              <ShoppingCart className="w-6 h-6 text-red-600" id='recentOrdersIcon' />
             </CardHeader>
             <CardContent className="p-8 space-y-6">
               <div className="space-y-4">
@@ -275,13 +275,13 @@ export default function ReportsPage() {
 
           <Card className="transition-colors shadow-md rounded-2xl bg-red-50 hover:bg-red-100">
             <CardHeader className="flex items-center justify-between px-8 py-6 bg-red-50">
-              <CardTitle className="text-lg font-medium text-slate-600">
+              <CardTitle className="text-lg font-medium text-slate-600" id='avgOrderValueTitle'>
                 Avg Order Value
               </CardTitle>
-              <DollarSign className="w-6 h-6 text-red-600" />
+              <DollarSign className="w-6 h-6 text-red-600" id='avgOrderValueIcon' />
             </CardHeader>
             <CardContent className="p-8 text-center">
-              <div className="text-2xl font-bold text-slate-900">
+              <div className="text-2xl font-bold text-slate-900" id='avgOrderValue'>
                 ${avgOrderValue.toFixed(2)}
               </div>
             </CardContent>
@@ -290,21 +290,21 @@ export default function ReportsPage() {
 
         {/* Download Reports Section */}
         <div className="space-y-8">
-          <h2 className="text-3xl font-bold text-center text-slate-900">
+          <h2 className="text-3xl font-bold text-center text-slate-900" id='downloadReportsHeading'>
             Download Reports
           </h2>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {/* Sales Report */}
             <Card className="shadow-md rounded-2xl">
               <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-                <CardTitle className="text-2xl font-bold text-slate-900">
+                <CardTitle className="text-2xl font-bold text-slate-900" id='salesReportTitle'>
                   Sales Report
                 </CardTitle>
-                <Download className="w-6 h-6 text-red-600" />
+                <Download className="w-6 h-6 text-red-600" id='salesReportDownloadIcon' />
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 <div>
-                  <Label htmlFor="sales-start" className="text-sm font-medium text-slate-600">
+                  <Label htmlFor="sales-start" className="text-sm font-medium text-slate-600" >
                     Start Date
                   </Label>
                   <Input
@@ -332,17 +332,17 @@ export default function ReportsPage() {
                     Format
                   </Label>
                   <Select value={salesFormat} onValueChange={setSalesFormat}>
-                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white">
+                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white" id='salesFormat'>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="csv">CSV</SelectItem>
-                      <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectContent id='salesFormat'>
+                      <SelectItem value="csv" id='csv'>CSV</SelectItem>
+                      <SelectItem value="pdf" id='pdf'>PDF</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <Button
-                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20" id='downloadSalesReportButton'
                   onClick={() =>
                     handleDownload("sales", salesStart, salesEnd, salesFormat)
                   }
@@ -355,10 +355,10 @@ export default function ReportsPage() {
             {/* Payments Report */}
             <Card className="shadow-md rounded-2xl">
               <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-                <CardTitle className="text-2xl font-bold text-slate-900">
+                <CardTitle className="text-2xl font-bold text-slate-900" id='paymentsReportTitle'>
                   Payments Report
                 </CardTitle>
-                <Download className="w-6 h-6 text-red-600" />
+                <Download className="w-6 h-6 text-red-600" id='paymentsReportDownloadIcon' />
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 <div>
@@ -390,17 +390,17 @@ export default function ReportsPage() {
                     Format
                   </Label>
                   <Select value={paymentsFormat} onValueChange={setPaymentsFormat}>
-                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white">
+                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white" id='paymentsFormat'>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="csv">CSV</SelectItem>
-                      <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectContent id='paymentsFormat'>
+                      <SelectItem value="csv" id='csvPayments'>CSV</SelectItem>
+                      <SelectItem value="pdf" id='pdfPayments'>PDF</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <Button
-                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20" id='downloadPaymentsReportButton'
                   onClick={() =>
                     handleDownload(
                       "payments",
@@ -418,10 +418,10 @@ export default function ReportsPage() {
             {/* Overdue Report */}
             <Card className="shadow-md rounded-2xl">
               <CardHeader className="flex items-center justify-between px-8 py-6 bg-slate-50">
-                <CardTitle className="text-2xl font-bold text-slate-900">
+                <CardTitle className="text-2xl font-bold text-slate-900" id='overdueReportTitle'>
                   Overdue Report
                 </CardTitle>
-                <Download className="w-6 h-6 text-red-600" />
+                <Download className="w-6 h-6 text-red-600" id='overdueReportDownloadIcon' />
               </CardHeader>
               <CardContent className="p-8 space-y-6">
                 <div>
@@ -429,17 +429,17 @@ export default function ReportsPage() {
                     Format
                   </Label>
                   <Select value={overdueFormat} onValueChange={setOverdueFormat}>
-                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white">
+                    <SelectTrigger className="mt-2 transition-all rounded-full bg-slate-50 border-slate-200 focus:bg-white" id='overdueFormat'>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="csv">CSV</SelectItem>
-                      <SelectItem value="pdf">PDF</SelectItem>
+                    <SelectContent id='overdueFormat'>
+                      <SelectItem value="csv" id='overdueReportDownloadCSV'>CSV</SelectItem>
+                      <SelectItem value="pdf" id='overdueReportDownloadPDF'>PDF</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <Button
-                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20"
+                  className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 shadow-lg hover:bg-red-700 shadow-red-900/20" id='downloadOverdueReportButton'
                   onClick={() => handleOverdueDownload(overdueFormat)}
                 >
                   Download

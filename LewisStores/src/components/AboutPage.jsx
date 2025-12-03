@@ -35,13 +35,13 @@ const About = () => {
         </div>
 
         <div className="container relative z-10 max-w-4xl px-6 mx-auto">
-          <Badge className="mb-6 bg-red-600 hover:bg-red-700 text-white border-none px-4 py-1.5 text-base font-medium rounded-full shadow-lg shadow-red-900/20">
+          <Badge className="mb-6 bg-red-600 hover:bg-red-700 text-white border-none px-4 py-1.5 text-base font-medium rounded-full shadow-lg shadow-red-900/20" id= 'estBadge'>
             Est. 1906
           </Badge>
-          <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight md:text-7xl">
+          <h1 className="mb-6 text-5xl font-extrabold leading-tight tracking-tight md:text-7xl" id= 'ourStory'>
             Our Story
           </h1>
-          <p className="max-w-3xl mx-auto text-lg font-light leading-relaxed md:text-2xl text-slate-200">
+          <p className="max-w-3xl mx-auto text-lg font-light leading-relaxed md:text-2xl text-slate-200" id= 'ourStoryPara'>
             For over a century, we've been helping South African families create beautiful, comfortable homes they love.
           </p>
         </div>
@@ -50,7 +50,7 @@ const About = () => {
       {/* --- Stats Bar --- */}
       <section className="relative z-20 mx-4 -mt-8 overflow-hidden text-white bg-red-700 shadow-xl md:mx-8 rounded-2xl">
         <div className="container px-6 py-12 mx-auto">
-          <div className="grid grid-cols-2 gap-8 text-center divide-x md:grid-cols-4 divide-red-600/50">
+          <div className="grid grid-cols-2 gap-8 text-center divide-x md:grid-cols-4 divide-red-600/50" id= 'statsBar'>
             {[
               { num: "117+", label: "Years in Business" },
               { num: "500+", label: "Retail Stores" },
@@ -72,13 +72,13 @@ const About = () => {
           <div className="grid items-center gap-16 lg:grid-cols-2">
             <div className="space-y-8">
               <div>
-                <span className="text-sm font-bold tracking-wider text-red-600 uppercase">Our Heritage</span>
-                <h2 className="mt-2 text-4xl font-bold leading-tight text-slate-900 md:text-5xl">
+                <span className="text-sm font-bold tracking-wider text-red-600 uppercase" >Our Heritage</span>
+                <h2 className="mt-2 text-4xl font-bold leading-tight text-slate-900 md:text-5xl" id= 'heading'>
                   117+ Years of <br className="hidden md:block"/> Excellence
                 </h2>
               </div>
               
-              <div className="space-y-6 text-lg leading-relaxed text-slate-600">
+              <div className="space-y-6 text-lg leading-relaxed text-slate-600" id= 'heritage-text'>
                 <p>
                   Founded in 1906, Lewis has grown from a single store into Southern Africa's largest and most trusted furniture retailer. Our journey has been built on a foundation of quality, affordability, and a deep commitment to serving our communities.
                 </p>
@@ -87,7 +87,7 @@ const About = () => {
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-wrap gap-4" id= 'ticks'>
                 {["Family-Owned Heritage", "Trusted by Millions", "Community Focused"].map((item, i) => (
                   <div key={i} className="flex items-center gap-2 px-4 py-2 font-medium border rounded-full bg-slate-50 border-slate-100 text-slate-700">
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -98,7 +98,7 @@ const About = () => {
             </div>
             
             <div className="relative group">
-              <div className="absolute transition duration-500 opacity-50 -inset-4 bg-gradient-to-r from-red-100 to-blue-50 rounded-3xl blur-lg group-hover:opacity-75"></div>
+              <div className="absolute transition duration-500 opacity-50 -inset-4 bg-gradient-to-r from-red-100 to-blue-50 rounded-3xl blur-lg group-hover:opacity-75" id= 'livingroomImg'></div>
               <img
                 src="/public/beautiful living room.jpg" // Assuming this path works in your setup
                 alt="Beautiful living room"
@@ -115,7 +115,7 @@ const About = () => {
       {/* --- Core Values --- */}
       <section className="py-24 bg-slate-50">
         <div className="container px-6 mx-auto max-w-7xl">
-          <div className="max-w-3xl mx-auto mb-16 text-center">
+          <div className="max-w-3xl mx-auto mb-16 text-center" id= 'coreValuesH'>
             <Badge variant="outline" className="px-4 py-1 mb-4 text-red-700 border-red-200 bg-red-50">
               What We Stand For
             </Badge>
@@ -127,7 +127,7 @@ const About = () => {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3" id= 'values'>
             {[
               {
                 icon: <Trophy className="w-8 h-8 text-red-600" />,
@@ -176,11 +176,11 @@ const About = () => {
 
       {/* --- The Lewis Difference --- */}
       <section className="py-24 overflow-hidden bg-white">
-        <div className="container px-6 mx-auto max-w-7xl">
+        <div className="container px-6 mx-auto max-w-7xl" id= 'lewisDiff'>
           <div className="grid items-center gap-16 lg:grid-cols-2">
             
             {/* Image Column */}
-            <div className="relative order-2 lg:order-1">
+            <div className="relative order-2 lg:order-1" id= 'showroomImg'>
               <div className="absolute w-40 h-40 bg-yellow-100 rounded-full opacity-50 top-10 -left-10 blur-3xl"></div>
               <div className="absolute w-40 h-40 bg-red-100 rounded-full opacity-50 bottom-10 -right-10 blur-3xl"></div>
               
@@ -257,7 +257,7 @@ const About = () => {
       </section>
 
       {/* --- Final CTA --- */}
-      <section className="relative py-24 overflow-hidden text-center text-white bg-gradient-to-br from-slate-900 to-red-900">
+      <section className="relative py-24 overflow-hidden text-center text-white bg-gradient-to-br from-slate-900 to-red-900" id= 'rttyhBanner'>
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
         <div className="container relative z-10 px-6 mx-auto">
           <h2 className="mb-6 text-4xl font-bold tracking-tight md:text-6xl">

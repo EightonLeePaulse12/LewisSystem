@@ -32,7 +32,7 @@ export function CustomerNavbar() {
 
   const navItems = [
     { to: "/public/home", label: "Home", icon: Home },
-    { to: "/public/about", label: "About Us", icon: Info },
+    { to: "/public/about", label: "About Us", icon: Info, id: "About Us"},
     { to: "/public/products", label: "Products", icon: ShoppingBag },
     { to: "/customer/cart", label: "Cart", icon: ShoppingCart },
     { to: "/customer/orders/manage", label: "My Orders", icon: Package },

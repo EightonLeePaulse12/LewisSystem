@@ -29,11 +29,11 @@ export default function AuditLogsPage() {
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
       <div className="container px-6 py-12 mx-auto max-w-7xl space-y-12">
-        <h1 className="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-slate-900">
-          <ClipboardList className="w-8 h-8 text-red-600" /> Audit Logs
+        <h1 className="flex items-center gap-3 text-4xl font-extrabold tracking-tight text-slate-900" id='audit-logs-heading'>
+          <ClipboardList className="w-8 h-8 text-red-600" id='audit-logs-icon' /> Audit Logs
         </h1>
 
-        <div className="relative max-w-xl">
+        <div className="relative max-w-xl" id='audit-logs-search'>
           <Input
             placeholder="Filter logs by action, entity, or details..."
             value={filter}
@@ -52,15 +52,15 @@ export default function AuditLogsPage() {
             <>
               <Table>
                 <TableHeader>
-                  <TableRow className="bg-slate-50">
-                    <TableHead className="text-slate-600">Timestamp</TableHead>
-                    <TableHead className="text-slate-600">User ID</TableHead>
-                    <TableHead className="text-slate-600">Action</TableHead>
-                    <TableHead className="text-slate-600">
+                  <TableRow className="bg-slate-50" id='audit-logs-table-header'>
+                    <TableHead className="text-slate-600" id='audit-logs-timestamp'>Timestamp</TableHead>
+                    <TableHead className="text-slate-600" id='audit-logs-user-id'>User ID</TableHead>
+                    <TableHead className="text-slate-600" id='audit-logs-action'>Action</TableHead>
+                    <TableHead className="text-slate-600" id='audit-logs-entity-type'>
                       Entity Type
                     </TableHead>
-                    <TableHead className="text-slate-600">Entity ID</TableHead>
-                    <TableHead className="text-slate-600">Details</TableHead>
+                    <TableHead className="text-slate-600" id='audit-logs-entity-id'>Entity ID</TableHead>
+                    <TableHead className="text-slate-600" id='audit-logs-details'>Details</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -69,6 +69,7 @@ export default function AuditLogsPage() {
                       <TableCell
                         colSpan={6}
                         className="py-12 text-center text-slate-500"
+                        id="audit-logs-no-logs-found"
                       >
                         No logs found
                       </TableCell>
@@ -108,6 +109,7 @@ export default function AuditLogsPage() {
                   className="text-slate-600 border-slate-200 hover:bg-slate-50"
                   disabled={page === 1}
                   onClick={() => setPage((p) => p - 1)}
+                  id="audit-logs-previous-page-button"
                 >
                   Previous
                 </Button>
@@ -119,6 +121,7 @@ export default function AuditLogsPage() {
                   className="text-slate-600 border-slate-200 hover:bg-slate-50"
                   disabled={page >= totalPages}
                   onClick={() => setPage((p) => p + 1)}
+                  id="audit-logs-next-page-button"
                 >
                   Next
                 </Button>

@@ -277,6 +277,7 @@ const InventoryDetail = ({ inventoryId }) => {
                   type="submit"
                   disabled={isPending}
                   className="w-full h-12 px-8 text-base font-semibold text-white bg-red-600 hover:bg-red-700 shadow-lg shadow-red-900/20 md:w-auto"
+                  id="updateProductButton"
                 >
                   {isPending ? (
                     <Loader2 className="mr-2 animate-spin" size={16} />

@@ -176,7 +176,7 @@ const ManageSidebar = React.memo(() => {
         className="sticky top-0 left-0 font-sans border-r shadow-2xl border-slate-800 bg-slate-900 text-slate-300"
       >
         {/* --- Header --- */}
-        <SidebarHeader className="flex items-center justify-between h-20 px-4 border-b border-slate-800/50 bg-slate-950/30">
+        <SidebarHeader className="flex items-center justify-between h-20 px-4 border-b border-slate-800/50 bg-slate-950/30" id= 'adminSidebar'>
           <div className="flex items-center gap-3 overflow-hidden">
             <div className="flex items-center justify-center w-10 h-10 text-white shadow-lg shrink-0 rounded-xl bg-linear-to-br from-red-600 to-red-800 shadow-red-900/30 ring-1 ring-white/10">
               <ShieldCheck className="w-6 h-6" />
@@ -186,10 +186,10 @@ const ManageSidebar = React.memo(() => {
                 isCollapsed ? "hidden w-0 opacity-0" : "flex w-auto opacity-100"
               }`}
             >
-              <span className="text-lg font-bold leading-none tracking-tight text-white">
+              <span className="text-lg font-bold leading-none tracking-tight text-white" id= 'adminSidebarTitle'>
                 Lewis Admin
               </span>
-              <span className="text-[10px] uppercase tracking-wider text-red-500 font-bold mt-1">
+              <span className="text-[10px] uppercase tracking-wider text-red-500 font-bold mt-1" id= 'adminSidebarEst'>
                 Est. 1906
               </span>
             </div>
@@ -294,7 +294,7 @@ const ManageSidebar = React.memo(() => {
                       : "w-auto opacity-100 block"
                   }`}
                 >
-                  <p className="text-sm font-bold text-white truncate">
+                  <p className="text-sm font-bold text-white truncate" id= 'adminUserName'>
                     Admin User
                   </p>
                   <Badge
@@ -315,9 +315,10 @@ const ManageSidebar = React.memo(() => {
                       hover:text-white hover:bg-red-600 rounded-lg transition-all duration-300 border border-transparent hover:border-red-500/50
                       ${isCollapsed ? "justify-center" : ""}
                     `}
+                    id="adminSignOutButton"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span className={`${isCollapsed ? "hidden" : "block"}`}>
+                    <span id="signOutText" className={`${isCollapsed ? "hidden" : "block"}`}>
                       Sign Out
                     </span>
                   </button>

@@ -63,7 +63,7 @@ const Dashboard = () => {
   const getMonthlyTrend = (trendData, isCount = false) => {
     if (!trendData || trendData.length < 2) return { current: 0, previous: 0 };
     const sorted = [...trendData].sort((a, b) =>
-      a.Period.localeCompare(b.Period)
+      a.Period?.localeCompare(b.Period)
     );
     const last = sorted[sorted.length - 1];
     const secondLast = sorted[sorted.length - 2];
@@ -99,41 +99,66 @@ const Dashboard = () => {
   return (
     <div className="flex flex-col min-h-screen font-sans text-slate-900 bg-slate-50">
       <div className="container px-4 sm:px-6 py-12 mx-auto max-w-7xl space-y-12">
-        <h2 className="text-4xl font-extrabold tracking-tight text-slate-900">
+        <h2
+          className="text-4xl font-extrabold tracking-tight text-slate-900"
+          id="dashHeading"
+        >
           Dashboard Overview
         </h2>
 
         {/* Key Metrics Grid - Made more prominent with larger cards and icons */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          id="total"
+        >
           {[
             {
               title: "Total Revenue",
-              value: `R${totalRevenue?.toFixed(2) || 0}`,
-              icon: <DollarSign className="w-6 h-6 text-red-600" />,
+              value: (
+                <span id="totalRevenue">{`R${totalRevenue?.toFixed(2) || 0}`}</span>
+              ),
+              icon: (
+                <DollarSign
+                  id="revenueCurrencyIcon"
+                  className="w-6 h-6 text-red-600"
+                />
+              ),
               trendPct: revenueTrendPct,
               trendUp: revenueTrendUp,
               color: "bg-red-50 hover:bg-red-100",
             },
             {
-              title: "Total Orders",
-              value: totalOrders || 0,
-              icon: <ShoppingCart className="w-6 h-6 text-red-600" />,
+              title: <span id="totalOrders">Total Orders</span>,
+              value: <span id="totalOrdersValue">{totalOrders || 0}</span>,
+              icon: (
+                <ShoppingCart
+                  id="totalOrdersIcon"
+                  className="w-6 h-6 text-red-600"
+                />
+              ),
               trendPct: ordersTrendPct,
               trendUp: ordersTrendUp,
               color: "bg-red-50 hover:bg-red-100",
             },
             {
-              title: "Products in Stock",
-              value: productsInStock || 0,
-              icon: <Package className="w-6 h-6 text-red-600" />,
+              title: <span id="productsInStock">Products in Stock</span>,
+              value: (
+                <span id="productsInStockValue">{productsInStock || 0}</span>
+              ),
+              icon: (
+                <Package
+                  id="productsInStockIcon"
+                  className="w-6 h-6 text-red-600"
+                />
+              ),
               trendPct: stockTrendPct,
               trendUp: stockTrendUp,
               color: "bg-red-50 hover:bg-red-100",
             },
             {
-              title: "Low Stock Items",
-              value: lowStockCount,
-              icon: <AlertTriangle className="w-6 h-6 text-red-600" />,
+              title: <span id="lowStockItems">Low Stock Items</span>,
+              value: <span id="lowStockItemsValue">{lowStockCount}</span>,
+              icon: <AlertTriangle id="lowStockItemsIcon" className="w-6 h-6 text-red-600" />,
               trendPct: lowStockTrendPct,
               trendUp: lowStockTrendUp,
               color: "bg-red-50 hover:bg-red-100",
@@ -185,13 +210,13 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="text-slate-600">Order ID</TableHead>
-                    <TableHead className="text-slate-600">
+                    <TableHead className="text-slate-600" id="orderId">Order ID</TableHead>
+                    <TableHead className="text-slate-600" id="customerName">
                       Customer Name
                     </TableHead>
-                    <TableHead className="text-slate-600">Date</TableHead>
-                    <TableHead className="text-slate-600">Total</TableHead>
-                    <TableHead className="text-slate-600">Status</TableHead>
+                    <TableHead className="text-slate-600" id="orderDate">Date</TableHead>
+                    <TableHead className="text-slate-600" id="orderTotal">Total</TableHead>
+                    <TableHead className="text-slate-600" id="orderStatus">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -228,7 +253,10 @@ const Dashboard = () => {
                     </TableRow>
                   )) || (
                     <TableRow>
-                      <TableCell colSpan={5} className="text-center text-slate-500">
+                      <TableCell
+                        colSpan={5}
+                        className="text-center text-slate-500"
+                      >
                         No recent orders
                       </TableCell>
                     </TableRow>
@@ -249,9 +277,9 @@ const Dashboard = () => {
               <Table>
                 <TableHeader>
                   <TableRow className="bg-slate-50">
-                    <TableHead className="text-slate-600">Name</TableHead>
-                    <TableHead className="text-slate-600">Qty Left</TableHead>
-                    <TableHead className="text-slate-600">
+                    <TableHead className="text-slate-600" id="lowStockItemsName">Name</TableHead>
+                    <TableHead className="text-slate-600" id="lowStockItemsQtyLeft">Qty Left</TableHead>
+                    <TableHead className="text-slate-600" id="lowStockItemsReorderStatus">
                       Reorder Status
                     </TableHead>
                   </TableRow>
@@ -284,7 +312,10 @@ const Dashboard = () => {
                     </TableRow>
                   )) || (
                     <TableRow>
-                      <TableCell colSpan={3} className="text-center text-slate-500">
+                      <TableCell
+                        colSpan={3}
+                        className="text-center text-slate-500"
+                      >
                         No low stock items
                       </TableCell>
                     </TableRow>
