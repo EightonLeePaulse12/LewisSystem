@@ -94,31 +94,32 @@ const OrdersManagement = () => {
 
   return (
     <div className="container max-w-6xl py-10 mx-auto space-y-8">
-      <h2 className="text-3xl font-bold">Orders Management</h2>
+      <h2 className="text-3xl font-bold" id="oMheading">Orders Management</h2>
 
       <Card>
         <CardHeader>
-          <CardTitle>Manage Orders</CardTitle>
-          <CardDescription>
+          <CardTitle id="manageOrdersTitle">Manage Orders</CardTitle>
+          <CardDescription id="manageOrdersDescription">
             View, search, filter, and update order statuses.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {/* Filters Section */}
           <div className="flex flex-wrap gap-4 mb-6">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2"  id="orderSearchIcon">
               <Search className="w-4 h-4" />
               <Input
                 placeholder="Search by Order ID or Customer Name"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-64"
+                id="orderSearchInput"
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2" id="orderStatusFilterIcon">
               <Filter className="w-4 h-4" />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-40" id="orderStatusFilter">
                   <SelectValue placeholder="Filter by Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -140,6 +141,7 @@ const OrdersManagement = () => {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               className="w-40"
+              id="orderStartDateFilter"
             />
             <Input
               type="date"
@@ -147,8 +149,9 @@ const OrdersManagement = () => {
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
               className="w-40"
+              id="orderEndDateFilter"
             />
-            <Button variant="outline" onClick={resetFilters}>
+            <Button id="resetFiltersButton" variant="outline" onClick={resetFilters}>
               Reset Filters
             </Button>
           </div>
@@ -164,7 +167,7 @@ const OrdersManagement = () => {
           ) : (
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow id="ordersTableHeaderRow">
                   <TableHead>Order ID</TableHead>
                   <TableHead>Customer ID</TableHead>
                   <TableHead>Date</TableHead>
@@ -234,6 +237,7 @@ const OrdersManagement = () => {
               variant="outline"
               onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
               disabled={page === 1}
+              id="previousPageButton"
             >
               Previous
             </Button>
@@ -242,6 +246,7 @@ const OrdersManagement = () => {
               variant="outline"
               onClick={() => setPage((prev) => prev + 1)}
               disabled={!rawOrders || rawOrders.length < 10}
+              id="nextPageButton"
             >
               Next
             </Button>
